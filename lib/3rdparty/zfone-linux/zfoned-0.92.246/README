@@ -1,0 +1,219 @@
+Zfone Beta Software
+Copyright (c) 2005 Philip Zimmermann.  All rights reserved.
+Contact Phil at: www.philzimmermann.com
+Visit the Zfone Project Home Page
+Report bugs via the Zfone Bugs Page
+
+
+Getting Started with Zfone Beta Software
+--------------------------------------------------------------------------------
+
+What is Zfone?
+
+	Zfone (http://zfoneproject.com/) is my new secure VoIP phone software, which
+lets you make secure phone calls over the Internet. It encrypts your call so
+that only the other person can hear you speak. Zfone lets you whisper in
+someone's ear, even if their ear is a thousand miles away. In the future, the
+Zfone protocol will be integrated into standalone secure VoIP clients, but today
+we have a software product that lets you turn your existing VoIP client into a
+secure phone. The current Zfone software runs in the Internet Protocol stack on
+any Windows XP, Mac OS X, or Linux PC, and intercepts and filters all the VoIP
+packets as they go in and out of the machine, and secures the call on the fly.
+You can use a variety of different software VoIP clients to make a VoIP call.
+The Zfone software detects when the call starts, and initiates a cryptographic
+key agreement between the two parties, and then proceeds to encrypt and decrypt
+the voice packets on the fly. It has its own little separate GUI, telling the
+user if the call is secure. It's as if Zfone were a "bump on the cord", sitting
+between the VoIP client and the Internet. Think of it as a software
+bump-on-the-cord. Maybe a bump in the protocol stack.
+
+Step 1: Getting your VoIP client software working
+
+	Experience has shown that there are many things that can go wrong with VoIP
+client software. There could be problems with your firewall, with getting VoIP
+calls to traverse your local network's NAT perimeter, with your audio
+configuration choices (especially your microphone), with your VoIP service
+provider. For this reason, it is important that you get your VoIP client 
+tested and working before you install Zfone. We don't want to get emails from
+you complaining that Zfone doesn't work, when you haven't first established that
+your VoIP client works in your local network environment.
+
+	First, you will need to get yourself a VoIP client, install it, sign up for
+a VoIP service provider, get a VoIP phone number (a SIP URI), and test your VoIP
+client to make sure it all works. Many VoIP service providers provide an echo
+server to make a test call. You need to make test calls and make sure your audio
+is configured properly, and that you have a microphone working 
+properly with your VoIP client software. You need to make sure your VoIP client
+will work properly in your local network, and can register with a SIP server and
+make calls through your firewall and NAT router.
+
+	Zfone has been tested with these VoIP clients and VoIP services:
+VoIP clients: X-Lite, Gizmo, and SJphone. 
+VoIP service providers: Free World Dialup, iptel.org, and SIPphone.
+
+	When you have Zfone installed, you should run it before you launch your VoIP
+client software. You can leave it running all the time, in the background.
+Assuming everything works the same for you as it works for us, Zfone should
+secure any VoIP call you make while it's running, and it will tell you the call
+is secure with its own separate graphical user interface. You must launch 
+the Zfone GUI before you use your VoIP client, and leave the GUI running. 
+
+Step 2: Testing Zfone
+
+	Now you can test it with another Zfone user. Hopefully you have arranged for
+an accomplice to test his own VoIP client before he installed Zfone. Or maybe
+you did it yourself on one of your other computers. 
+	*	To make your VoIP client work with Zfone, you will need to open your
+		VoIP client's preference panel and set the SIP port number to 5060. 
+	*	You must launch the Zfone GUI before you use your VoIP client, and leave
+		the GUIrunning. If your GUI tells you the Zfone IP filter is not
+		running, you must start the IP filter via the Zfone menu bar. 
+	*	Then you are ready to make a Zfone-secured call with your VoIP client.
+		Place a call to the other Zfone client on the other computer, and it
+		should establish a secure link,and the Zfone GUI tells you the call
+		is secure. The GUI displays a short authentication string that you
+		should verbally compare with your partner, who can see the same
+		authentication string on his GUI. If they do not match, it indicates the
+		presence of a man-in-the-middle wiretapper. If they do match, there is a
+		high probability that no wiretapper is present. 
+
+When you run Zfone, it checks with our update server to see if a new version of
+Zfone is available for download. If a download is available, you really should
+get it. 
+
+Reporting Bugs, and Other Known "Issues"
+To read about known bugs and issues in the Zfone beta software, and to
+report bugs, visit the http://philzimmermann.com/zfone/bugs page.
+
+
+
+Default Installation pathes
+--------------------------------------------------------------------
+Main files:
+daemon:  		/usr/local/bin/zfoned
+control GUI at:	/usr/local/bin/zfone
+zfone log file:	/var/log/zfone.log
+secret cache:	/usr/local/share/zfone/zfone_cache.dat
+ZID file:		/usr/local/share/zfone/zfone_zid.dat
+
+Resources:
+zfone sounds: 	/usr/local/share/zfone/sounds/
+zfone pictures: /usr/local/share/zfone/pictures/
+
+
+Usage
+--------------------------------------------------------------------
+	Zfone consist of two parts: daemon and control GUI. Daemon implement ZRTP
+protocol and intergated to the Linux IP stack. Zfoned is the standart  network
+daemon and can be used as other Linux daemons. Control GUI - interface between
+userts and protocol logic. For using Zfone you mast ran zfoned (daemon) and
+zfone (GUI). To ran zfoned you mast have root
+privilages: 		"/usr/local/bin/zfoned".
+To ran GUI type: 	"/usr/local/bin/zfone".
+
+
+Known "Issues"
+--------------------------------------------------------------------
+
+Most of the trouble we have with this implementation of Zfone stems from the 
+complexity of detecting the VoIP client's SIP and RTP packets on the fly,
+figuring out what port numbers they use, and triggering ZRTP protocol whenever
+these packets are detected. All of that class of problems would disappear if the
+ZRTP protocol were integrated inside a VoIP client. The packet detection
+problems only arise because we implement the ZRTP protocol in this particular
+product outside the VoIP client as a "bump in the cord". 
+
+
+Here are the known issues in this beta version: 
+
+Sometimes one party cannot hear the other party. Sound flows in only one 
+direction. We don't know if it's a Zfone problem, or the VoIP clients having
+problems with NAT barriers. If you encounter this behavior, please file a bug
+report and send us the Zfone log files (see below for how to do that). 
+
+There are some cases where a VoIP client does not follow normal SIP and RTP 
+protocols, and our Zfone proxy won't work in those cases. For example, if the
+VoIP client sends the RTP packets through TCP/IP instead of UDP. Or if
+it sends the SIP packet through a TLS tunnel. Or some even send the voice
+packets through a TLS tunnel, I have heard. This makes it hard for us to see the
+packets, so we can't trigger the ZRTP protocol. Again, all these
+problems go away if the ZRTP protocol is integrated inside a VoIP client. We
+have occasionally observed problems with Gizmo violating the normal protocols
+this way, if it's talking to another Gizmo user. But only under certain
+circumstances, such as when it has trouble with certain local network NAT
+barriers. 
+
+
+We'll add more as we get more bug reports from users. I predict that most of 
+the problems will be related to trying to run the ZRTP protocol as a proxy in
+the IP stack. 
+
+For the free public beta of Zfone, bug reports are encouraged, but requests for 
+support will likely get no response. If you want support, you'll have to wait
+for the official release and pay for it. 
+
+REPORTING BUGS
+--------------------------------------------------------------------
+
+We need your help in finding bugs, which is why we do a public beta release. 
+Please do your part to help us make Zfone better for everyone by taking the time
+to report bugs, and give us as much detail you can to help us track
+down the problem and fix it (see below on what to include in the bug report).
+Report bugs to my development team,
+at bug-reports at philzimmermann dot com. Note that philzimmermann is spelled 
+with 2 Ns. 
+
+Please use the bug-reports email address only to report bugs or problems you are
+having with the software, because it goes to the developers who fix bugs. If you
+just want to send email to me for other reasons, use prz at mit dot edu. 
+
+Be sure to specify everything in the bug report, such as: 
+* the version and build number of Zfone you tested,
+* the operating system you are using,
+* what VoIP client (and version number of the VoIP client) you were using,
+  the exact circumstances of the bug, and whether and how the bug can be 
+  reproduced, whatever you can tell us about your NAT/Firewall environment (such
+  as the type of router you are using, if you know anything about this),
+  and, anything else that we should know.
+* Also, Zfone writes a lot of diagnostic information to an error log. On the Mac
+  and Linux, this log files are in /var/log/zfone_XXX.log, and on Windows, it's
+  in /Zfone install directory/Zfone/Zfonelog. It would be helpful if
+  you attached that file with your bug report, and get the other party in the
+  phone call to attach his as well, with an introductory note explaining that
+  the two log files are related. These log files are highly compressible,
+  so if it's a large file, you might compress it into a .zip archive before
+  emailing it. Mac OS X users can conveniently view the Zfone log file by
+  running the Console utility (in the /Applications/Utilities folder). In the
+  console tool bar select Logs, and open /var/log/zfone.log.
+  Then copy this file to the clipboard and add it to the emailed bug report.
+
+Advanced Users:
+
+If you're a techno weenie with a lot of experience with the minutiae of your 
+operating system, you can be even more helpful if you provide us with additional
+details to diagnose the problem. Here's how. 
+
+* On Windows, capture the information about network interfaces, by doing this:
+  - Click Start - Run - cmd 
+  -Then in the console: ipconfig 
+  - Then use the mouse to right-click and in pop-ip menu selesc "select" item 
+	and  copy the relevant text to the clipboard, then paste the information
+	into the body of the emailed bug report. 
+
+* On Linux or Mac OS X, capture the information about network interfaces. Open 
+	a terminal window, type "ifconfig",
+  	and copy the output into the body of the emailed bug report. 
+
+* 	For Mac OS X, you may add zfone.crash.log. To do that, run the Console
+	utility (in the /Applications/Utilities folder). In the console tool bar
+	select Logs, and open ~/Library/Logs/CrashReporter/zfone.crash.log. Then
+	copy this file to the clipboard and add it to the emailed bug report. 
+
+*	For Linux, if the program crashes you should send us a backtrace of the
+	program. If you are familiar with the gdb debugger, start up a terminal
+	window and do these steps:
+  	- ./gdb "path to zfoned" "path to core_file"
+  	- Then, in gdb, type "info threads" - get the list of threads 
+  	- For the transfer to the next thread: "thread N" (N is the thread number) 
+  	- To print the backtrace: type "bt" 
+  	- To exit from the debugger: type "quit"

@@ -1,0 +1,279 @@
+#
+# Copyright (c) 2006 Philip R. Zimmermann. All rights reserved.
+# Contact: http://philzimmermann.com
+# 
+# Viktor Krikun <v.krikun@soft-industry.com> <v.krikun@gmail.com>
+#
+
+# Process this file with autoconf to produce a configure script.
+AC_INIT
+
+AC_CONFIG_AUX_DIR(config)
+AM_CONFIG_HEADER(config/zfone_config.h)
+
+CFLAGS="$CFLAGS -Wno-unused-parameter"
+
+#-------------------------------------------------------------------------------
+# Checks for target OS
+#-------------------------------------------------------------------------------
+
+is_bsd_based=no
+
+AC_CANONICAL_SYSTEM
+
+case $target_os in
+  aix*)       ;;
+  cygwin*)    ;;
+  darwin*)    is_bsd_based=yes;;
+  freebsd2*)  is_bsd_based=yes;;
+  freebsd*)   is_bsd_based=yes;;
+  hpux*)      ;;
+  irix*)      ;;
+  linuxaout*) ;;
+  linux*)     ;;
+  mingw32*)   ;;
+  netbsd*)    is_bsd_based=yes;;
+  openbsd*)   is_bsd_based=yes;;
+  osf[12]*)   is_bsd_based=yes;;
+  osf*)       ;;
+  solaris2*)  ;;
+  sunos4*)    ;;
+  ultrix*)    ;;
+esac
+
+if test "x$is_bsd_based" == xno; then
+echo "------- START Zfone configuration for Linux platform ------------"
+fi
+
+if test "x$is_bsd_based" == xyes; then
+echo "------- START Zfone configuration for Mac platform ------------"
+fi
+
+
+AM_CONDITIONAL(IS_LINUX_BASED, test "x$is_bsd_based" == xno)
+AM_CONDITIONAL(COMPILE_MACGREW, test "x$enable_macgrews" == "xyes")
+
+AM_INIT_AUTOMAKE(zfoned, 0.92.246)
+
+
+#-------------------------------------------------------------------------------
+# Checks for programs.
+#-------------------------------------------------------------------------------
+AC_PROG_CC
+
+
+#-------------------------------------------------------------------------------
+# Checks for libraries.
+#-------------------------------------------------------------------------------
+
+AC_SUBST(LIB_PTHREAD)
+AC_SUBST(LIB_ZRTP)
+AC_SUBST(LIB_BN)
+#AC_SUBST(LIB_SRTP)
+
+# check for libipq on linux only
+if test "x$is_bsd_based" == xno; then
+AC_SUBST(LIB_IPQ)
+
+AC_CHECK_LIB([ipq], [main], [LIB_IPQ="-lipq"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library libipq";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+fi
+
+AC_CHECK_LIB([pthread], [main], [LIB_PTHREAD="-lpthread"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library pthread";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+
+AC_CHECK_LIB([zrtp], [main], [LIB_ZRTP="libzrtp.a"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library libzrtp";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+AC_CHECK_LIB([bn], [main], [LIB_BN="libbn.a"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library libbn";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+		
+if test "x$enable_macgrews" == xyes; then
+AC_CHECK_LIB([srtp], [main], [LIB_ZRTP="libsrtp.a"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library libsrtp";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+AC_ARG_WITH([srtp_libdir],
+    		AS_HELP_STRING([--with-srtp-libdir=DIR],[SRTP library dir (deafult /usr/local/lib)])
+		,[AC_SUBST(srtp_lib, $withval)]
+		,[AC_SUBST(srtp_lib, "/usr/local/lib")]
+	   )
+
+fi
+
+# check for libipq on linux only
+if test "x$is_bsd_based" == xno; then
+AC_ARG_WITH([ipq_includedir],
+    		AS_HELP_STRING([--with-ipq-includedir=DIR],[IPQ includes dir (deafult /usr/include/libipq)])
+		,[AC_SUBST(ipq_inc, $withval)]
+		,[AC_SUBST(ipq_inc, "/usr/include/libipq")]
+	   )
+
+AC_ARG_WITH([ipq_libdir],
+    		AS_HELP_STRING([--with-ipq-libdir=DIR],[IPQ library dir (deafult /usr/local/lib)])
+		,[AC_SUBST(ipq_lib, $withval)]
+		,[AC_SUBST(ipq_lib, "/usr/local/lib")]
+	   )
+fi
+
+AC_ARG_WITH([zrtp_includedir],
+    		AS_HELP_STRING([--with-zrtp-includedir=DIR],[ZRTP includes dir (default /usr/local/include/libzrtp)])
+		,[AC_SUBST(zrtp_inc, $withval)]
+		,[AC_SUBST(zrtp_inc, "/usr/local/include/libzrtp/")]
+	   )
+
+AC_ARG_WITH([zrtp_libdir],
+    		AS_HELP_STRING([--with-zrtp-libdir=DIR],[ZRTP3 library dir (deafult /usr/local/lib)])
+		,[AC_SUBST(zrtp_lib, $withval)]
+		,[AC_SUBST(zrtp_lib, "/usr/local/lib")]
+	   )
+
+AC_ARG_WITH([bn_includedir],
+    		AS_HELP_STRING([--with-bn-includedir=DIR],[bn includes dir (deafult /usr/local/include/libzrtp)])
+		,[AC_SUBST(bn_inc, $withval)]
+		,[AC_SUBST(bn_inc, "/usr/local/include/libzrtp")]
+	   )
+
+AC_ARG_WITH([bn_libdir],
+    		AS_HELP_STRING([--with-bn-libdir=DIR],[bn library dir (deafult /usr/local/lib)])
+		,[AC_SUBST(bn_lib, $withval)]
+		,[AC_SUBST(bn_lib, "/usr/local/lib")]
+	   )
+
+
+#-------------------------------------------------------------------------------
+# Checks for header files.
+#-------------------------------------------------------------------------------
+
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([netinet/in.h stdlib.h sys/socket.h sys/time.h unistd.h time.h])
+AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
+
+if test "x$is_bsd_based" == xno; then
+AC_CHECK_HEADER([libipq/libipq.h])
+fi
+
+#-------------------------------------------------------------------------------
+# Checks for typedefs, structures, and compiler characteristics.
+#-------------------------------------------------------------------------------
+
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_PID_T
+AC_CHECK_TYPES([int8_t,uint8_t,int16_t,uint16_t,int32_t,uint32_t,uint64_t])
+
+#-------------------------------------------------------------------------------
+# Checks for library functions.
+#-------------------------------------------------------------------------------
+
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_REALLOC
+AC_TYPE_SIGNAL
+AC_CHECK_FUNCS([signal memset socket strchr strerror])
+
+
+if test "x$prefix" == xNONE; then
+    zfone_prefix=$ac_default_prefix
+fi
+
+
+#-------------------------------------------------------------------------------
+# Configure pathes
+#-------------------------------------------------------------------------------
+
+echo "#ifndef __ZFONED_SFILES_H" 							> ./include/daemon/sfiles.h
+echo "#define __ZFONED_SFILES_H" 							>> ./include/daemon/sfiles.h
+echo "#define LOG_PATH 		\"/var/log/\"" 						>> ./include/daemon/sfiles.h
+echo "#define FILES_DIR_SIZE	9" 							>> ./include/daemon/sfiles.h
+
+echo "#define ZFONE_PID_PATH 	\"/tmp/zfone.pid\"" 						>> ./include/daemon/sfiles.h
+
+if test "x$is_bsd_based" == xno; then
+
+echo "#define SNDS_DIR 		\"$zfone_prefix/share/zfone/sounds/\"" 			>> ./include/daemon/sfiles.h
+echo "#define CACHE_PATH 	\"$zfone_prefix/share/zfone/zfone_cache.dat\"" 		>> ./include/daemon/sfiles.h
+echo "#define ZID_PATH 		\"$zfone_prefix/share/zfone/zfone_zid.dat\"" 		>> ./include/daemon/sfiles.h
+echo "#define CONFIG_PATH 	\"$zfone_prefix/share/zfone/zfone.cfg\"" 		>> ./include/daemon/sfiles.h
+echo "#define ZFONE_ENTROPY_PATH 	\"$zfone_prefix/share/zfone/zfone_entropy.dat\"" 		>> ./include/daemon/sfiles.h
+
+
+#cp  ./config/zfone.cfg $zfone_prefix/share/zfone/zfone.cfg
+
+else
+
+echo "#define SNDS_DIR        \"\"" 							>> ./include/daemon/sfiles.h
+echo "#define CACHE_PATH      \"/Library/Application Support/Zfone/zfone_cache.dat\"" 	>> ./include/daemon/sfiles.h
+echo "#define ZID_PATH        \"/Library/Application Support/Zfone/zid.dat\"" 		>> ./include/daemon/sfiles.h
+echo "#define CONFIG_PATH     \"/Library/Application Support/Zfone/zfone.cfg\"" 	>> ./include/daemon/sfiles.h
+echo "#define ZFONE_ENTROPY_PATH     \"/Library/Application Support/Zfone/zfone_entropy.dat\"" 	>> ./include/daemon/sfiles.h
+
+#cp  ./config/zfone.cfg /Library/Application\ Support/Zfone/zfone.cfg
+
+fi
+
+#-------------------------------------------------------------------------------
+#firewall configuration (iptables in linux and ipfw in Free BSD)
+#-------------------------------------------------------------------------------
+
+#AC_ARG_WITH([firewall_progdir],
+#    		AS_HELP_STRING([--with-firewall-dir=DIR],[iptables dir (deafult /sbin/iptables)])
+#		,[AC_SUBST(firewall_dir, $withval)]
+#		,[AC_SUBST(firewall_dir, "/usr/sbin/iptables")]
+#	   )
+
+ipfilter_path=none
+
+if test "x$is_bsd_based" == xno; then
+    echo -en "checking for iptables..."
+    for A in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin /opt/bin /opt/sbin; do
+    test -f $A/iptables && ipfilter_path=$A/"iptables";
+    done
+else
+    echo -en "checking for ipfw..."
+    for A in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin /opt/bin /opt/sbin; do
+    test -f $A/ipfw && ipfilter_path=$A/"ipfw";
+    done
+fi
+
+if test "x$prefix" == xnone; then
+    echo "#endif" >> ./include/daemon/sfiles.h;
+    echo "Error: ipfilter was not found!";
+    { (exit 1); exit 1; };
+fi
+
+echo $ipfilter_path
+echo "#define IPF_PATH	"\"$ipfilter_path\" >> ./include/daemon/sfiles.h
+echo "#endif" >> ./include/daemon/sfiles.h
+
+
+AC_OUTPUT([Makefile src/Makefile resources/Makefile])

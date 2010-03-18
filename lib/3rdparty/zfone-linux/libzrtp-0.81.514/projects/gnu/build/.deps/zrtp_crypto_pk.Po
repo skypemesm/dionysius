@@ -1,0 +1,143 @@
+zrtp_crypto_pk.o: ../../../src/zrtp_crypto_pk.c ../../../include/zrtp.h \
+ ../../../include/zrtp_config.h ../../../include/zrtp_config_user.h \
+ /usr/include/linux/version.h ../../../include/zrtp_config_unix.h \
+ /usr/include/asm/types.h /usr/include/asm-generic/int-ll64.h \
+ /usr/include/asm/bitsperlong.h /usr/include/asm-generic/bitsperlong.h \
+ /usr/include/stdlib.h /usr/include/features.h \
+ /usr/include/bits/predefs.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.4.1/include/stddef.h \
+ /usr/include/sys/types.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h /usr/include/time.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/alloca.h /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/inttypes.h ../../../include/zrtp_base.h \
+ ../../../third_party/bgaes/sha2.h ../../../third_party/bgaes/brg_types.h \
+ ../../../third_party/bgaes/bg2zrtp.h ../../../include/zrtp_config.h \
+ ../../../include/zrtp_error.h ../../../include/zrtp_types.h \
+ ../../../third_party/bnlib/bn.h ../../../include/zrtp_iface.h \
+ ../../../include/zrtp_string.h ../../../include/zrtp_iface_system.h \
+ ../../../include/zrtp_list.h ../../../include/zrtp_legal.h \
+ ../../../include/zrtp_protocol.h ../../../include/zrtp_engine.h \
+ ../../../include/zrtp_crypto.h ../../../third_party/bgaes/aes.h \
+ ../../../include/zrtp_iface_builtin.h ../../../include/zrtp_log.h \
+ ../../../include/zrtp_srtp.h ../../../include/zrtp_srtp_builtin.h \
+ ../../../include/zrtp_pbx.h ../../../include/zrtp_version.h
+
+../../../include/zrtp.h:
+
+../../../include/zrtp_config.h:
+
+../../../include/zrtp_config_user.h:
+
+/usr/include/linux/version.h:
+
+../../../include/zrtp_config_unix.h:
+
+/usr/include/asm/types.h:
+
+/usr/include/asm-generic/int-ll64.h:
+
+/usr/include/asm/bitsperlong.h:
+
+/usr/include/asm-generic/bitsperlong.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/features.h:
+
+/usr/include/bits/predefs.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.4.1/include/stddef.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/time.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/sys/sysmacros.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/stdint.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/include/inttypes.h:
+
+../../../include/zrtp_base.h:
+
+../../../third_party/bgaes/sha2.h:
+
+../../../third_party/bgaes/brg_types.h:
+
+../../../third_party/bgaes/bg2zrtp.h:
+
+../../../include/zrtp_config.h:
+
+../../../include/zrtp_error.h:
+
+../../../include/zrtp_types.h:
+
+../../../third_party/bnlib/bn.h:
+
+../../../include/zrtp_iface.h:
+
+../../../include/zrtp_string.h:
+
+../../../include/zrtp_iface_system.h:
+
+../../../include/zrtp_list.h:
+
+../../../include/zrtp_legal.h:
+
+../../../include/zrtp_protocol.h:
+
+../../../include/zrtp_engine.h:
+
+../../../include/zrtp_crypto.h:
+
+../../../third_party/bgaes/aes.h:
+
+../../../include/zrtp_iface_builtin.h:
+
+../../../include/zrtp_log.h:
+
+../../../include/zrtp_srtp.h:
+
+../../../include/zrtp_srtp_builtin.h:
+
+../../../include/zrtp_pbx.h:
+
+../../../include/zrtp_version.h:

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Zfone
+Version=0.92.246
+Comment=Zfone GUI
+Terminal=false
+TryExec=zfone
+Exec=zfone
+Terminal=false
+Categories=GNOME;Application;Network;
+Icon=Zfone.png
+GenericName=Voip encryption
+Comment=Voip encryption

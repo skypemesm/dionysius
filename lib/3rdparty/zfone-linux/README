@@ -1,0 +1,44 @@
+	Zfone consists of three main components. To enable successful work of Zfone
+application all three components should be installed:
+- ZRTP protocol library:					"libzrtp";
+- calls detection daemon:					"zfoned";
+- And daemon management graphic interface:	"zfone".
+	
+INSTALLATION NOTES
+================================================================================
+
+	Detail information about building of all ZFone components are given in
+documentation
+for each one. 
+
+This file presents short instructions for Zfone "Quick installation" upon
+the usage of install.sh script. install.sh script allows to install zfone on
+most of Linux systems automatically. To initiate the installation just run
+script with superuser's rights. If the script implementation was unsuccessful,
+please contact the Support Service and try to perform the installation manually.
+To do that, install each component following instructions in INSTALL files.
+
+--------------------------------------------------------------------------------
+For Ubuntu/Kubuntu users (and other debian-based Linuxes):
+--------------------------------------------------------------------------------
+1. To start playing with ZFone - install several developers tools which allows
+   configure and build programs from sources: g++, automake and autoconf
+   Type: "sudo apt-get install g++ automake autoconf" in konsole or use GUI package
+   manager and install necessary packages.
+   
+2. Install dependencies to build ZFone encryption daemon: iptables-dev package.
+   Type: "sudo apt-get install iptables-dev" in konsole or use GUI package manager
+   and install necessary packages.
+   
+3. Install dependencies to build ZFone GUI/Control Panel: glib 2.0 and gtk+ 2.0.
+	Type: "sudo apt-get install libglib2.0-dev libgtk2.0-dev" in konsole or use
+	GUI package manager and install necessary packages.
+	
+4. Run the installation script "install.sh" as a root
+
+5. After the installation you may start daemon from the konsole manually:
+   "sudo /usr/local/bin/zfoned start" or add it autostart using update-rc.d
+   utility: "sudo update-rc.d zfone defaults"
+
+6. To run Zfone control panel use konsole: "/usr/local/bin/zfone &" or select
+   ZFone application from the Menu-->Internet-->Zfone.
