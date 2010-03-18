@@ -9,6 +9,11 @@
 #define PADDINGFUNCTIONS_H_
 
 class PaddingFunctions {
+private:
+	int pad_ps();
+	int pad_bs();
+
+
 public:
 	PaddingFunctions();
 	virtual ~PaddingFunctions();
