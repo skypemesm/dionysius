@@ -1,0 +1,43 @@
+# 
+# Copyright (c) 2006-2009 Philip R. Zimmermann. All rights reserved.
+# Contact: http://philzimmermann.com
+# For licensing and other legal details, see the file zrtp_legal.c.
+# 
+# Viktor Krikun <v.krikun at zfoneproject.com> 
+
+/**
+\mainpage ZRTP VoIP security
+
+****************************************************************************************************
+\section intro Intro
+****************************************************************************************************
+
+	This is the new version of ZRTP VoIP encryption library - libzrtp v0.8X. It contains lot of changes comparing to previous versions. There are three main reasons why we changed API so significantly:
+		-# New experience in VoIP products design made as look at libzrtp from different angle: not like developers, but like clients. We started using libzrtp in our own projects and found extra complexity and unhandy approaches in API, ambiguity in documentation. libzrtp 0.80 improves lot of things which was uncomfortable for us and we hope it made library better.
+		-# Lot of activity around libzrtp. We have being received bug-reports, propositions and ideas from our customers and partners - most of them are implemented in libzrtp 0.80;
+		-# New version of ZRTP Protocol brings new features and improvements.
+
+	ZRTP Protocol finally goes RFC this months and we going to stabilize SDK as well. Next builds of libzrtp will contain bug-fixes, performance and stability improvements only.
+	
+	So, please, be a patient with new API changes. We hope you will find them useful.
+
+****************************************************************************************************
+\section aboutdoc About this Documentation
+****************************************************************************************************
+	
+	Libzrtp, since v0.80 includes new, documentation. We have updated "How to Get Up and Running Quickly with libZRTP" and Public API documentation.
+	
+	We working on new "Libzrtp Developers Guide" which will give more detail information about ZRTP protocol and libzrtp architecture. This document will be available in next versions of libzrtp. But even now, libzrtp contains enough documentation to start using it comfortable.
+	
+	\note
+	libzrtp private API may have outdated information from previous version (links like this: \ref XXX). We working hard on that part of the documentation and it will be published in next versions of libzrtp.
+	
+****************************************************************************************************
+\section zrtp Libzrtp Documents
+****************************************************************************************************
+
+-# \ref changelog
+-# \ref howto
+-# \ref rng
+
+*/

@@ -1,0 +1,186 @@
+#
+# Copyright (c) 2006 Philip R. Zimmermann. All rights reserved.
+# Contact: http://philzimmermann.com
+#
+# Viktor Krikun <v.krikun@soft-industry.com> <v.krikun@gmail.com>
+#
+
+
+# Process this file with autoconf to produce a configure script.
+AC_INIT
+
+AC_CONFIG_AUX_DIR(config)
+AM_CONFIG_HEADER(config/zfone_config.h)
+
+AM_INIT_AUTOMAKE(zfone, 0.92.246)
+
+#-------------------------------------------------------------------------------
+# Checks for programs.
+#-------------------------------------------------------------------------------
+AC_PROG_CC
+
+AC_CHECK_TYPES([int8_t,uint8_t,int16_t,uint16_t,int32_t,uint32_t,uint64_t])
+
+AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not installed - please install first ***]))
+
+
+#-------------------------------------------------------------------------------
+# Checks for libraries.
+#-------------------------------------------------------------------------------
+
+AM_PATH_GLIB_2_0(2.6.0,,AC_MSG_ERROR([*** GLIB >= 2.x.x not installed - please install first ***]))
+AM_PATH_GTK_2_0(2.10.0,,AC_MSG_ERROR([*** GTK+ >= 2.10.x not installed - please install first ***]), gthread)
+
+AC_SUBST(LIB_PTHREAD)
+AC_SUBST(LIB_ZRTP)
+
+
+AC_CHECK_LIB([zrtp], [main], [LIB_ZRTP="libzrtp.a"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library libzrtp";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+AC_CHECK_LIB([bn], [main], [LIB_BN="libbn.a"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library libbn";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+
+AC_ARG_WITH([zrtp_includedir],
+    		AS_HELP_STRING([--with-zrtp-includedir=DIR],[ZRTP includes dir (deafult /usr/local/include/libzrtp)])
+		,[AC_SUBST(zrtp_inc, $withval)]
+		,[AC_SUBST(zrtp_inc, "/usr/local/include/libzrtp")]
+	   )
+
+AC_ARG_WITH([zrtp_libdir],
+    		AS_HELP_STRING([--with-zrtp-libdir=DIR],[ZRTP library dir (deafult /usr/local/lib)])
+		,[AC_SUBST(zrtp_lib, $withval)]
+		,[AC_SUBST(zrtp_lib, "/usr/local/lib")]
+	   )
+
+AC_ARG_WITH([bn_includedir],
+    		AS_HELP_STRING([--with-bn-includedir=DIR],[bn includes dir (deafult /usr/local/include/libzrtp)])
+		,[AC_SUBST(bn_inc, $withval)]
+		,[AC_SUBST(bn_inc, "/usr/local/include/libzrtp")]
+	   )
+
+AC_ARG_WITH([bn_libdir],
+    		AS_HELP_STRING([--with-bn-libdir=DIR],[bn library dir (deafult /usr/local/lib)])
+		,[AC_SUBST(bn_lib, $withval)]
+		,[AC_SUBST(bn_lib, "/usr/local/lib")]
+	   )
+
+AC_CHECK_LIB([pthread], [main], [LIB_PTHREAD="-lpthread"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library pthread";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+AC_CHECK_LIB([z], [zlibVersion], [LIB_Z="-lz"], [
+	    echo;
+	    echo "  ERROR: Couldn't find library zlib";
+	    echo "         Install library and try again.";
+	    echo;
+	    exit 1; 
+	])
+
+
+#-------------------------------------------------------------------------------
+# Checks for header files.
+#-------------------------------------------------------------------------------
+
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([time.h])
+AC_CHECK_HEADERS([netinet/in.h stdlib.h sys/socket.h sys/time.h unistd.h])
+AC_CHECK_HEADERS(zlib.h)
+
+#-------------------------------------------------------------------------------
+# Checks for typedefs, structures, and compiler characteristics.
+#-------------------------------------------------------------------------------
+
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_PID_T
+
+#-------------------------------------------------------------------------------
+# Checks for library functions.
+#-------------------------------------------------------------------------------
+
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_REALLOC
+AC_TYPE_SIGNAL
+AC_CHECK_FUNCS([signal memset socket strchr strerror])
+
+if test "x$prefix" == xNONE; then
+    zfone_prefix=$ac_default_prefix
+fi
+
+AC_ARG_ENABLE(logo, [--enable-logo company logo.], logo=$enableval,logo="no")
+AM_CONDITIONAL(RIPCORD_LOGO, test "x$logo" == "xyes")
+
+#-------------------------------------------------------------------------------
+# Configure pathes
+#-------------------------------------------------------------------------------
+
+echo "#ifndef __ZFONEG_FILES_H__" 							>  ./include/files.h
+echo "#define __ZFONEG_FILES_H__" 							>> ./include/files.h
+echo "#define IDLE_PATH_PIC \"$zfone_prefix/share/zfone/pictures/state_idle.png\"" 		>> ./include/files.h
+echo "#define NO_FILTER_PIC \"$zfone_prefix/share/zfone/pictures/state_no_filter.png\"" 	>> ./include/files.h
+echo "#define NOT_SECURE_PIC \"$zfone_prefix/share/zfone/pictures/state_clear.png\"" 	>> ./include/files.h
+echo "#define NOT_SECURE_PASSIVE_PIC \"$zfone_prefix/share/zfone/pictures/state_passive_peer.png\"" 	>> ./include/files.h
+echo "#define PRESS_CLEAR_PIC \"$zfone_prefix/share/zfone/pictures/state_press_clear.png\"" 	>> ./include/files.h
+echo "#define SECURE_DISCLOSE_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_oye.png\"">> ./include/files.h
+echo "#define SECURE_MITM_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_mitm.png\"">> ./include/files.h
+echo "#define SECURE_AUDIO_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_audio.png\"">> ./include/files.h
+echo "#define SECURE_VIDEO_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_video.png\"">> ./include/files.h
+echo "#define SECURE_DISCLOSE_FADED_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_oye_f.png\"">> ./include/files.h
+echo "#define SECURE_MITM_FADED_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_mitm_f.png\"">> ./include/files.h
+echo "#define SECURE_AUDIO_FADED_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_audio_f.png\"">> ./include/files.h
+echo "#define SECURE_VIDEO_FADED_PIC \"$zfone_prefix/share/zfone/pictures/state_secure_video_f.png\"">> ./include/files.h
+echo "#define SECURING_PIC \"$zfone_prefix/share/zfone/pictures/state_securing.png\"" 	>> ./include/files.h
+echo "#define WAITING_PIC \"$zfone_prefix/share/zfone/pictures/state_waiting.png\"" 		>> ./include/files.h
+echo "#define NO_ZRTP_PIC \"$zfone_prefix/share/zfone/pictures/state_no_zrtp.png\""		>> ./include/files.h
+echo "#define LOOKING_PIC \"$zfone_prefix/share/zfone/pictures/state_looking.png\"" 	>> ./include/files.h
+echo "#define GEN_PANE_PIC \"$zfone_prefix/share/zfone/pictures/prefs_general.png\"" 	>> ./include/files.h
+echo "#define CRY_PANE_PIC \"$zfone_prefix/share/zfone/pictures/prefs_crypto.png\"" 	>> ./include/files.h
+echo "#define SNF_PANE_PIC \"$zfone_prefix/share/zfone/pictures/prefs_advanced.png\"" 	>> ./include/files.h
+echo "#define ICON_RED \"/usr/local/share/zfone/pictures/icon_red.png\"" >> ./include/files.h
+echo "#define ICON_GREEN \"/usr/local/share/zfone/pictures/icon_green.png\"" >> ./include/files.h
+echo "#define ICON_YELLOW \"/usr/local/share/zfone/pictures/icon_yellow.png\"" >> ./include/files.h
+echo "#define ICON_GREY \"/usr/local/share/zfone/pictures/icon_grey.png\"" >> ./include/files.h
+echo "#define ICON_BLUE \"/usr/local/share/zfone/pictures/icon_blue.png\"" >> ./include/files.h
+echo "#define ZFONE_ICON \"/usr/local/share/zfone/pictures/Zfone.png\"" >> ./include/files.h
+echo "#define NO_NET_PIC \"$zfone_prefix/share/zfone/pictures/state_no_net.png\"" 	>> ./include/files.h
+echo "#define ANALYZING_PIC \"$zfone_prefix/share/zfone/pictures/state_analyzing.png\"" >> ./include/files.h
+echo "#define ERROR_PIC \"$zfone_prefix/share/zfone/pictures/state_error.png\"" >> ./include/files.h
+echo "#define RTP_RX_GREEN_PIC \"$zfone_prefix/share/zfone/pictures/rx_green.png\"" >> ./include/files.h
+echo "#define RTP_RX_RED_PIC   \"$zfone_prefix/share/zfone/pictures/rx_red.png\"" >> ./include/files.h
+echo "#define RTP_RX_GREY_PIC  \"$zfone_prefix/share/zfone/pictures/rx_grey.png\"" >> ./include/files.h
+echo "#define RTP_TX_GREEN_PIC \"$zfone_prefix/share/zfone/pictures/tx_green.png\"" >> ./include/files.h
+echo "#define RTP_TX_RED_PIC   \"$zfone_prefix/share/zfone/pictures/tx_red.png\"" >> ./include/files.h
+echo "#define RTP_TX_GREY_PIC  \"$zfone_prefix/share/zfone/pictures/tx_grey.png\"" >> ./include/files.h
+echo "#define PADLOCK_DISABLED_PIC  \"$zfone_prefix/share/zfone/pictures/padlock_disable.png\"" >> ./include/files.h
+echo "#define PADLOCK_CHECKED_PIC  \"$zfone_prefix/share/zfone/pictures/padlock_checked.png\"" >> ./include/files.h
+echo "#define PADLOCK_PIC  \"$zfone_prefix/share/zfone/pictures/padlock.png\"" >> ./include/files.h
+echo "#define SEC_GREEN_PIC  \"$zfone_prefix/share/zfone/pictures/sec_green.png\"" >> ./include/files.h
+echo "#define SEC_GREY_PIC   \"$zfone_prefix/share/zfone/pictures/sec_grey.png\""  >> ./include/files.h
+echo "#define SEC_RED_PIC    \"$zfone_prefix/share/zfone/pictures/sec_red.png\""   >> ./include/files.h
+echo "#define HEAR_CTX_PIC    \"$zfone_prefix/share/zfone/pictures/state_hear_ctx.png\""   >> ./include/files.h
+if test "x$logo" == "xyes"; then
+  echo "#define RIPCORD_PIC    \"$zfone_prefix/share/zfone/pictures/ripcord.png\""   >> ./include/files.h
+fi
+echo "#endif" 										>> ./include/files.h
+
+AC_OUTPUT([Makefile resources/Makefile])

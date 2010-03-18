@@ -1,0 +1,435 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Unix)">
+	<META NAME="CREATED" CONTENT="20070907;15212300">
+	<META NAME="CHANGED" CONTENT="20090208;14454500">
+	<META NAME="Info 1" CONTENT="">
+	<META NAME="Info 2" CONTENT="">
+	<META NAME="Info 3" CONTENT="">
+	<META NAME="Info 4" CONTENT="">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 8.5in 11in; margin: 0.79in }
+		P { margin-bottom: 0.08in }
+		PRE { font-family: "DejaVu Sans Mono", monospace }
+		A.western:visited { so-language: en-US }
+		A.cjk:visited { so-language: zxx }
+		A.ctl:visited { so-language: zxx }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<PRE>        <FONT FACE="Helvetica, sans-serif">Copyright (c) 2006-2009 Philip R. Zimmermann. All rights reserved.</FONT>
+        <FONT FACE="Arial, sans-serif"><FONT FACE="Helvetica, sans-serif">Contact: </FONT><A CLASS="western" HREF="http://philzimmermann.com/"><FONT FACE="Helvetica, sans-serif">http://philzimmermann.com</FONT></A><FONT FACE="Helvetica, sans-serif"> </FONT></FONT>
+
+<FONT FACE="Helvetica, sans-serif">	Zfone is a software product that lets you turn your existing VoIP client into a secure phone.</FONT>
+<FONT FACE="Helvetica, sans-serif">Zfone runs in the Internet Protocol stack on any Windows XP, Mac OS X, or Linux PC, and intercepts</FONT>
+<FONT FACE="Helvetica, sans-serif">and filters all the VoIP packets as they go in and out of the machine, and secures the call on the fly. </FONT>
+<FONT FACE="Helvetica, sans-serif">You can use a variety of different software VoIP clients to make a VoIP call with Zfone. Tested VOIP </FONT>
+<FONT FACE="Helvetica, sans-serif">clients include Gizmo, iChat, SJPhone, Ekiga, Xmeeting and others. This Zfone changelog.html file </FONT>
+<FONT FACE="Helvetica, sans-serif">began with the release on 11 Sept 2007.  These release notes were authored by Viktor Krikun.</FONT>
+
+<FONT FACE="Helvetica, sans-serif">09  Feb 2009  (Linux 0.9.245), (MacOS 0.9.263), (Win 0.9.217)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT>
+
+<FONT FACE="Helvetica, sans-serif">This build includes improvements in ZRTP secure protocol and supports the latest version of libzrtp.0.80.</FONT>
+<FONT FACE="Helvetica, sans-serif">Enhanced ZRTP protocol to comply with the recommendations from NIST SP800-108, which will make it easier</FONT>
+<FONT FACE="Helvetica, sans-serif"><FONT COLOR="#000000"><FONT SIZE=2>to get FIPS-140 validation for ZRTP products.</FONT></FONT></FONT>
+
+<FONT FACE="Helvetica, sans-serif">14  Nov 2008  (Linux 0.9.231), (MacOS 0.9.254), (Win 0.9.212)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT>
+
+<FONT FACE="Helvetica, sans-serif">This build includes no significant improvements in VoIP call detection capabilities. It just reflects changes in</FONT>
+<FONT FACE="Helvetica, sans-serif">ZRTP protocol and supports the latest version of libzrtp.</FONT>
+
+<FONT FACE="Helvetica, sans-serif">What's new in ZRTP:</FONT>
+<FONT FACE="Helvetica, sans-serif">	• Changes in libzrtp sources tree;</FONT>
+<FONT FACE="Helvetica, sans-serif">	• Improvements in libzrtp initialization routine;</FONT>
+<FONT FACE="Helvetica, sans-serif">	• Improvements in support for passive mode;</FONT>
+<FONT FACE="Helvetica, sans-serif">	• Improvements in ZRTP feedback interface and system-dependent functions;</FONT>
+<FONT FACE="Helvetica, sans-serif">	• ZRTP configuration approach was improved;</FONT>
+<FONT FACE="Helvetica, sans-serif">	• Implemented new functions in protocol according to the Internet Draft v 10.</FONT>
+<FONT FACE="Helvetica, sans-serif">	• and other changes, the details of which may be found in libzrtp.</FONT>
+
+<FONT FACE="Helvetica, sans-serif">	More details about these changes can be found in libzrtp.</FONT>
+
+<FONT FACE="Helvetica, sans-serif">03  Sep 2008  (Linux 0.9.224), (MacOS 0.9.246), (Win 0.9.206)</FONT>
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>====================================================================================</FONT></FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=2><B>What's new in
+ZRTP:</B></FONT></FONT></P>
+<OL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug with incorrect maximum value for T1 retry interval timer which increased delay between</FONT>
+<FONT FACE="Helvetica, sans-serif">LOOKING_FOR_ZRTP and NO_ZRTP_SUPPORT states.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Implemented version negotiation according to the latest specification. libzrtp v 0.6.8 supports ZRTP</FONT>
+<FONT FACE="Helvetica, sans-serif">v0.90 only.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New libzrtp licensing scheme was implemented. It allows the licensing policy to be changed at run time.</FONT>
+<FONT FACE="Helvetica, sans-serif">See zrtp_license_mode_t doc. for more details. Affected API - zrtp_init(). ZFone runs on ACTIVE license</FONT>
+<FONT FACE="Helvetica, sans-serif">mode and be able to establish SECURE calls with ACTIVE and UNLIMITED ZRTP endpoints only.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">ZRTP Protocol version was changed to 0.90 according to ZRTP Internet Draft.</FONT></PRE>
+</OL>
+<PRE>
+<FONT FACE="Helvetica, sans-serif">	More details about these changes can be found in libzrtp.</FONT></PRE><P>
+<BR><BR>
+</P>
+<PRE>
+<FONT FACE="Helvetica, sans-serif">27  June 2008  (Linux 0.9.217), (MacOS 0.9.235), (Win 0.9.201)</FONT>
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>====================================================================================</FONT></FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new in
+ZRTP:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE> <FONT FACE="Helvetica, sans-serif">Small bug was fixed in S0 calculation: when RS1 is corrupted the library uses RS2 instead;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Some changes in Makefile and building process: unused header were eliminated from the installation</FONT>
+<FONT FACE="Helvetica, sans-serif">process;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">DBUILD_WITH_ZRTP_MUTEXES was replaced with --enable_mutexes option passed to                                        </FONT>
+<FONT FACE="Helvetica, sans-serif">./configure script. This change allows not to specify any libzrtp compilation flags during user application</FONT>
+<FONT FACE="Helvetica, sans-serif">compilation. --enable-mutexes adds BUILD_ZRTP_MUTEXES definition to the</FONT>
+<FONT FACE="Helvetica, sans-serif">./config/zrtp_unix_config.h so if you build libzrtp on other platforms - define this flag manually (windows                                                </FONT>
+<FONT FACE="Helvetica, sans-serif">configuration file already includes this option);</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Clean-up in .h and .c comments was made. </FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Reorganized and simplified IPC between daemon and GUI. (TCP server was eliminated) </FONT>
+<FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Unix platforms);</SPAN></SPAN></FONT></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif">Mac OS Zfone daemon is now managed by lounchd. It is native OS X approach and prevents some</FONT></FONT>
+<FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif">problems when zfoned takes all CPU power. In addition zfoned now automatic ally starts and stops</FONT></FONT>
+<FONT FACE="Helvetica, sans-serif"><FONT COLOR="#000000"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">when Zfone GUI is opened.</SPAN></SPAN></FONT><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none"> (For Mac OS X);</SPAN></SPAN></FONT></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif"><FONT COLOR="#000000"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none"><SPAN STYLE="font-weight: normal">Firewall manage on Mac OS X was improved and optimized. Sources is more clear now</SPAN></SPAN></SPAN></FONT><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">.(For Mac OS X)</SPAN></SPAN></FONT></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif">All development process for Mac OS X was moved from Gnu Autotools to Xcode. All ZFone sources</FONT></FONT>
+<FONT FACE="Helvetica, sans-serif"><FONT COLOR="#000000"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">with Xcode projects are available.</SPAN></SPAN></FONT><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none"> </SPAN></SPAN></FONT><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(For Mac OS X).</SPAN></SPAN></FONT></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif">All libzrtp and ZFone were examined by Coverity prevent tool. Few resource leaks were found and fixed. </FONT></FONT></PRE>
+</OL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">10  June 2008  (Linux 0.9.211), (MacOS 0.9.216), (Win 0.9.198)</FONT>
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=2>====================================================================================</FONT></FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new in
+ZRTP:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug with restoring RS secret from back-when session was interrupted;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Some minor corrections in Zfone preferences panel</FONT></PRE>
+</OL>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<PRE><FONT FACE="Helvetica, sans-serif">04  June 2008  (Linux 0.9.210), (MacOS 0.9.215), (Win 0.9.197)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new in
+ZRTP:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New names for: other_secret - pbxs; srtps - auxs. In bits and secrets storages;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">RS2 secret was eliminated form DH s0 calculation;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Protocol version number was increased to 0.85</FONT></PRE>
+</OL>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<PRE><FONT FACE="Helvetica, sans-serif">21 May 2008  (Linux 0.9.208), (MacOS 0.9.212), (Win 0.9.196)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new in
+ZRTP:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">According to the new version of the Internet Draft Signaling secret was removed from the</FONT>
+<FONT FACE="Helvetica, sans-serif">protocol and from the sources. It was not used by interface functions and developers need not change</FONT>
+<FONT FACE="Helvetica, sans-serif">anything in libzrtp based applications.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">DH4K Key exchange was eliminated from the specification and from the sources. Now ECDH is used for</FONT>
+<FONT FACE="Helvetica, sans-serif">all larger AES key sizes.</FONT></PRE>
+</OL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">02 April 2008  (Linux 0.9.205), (MacOS 0.9.210), (Win 0.9.192)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE STYLE="text-align: justify"><FONT FACE="Helvetica, sans-serif">New Secure --&gt; Clear --&gt; Secure scenario was implemented according to the new version of ZRTP</FONT>
+ <FONT FACE="Helvetica, sans-serif">INow, when you go Clear and go Secure again ZFone will use Multistream mode and eliminate DH</FONT>
+<FONT FACE="Helvetica, sans-serif">exchange. See ZRTP Internet Draft section 5.7.2.1. for more information.</FONT></PRE>
+</OL>
+<PRE STYLE="text-align: justify">
+
+<FONT FACE="Helvetica, sans-serif">18 March 2008  (Linux 0.9.201), (MacOS 0.9.208), (Win 0.9.191)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new:</B></FONT></FONT></P>
+<OL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif">New &quot;Multistream&quot; mode was implemented to extend call with additional streams in secure and fast way,</FONT>
+<FONT FACE="Helvetica, sans-serif">without DH exchange. This mode is used by default in all versions of Zfone;&nbsp;&quot;Preshared&quot; mode was</FONT>
+<FONT FACE="Helvetica, sans-serif">also streamlined to use fewer packets. Both of these modes are part of the new ZRTP Internet Draft;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Lots of other cryptographic improvements according to ZRTP Internet Draft version 6;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Zfone now is Windows Vista ready. The same installation package is used for both Vista and XP;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Zfone for Windows 64-bit XP and Vista. Single installer includes separate binaries for 32-bit and 64-bit</FONT>
+<FONT FACE="Helvetica, sans-serif">versions and it installs the appropriate one according to the type of the OS;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New default configuration file for EC builds: only EC256 is enabled by default;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New &quot;Smart&quot; crypto preferences which helps user to adjust EC options;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Improved installer for EC build which can update non-EC ZFone to EC version and vice-versa;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Labels are now more clear for crypto components in &quot;Preferences panel&quot; and &quot;Connection settings&quot;;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Flushes ZRTP cache after every call to prevent data losses on emergency exit or shutting down;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Mark trusted MiTM caches with special prefix in &quot;Caches&quot; window;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Added default names for ZRTP cache entries from SIP URI;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Improved RNG entropy collection uses dropped outgoing media as an entropy source;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Sources clarification (cleared unused and old commands from engine-GUI communications).</FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug
+Fixes:</B></FONT></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Some bugs in Windows version of Zfone were fixed;</FONT></PRE>
+</OL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">01 Feb 2008  (Linux 0.8.184), (MacOS 0.8.184), (Win 0.8.168)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new in ZRTP:</B></FONT></FONT></FONT></P>
+<OL>
+	<LI><PRE> <FONT FACE="Helvetica, sans-serif">Elliptic Curve Crypto functions were added to the libzrtp. This option is available for Zfone customers</FONT>
+ <FONT FACE="Helvetica, sans-serif">and partners only;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">ZRTP Client ID was extended to 16bits and as result  protocol version number was increased to 0.82;</FONT></PRE>
+	<LI><PRE> <FONT FACE="Helvetica, sans-serif">New event zrtp_event_t::ZRTP_EVENT_NO_ZRTP_QUICK was added. It allows user-application to</FONT>
+ <FONT FACE="Helvetica, sans-serif">make an fast assumption about ZRTP support by the remote peer.</FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">There is a build with  </SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">Elliptic Curve Crypto functions support available for our enterprise customers;</SPAN></SPAN></FONT>
+<FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all</SPAN></SPAN></FONT><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none"> platforms)</SPAN></SPAN></FONT></FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug
+Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">Critical issue with installation of Zfone for Windows was resolved. We conjecture that Windows have</FONT>
+ <FONT FACE="Helvetica, sans-serif">some problems with drivers information cache integrity. Corruption if this cache may prevent Zfone</FONT>
+ <FONT FACE="Helvetica, sans-serif">from being installed successfully. We have added special unite which can help  to fix this issue.  We</FONT>
+<FONT FACE="Helvetica, sans-serif">hope that, current build will be extremely useful for our Windows users who have problem with Zfone</FONT>
+<SPAN STYLE="text-decoration: none"> <FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal">upgrade or installation; (</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Windows platform)</SPAN></SPAN></FONT></FONT></PRE>
+</UL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">23 Jan 2008  (Linux 0.8.182), (MacOS 0.8.186), (Win 0.8.157)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new in ZRTP:</B></FONT></FONT></FONT></P>
+<OL START=4>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Wixed issue with the wrong string name for ErrorACK packet. In result previous version of libzrtp had</FONT>
+ <FONT FACE="Helvetica, sans-serif">bug with interoperability with ZRTP implementations by other vendors;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug with HMAC keys truncation. Current version of the library doesn't truncate the keys;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug with ConfirmAck dropping during alert sounds playing. Such issue took place with Zfone for</FONT>
+ <FONT FACE="Helvetica, sans-serif">Linux, when libzrtp engine drops all outgoing traffic during “Secure” alert. In result it caused extra retry</FONT>
+ <FONT FACE="Helvetica, sans-serif">of Confirm2/ConfirmACK exchange;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Added one more Hello packet check: all Hello-&gt;ZID values must be the same within single session. IF</FONT>
+ <FONT FACE="Helvetica, sans-serif">libzrtp detect such error it rises error event with code zrtp_protocol_error_t::zrtp_error_wrong_zid.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed algorithm of errors handling: libzrtp doesn't accept ERROR messages in ZRTP_NONE state to</FONT>
+ <FONT FACE="Helvetica, sans-serif">user application from prevent re-cyclical error event; fixed state-handler function of</FONT>
+ <FONT FACE="Helvetica, sans-serif">ZRTP_INITIATING_ERROR state.</FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">RTP detection was improved to work more smoothly with embedded ZRTP endpoints: as a rule,</FONT>
+ <FONT FACE="Helvetica, sans-serif">embedded ZRTP endpoint start ZRTP exchange before starting the media. Zfone doesn't see incoming</FONT>
+ <FONT FACE="Helvetica, sans-serif">RTP traffic and can't “link” incoming and outgoing RTP streams to the single call. To avoid this problem</FONT>
+ <FONT FACE="Helvetica, sans-serif">Zfone looks for incoming Hello messages from non-ZFone endpoints and marks such stream as RTP.;</FONT>
+<SPAN STYLE="text-decoration: none"> <FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms)</SPAN></SPAN></FONT></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif"><FONT COLOR="#000000"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">If user doesn't specify name for the endpoint, Zfone store SIP URI to the cache by default. (</SPAN></SPAN></FONT><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all</SPAN></SPAN></FONT></FONT>
+<FONT COLOR="#000080"> <FONT FACE="Helvetica, sans-serif">platforms)</FONT></FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug
+Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">Made several fixes is sources for Symbian compatibility; (</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Unix sources brunch)</SPAN></SPAN></FONT></FONT></PRE>
+	<LI><PRE><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">Fixed bug with wrong time-stamp of MiTM secrets in “Caches” window.</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(for all platforms)</SPAN></SPAN></FONT></FONT></FONT></PRE>
+	<LI><PRE><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">Fixed bug with “Duplicated ZID” issue on Windows platform</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">.</SPAN></SPAN></FONT></FONT></FONT></PRE>
+</UL>
+<UL>
+	<PRE></PRE>
+</UL>
+<PRE>
+<FONT FACE="Helvetica, sans-serif">14 Jan 2008  (Linux 0.8.174), (MacOS 0.8.180), (Win 0.8.149)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new in ZRTP:</B></FONT></FONT></FONT></P>
+<OL START=9>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Some fixes in cache logic: &quot;secure since&quot; was eliminated from library logic and moved to the zfone logic</FONT>
+ <FONT FACE="Helvetica, sans-serif">as result structure of cache was changed. Developers who don't use internal realization should apply</FONT>
+ <FONT FACE="Helvetica, sans-serif">necessary changes. (See necessary sections of developers guide and API description for more</FONT>
+ <FONT FACE="Helvetica, sans-serif">information)</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Improved “cache TTL” logic according to the last version of the Internet Draft.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New PBX handling logic:  new API and set of events for the enrollment ritual; new SAS relaying logic.</FONT>
+<FONT FACE="Helvetica, sans-serif">Now handling of  ZRTP call is much easy for PBX and VoIP clients developers. Just one function should</FONT>
+ <FONT FACE="Helvetica, sans-serif">be call for enrollment and one for SAS transferring. See zrtp_pbx.h and necessary sections of the</FONT>
+ <FONT FACE="Helvetica, sans-serif">Developers Guide and API descryptiuon for more information. </FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Public key exchange schemes, based on Elliptic Curve were added for enterprise solutions;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New feature to prevent DOS attacks was added to libzrtp and Zfones. See sec. 9.1 and 10 of ZRTP</FONT>
+ <FONT FACE="Helvetica, sans-serif">Internet draft and description of  zrtp_set_signaling_hash() and zrtp_get_signaling_hash() functions.</FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE> <FONT FACE="Helvetica, sans-serif">Full support of ZRTP secure call using Asterisk PBX. This option is in beta testing phase and works</FONT>
+ <FONT FACE="Helvetica, sans-serif">with special pre-configured Asterisk PBXes. For more information please email to Zfone support</FONT>
+ <FONT FACE="Helvetica, sans-serif">service. <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Protection against DOS attacks to ZRTP protocol was integrated into Zfone <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">).</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">Zfone sources was re-factored to make them more clear and easy for understanding (</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">).</SPAN></SPAN></FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug
+Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">GUI Freezing problem was solved on Linux64 platforms.</FONT></PRE>
+</UL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">16 Nov 2007  (Linux 0.7.149), (MacOS 0.7.159), (Win 0.7.134)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new:</B></FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE> <FONT FACE="Helvetica, sans-serif">&quot;delete secret&quot; option was added. to windows-&gt;secrets menu;</FONT></PRE>
+	<LI><PRE> <FONT FACE="Helvetica, sans-serif">color marks for secrets: gray- expired, yellow - PBX secret. white - common retain secret.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">beta of the new PBX enrolment API is available</FONT></PRE>
+</UL>
+<PRE></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">cache management logic was improved according to ZRTP Internet Draft;</FONT></PRE>
+</UL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">09 Nov 2007  (Linux 0.7.144), (MacOS 0.7.154), (Win 0.7.130)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's new:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Mac OS X 10.5 Leopard support.  Be careful! Zfone doesn't encrypt all new iChat 4.0 features like </FONT>
+<FONT FACE="Helvetica, sans-serif">desktop sharing, files transferring, presentations and etc. We encrypt voice and video only. May be in  </FONT>
+<FONT FACE="Helvetica, sans-serif">following builds we will support these options.</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">bnlib was updated to version 1.14</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">There are some changes in shared secrets indicators. Now we have one row of indicators: gray means </FONT>
+<FONT FACE="Helvetica, sans-serif">that secret isn't cached, green – secret is matched with remote one and red – secret was uploaded from </FONT>
+<FONT FACE="Helvetica, sans-serif">the cache but doesn't matched with other party's secret.</FONT></PRE>
+</UL>
+<PRE>
+<FONT FACE="Helvetica, sans-serif">30 Oct 2007  (Linux 0.7.138), (MacOS 0.7.147), (Win 0.7.125)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; font-style: normal; text-decoration: none; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Shared secrets flags indicators were redesigned (see Zfone menu “Connection settings”);</FONT></PRE>
+	<LI><PRE>”<FONT FACE="Helvetica, sans-serif">Stay secure” option were renamed and inverted. Now this option's name is “Allow switching plain RTP”;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Sound warnings about interruption in outgoing media was enabled by default;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug wrong build number on PowerPC macs.</FONT></PRE>
+</UL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">23 Oct 2007  (Linux 0.7.136), (MacOS 0.7.145), (Win 0.7.123)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; font-style: normal; text-decoration: none; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed “Create a bug report” option for non root Mac OS X users;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Some refactoring of bnlib usage.</FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New Zfone doesn't drop Rtp media on switching to Secure state to prevent some VoIP clients from </FONT>
+<FONT FACE="Helvetica, sans-serif">closing the channel. For now this trick is enabled for iChat only.<SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Mac OS</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">Zfone skips some amount of media packets after the SIP BYE. It should prevent it from reporting “false </FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">alarms” when call is finished but there are some media still in the cloud. (</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">Some improvements in iChat calls detection (</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Mac OS</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">).</SPAN></SPAN></FONT></PRE>
+</OL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">15 Oct 2007  (Linux 0.7.133), (MacOS 0.7.141), (Win 0.7.121)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Bug Fixes:</B></FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug with &quot;early&quot; calls linking when media starts before SIP; </FONT>
+<FONT FACE="Helvetica, sans-serif"><I>symptoms</I>:  Video calls for Counterpath products may look like two separate calls (audio and video);</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed set of media codecs supported by Zfone RTP detection heuristics. It should improve problems with </FONT>
+<FONT FACE="Helvetica, sans-serif">SJPhone and X-Lite calls detection;</FONT>
+<FONT FACE="Helvetica, sans-serif"><I>symptoms</I>: Zfone stayed IDLE during some VoIP calls;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug with displaying different SASes during Video calls;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed several critical bugs which caused Windows driver crashes;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed bug when Zfone control panel for Windows doesn't work for multiple logins;</FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new:</B></FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Uninstall script for MacOS allows to remove all Zfone related data from your Mac (log files, cache of the </FONT>
+<FONT FACE="Helvetica, sans-serif">secrets, configuration profile tec.) <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Mac OS</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New icons set for Mac OS installer and uninstaller <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for Mac OS</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">New icon for verified check-box <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Warning on interruptions in outgoing media; It should protect users from VoIP client's changing the </FONT>
+<FONT FACE="Helvetica, sans-serif">media transport pass by Zfone encryption engine. ZFone alarms user by means of Rx indicator, </FONT>
+<FONT FACE="Helvetica, sans-serif">changing the status indicator to “Encryption interrupted”. If the encryption of outgoing media was </FONT>
+<FONT FACE="Helvetica, sans-serif">interrupted for a more that 5 seconds – sound alarm will be played <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT COLOR="#000000"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>What's
+new in ZRTP:</B></FONT></FONT></FONT></P>
+<OL START=14>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">ZRTP state-machine waits for Hello in NO_ZRTP state;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Fixed issue with verified flag  disappearances after cache losing;</FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=3><B>Known
+Issues:</B></FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif">iChat video calls sometimes look like two separate calls (audio and video).  zfone GUI gets confused when this happens;</FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">iChat seems to crash sometimes probably related to zfone;</FONT></PRE>
+</UL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">25 September 2007  (Linux 0.7.117), (MacOS 0.7.123), (Win 0.7.105)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=4>Bug Fixes</FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif">A few errors and warnings were fixed;</FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=4>What's
+new:</FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">ICE support. Current release Zfone supports VoIP clients using ICE protocol for NAT traversing;  </FONT>
+<FONT FACE="Helvetica, sans-serif">For our tests VoIP clients by Counterpath eg: EyeBeam and Bria were used. We will test more VoIP</FONT>
+<FONT FACE="Helvetica, sans-serif">clients later;</FONT>
+<FONT FACE="Helvetica, sans-serif"><I>info: We have discovered that Counterpath clients may establish asymmetric RTP channels on LAN </I></FONT>
+<FONT FACE="Helvetica, sans-serif"><I>calls. When incoming traffic goes through LAN channel but outgoing – through media relay. Zfone fails </I></FONT>
+<FONT FACE="Helvetica, sans-serif"><I>to detect such calls – we will fix this soon <SPAN STYLE="text-decoration: none">(</SPAN><FONT COLOR="#000080"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></FONT><SPAN STYLE="text-decoration: none">);</SPAN></I></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">Linking with “early” SIP sessions; when media starts right after the first SIP INVITE. As result: faster and </FONT>
+<FONT FACE="Helvetica, sans-serif">more effective calls detection. <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">)</SPAN></SPAN><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">;</SPAN></SPAN></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">On Mac OS and Linux html ChangeLog file is a part of the package and on </FONT>
+<FONT FACE="Helvetica, sans-serif">Windows it's available for reviewing after the installation <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE STYLE="font-style: normal; text-decoration: none"><FONT FACE="Helvetica, sans-serif">New &quot;verified&quot; style: padlock icon and menu item <SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">(</SPAN></SPAN><FONT COLOR="#000080"><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">for all platforms</SPAN></SPAN></FONT><SPAN STYLE="font-style: normal"><SPAN STYLE="text-decoration: none">);</SPAN></SPAN></FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Some changes for better compatibility with Asterisk PBX according to the latest changes in ZRTP </FONT>
+<FONT FACE="Helvetica, sans-serif">internet draft.</FONT></PRE>
+</OL>
+<PRE>
+
+<FONT FACE="Helvetica, sans-serif">11 Sep 2007  (Linux 0.7.112), (MacOS 0.7.118), (Win 0.7.102)</FONT>
+<FONT FACE="Helvetica, sans-serif">====================================================================================</FONT></PRE><P STYLE="margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Helvetica, sans-serif"><FONT SIZE=4>Bug Fixes</FONT></FONT></P>
+<UL>
+	<LI VALUE=1><PRE><FONT FACE="Helvetica, sans-serif">Windows MTU 1400 fixed (SIP was too big);</FONT>
+<FONT FACE="Helvetica, sans-serif"><I>symptoms:</I> May not detect SIP sessions and as result link calls by &quot;time window&quot;;</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Count of active audio calls was fixed;</FONT>
+<FONT FACE="Helvetica, sans-serif"><I>symptoms</I>: &quot;Smart closing&quot; of non confirmed calls may not work;</FONT></PRE>
+</UL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=4>What's
+new:</FONT></FONT></P>
+<OL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">&quot;Clear SIP sessions&quot; options was added. It allows removal of unused and unconfirmed SIP sessions and </FONT>
+<FONT FACE="Helvetica, sans-serif">keeps the list of active calls clean. &quot;Unconfirmed&quot; - session with incomplete SIP negotiation, ACK is </FONT>
+<FONT FACE="Helvetica, sans-serif">missing. &quot;Unused&quot; - unclosed SIP session without a BYE packet (<FONT COLOR="#000080">for all platforms</FONT>);</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">RC script was added to the Linux package. It allows running zfoned on system startup. After installation </FONT>
+<FONT FACE="Helvetica, sans-serif">it will be copied to the /etc/inid.d folder  (<FONT COLOR="#000080">for Linux ZFone only</FONT>);</FONT></PRE>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">ZFone installation script makes zfone <U>application </U>entry at your KDE or Gnome desktop manager. (look </FONT>
+<FONT FACE="Helvetica, sans-serif">for ZFone at &quot;Internet&quot; section at your Applications panel) (<FONT COLOR="#000080">for Linux ZFone only</FONT>);</FONT></PRE>
+	<LI><PRE>“<FONT FACE="Helvetica, sans-serif">Reset IP filter&quot; was optimized to work with the new heuristics engine (<FONT COLOR="#000080">for all platforms</FONT>).</FONT></PRE>
+</OL>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Helvetica, sans-serif"><FONT SIZE=4>Reorganization:</FONT></FONT></P>
+<UL>
+	<LI><PRE><FONT FACE="Helvetica, sans-serif">Heuristics engine sources were split to zfone_heurist.c and zfone_heurist_utils.c. The first one contains </FONT>
+<FONT FACE="Helvetica, sans-serif">kernel logic and the second one tests and utils.</FONT></PRE>
+</UL>
+<PRE>
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,2 @@
+#./configure CFLAGS="$CFLAGS -O2 -g0 -W -Wall"
+./configure
