@@ -5,7 +5,10 @@
  */
 
 #include "SQRKal_functions.h"
-//#include "SRPPSession.h"
+#include "ServerSocket.h"
+#include "ClientSocket.h"
+#include "SRPPSession.hpp"
+
 #include <iostream>
 #include <string>
 
@@ -27,9 +30,47 @@ using namespace std;
 	}
 
 	//create SRPP session
-	int create_SRPPSession(string address)
+	int create_SRPPSession(string address, int port)
 	{
-		cout << " Trying to contact SQRKal endpoint at " << address << endl;
+
+		//Create a SRPP Session
+		SRPPSession* newsession = new SRPPSession(
+									address,port,port);
+
+
+		cout << "Session started at " << newsession->startTime << endl;
+		cout << "FOR receiver with IP " << newsession->receiverIP << endl << endl;
+
+		//Create the socket threads
+
+		if (address == "receiver")
+		{
+			ServerSocket* serversock = new ServerSocket(3530);
+			while(true)
+			{
+				string data = serversock->getData();
+				serversock->putData("ok");
+
+				cout << "-----------------------------------------\n";
+			}
+		}
+		else
+		{
+			cout << " Trying to contact SQRKal endpoint at " << address << endl;
+			ClientSocket* clientsock = new ClientSocket(address,3530);
+
+			clientsock->putData("aaha");
+
+			string data = "";
+			while (data.empty()){
+				data = clientsock->getData();
+			}
+
+		}
+
+		cout << "Created the sockets..\n\n";
+
+		cout << "Session ending now...\n\n";
 
 	}
 
