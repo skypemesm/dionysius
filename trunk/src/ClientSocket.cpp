@@ -5,6 +5,7 @@
  */
 
 #include "ClientSocket.h"
+#include "SRPPMessage.hpp"
 
 using namespace std;
 
@@ -47,32 +48,39 @@ using namespace std;
 	/** Get data from the server socket  **/
 	string ClientSocket::getData()
 	{
+		unsigned char buff[65536];
+		SRPPMessage * srpp_msg = new SRPPMessage(buff);
 
-		bytes_read = recvfrom(sock,recv_data,1024,0,(struct sockaddr *)&server_addr,
-						(socklen_t *)&addr_len);
+		bytes_read = recvfrom(sock,srpp_msg,sizeof(*srpp_msg),0,
+				(struct sockaddr *)&server_addr,
+								(socklen_t *)&addr_len);
 
+		srpp_msg->encrypted_part.original_payload[bytes_read] = '\0';
 
-		recv_data[bytes_read] = '\0';
 
 		if (bytes_read > 0)
 		{
 			printf("\n(%s , %d) said : ",inet_ntoa(server_addr.sin_addr),
-														   ntohs(server_addr.sin_port));
-			printf("%s\n", recv_data);
+							ntohs(server_addr.sin_port));
+			printf("%s\n", (srpp_msg->encrypted_part.original_payload));
 		}
 
 		fflush(stdout);
-
-		return string(recv_data);
+		return string(srpp_msg->encrypted_part.original_payload);
 	}
 
 	/** Send data to the server socket  **/
 	int ClientSocket::putData(string data)
 	{
-	     sendto(sock, data.c_str(), data.length(), 0,
-	              (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+		unsigned char buff[65536];
+		SRPPMessage* srpp_msg = new SRPPMessage(buff);
+		data.copy((srpp_msg->encrypted_part.original_payload),data.length(),0);
 
-	     cout << "\nWriting \""<< data.c_str() << "\" to server" << endl;
+		sendto(sock, srpp_msg, sizeof(*srpp_msg), 0,
+			              (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+
+		cout << "\nWriting " << sizeof(*srpp_msg) << " bytes \""
+				<< srpp_msg->encrypted_part.original_payload << "\" to server" << endl;
 
 
 	}
