@@ -49,7 +49,7 @@ using namespace std;
 			while(true)
 			{
 				string data = serversock->getData();
-				serversock->putData("ok");
+				//serversock->putData("sending from server");
 
 				cout << "-----------------------------------------\n";
 			}
@@ -59,11 +59,10 @@ using namespace std;
 			cout << " Trying to contact SQRKal endpoint at " << address << endl;
 			ClientSocket* clientsock = new ClientSocket(address,3530);
 
-			clientsock->putData("aaha");
-
 			string data = "";
 			while (data.empty()){
-				data = clientsock->getData();
+				clientsock->putData("sending from client");
+				//data = clientsock->getData();
 			}
 
 		}
