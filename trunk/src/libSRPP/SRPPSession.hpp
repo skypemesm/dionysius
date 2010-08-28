@@ -19,7 +19,7 @@ class SRPPSession
 public:
 	string receiverIP, startTime;
 	int receiverPort,myPort;
-
+	unsigned int encryption_key;
 
 	/**
 	 * @param receiverIP: IP of the receiver
@@ -44,6 +44,8 @@ public:
 		timeinfo = localtime ( &rawtime );
 
 		startTime = asctime(timeinfo);
+
+		encryption_key = 1655;
 
 	}
 

@@ -5,7 +5,7 @@
  */
 
 #include "ClientSocket.h"
-#include "SRPPMessage.hpp"
+#include "libSRPP/SRPPMessage.hpp"
 
 using namespace std;
 
@@ -55,6 +55,9 @@ using namespace std;
 				(struct sockaddr *)&server_addr,
 								(socklen_t *)&addr_len);
 
+		//Decrypt
+
+
 		srpp_msg->encrypted_part.original_payload[bytes_read] = '\0';
 
 
@@ -75,6 +78,9 @@ using namespace std;
 		unsigned char buff[65536];
 		SRPPMessage* srpp_msg = new SRPPMessage(buff);
 		data.copy((srpp_msg->encrypted_part.original_payload),data.length(),0);
+
+		//encrypt
+
 
 		sendto(sock, srpp_msg, sizeof(*srpp_msg), 0,
 			              (struct sockaddr *)&server_addr, sizeof(struct sockaddr));

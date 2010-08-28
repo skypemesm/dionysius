@@ -7,7 +7,7 @@
 #include "SQRKal_functions.h"
 #include "ServerSocket.h"
 #include "ClientSocket.h"
-#include "SRPPSession.hpp"
+#include "libSRPP/SRPPSession.hpp"
 
 #include <iostream>
 #include <string>
