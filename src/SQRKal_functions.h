@@ -1,5 +1,5 @@
 /*
- * This header file contains all the majore functions of the SQRKal app
+ * This header file contains all the major functions of the SQRKal app
  *
  * @author Saswat Mohanty <smohanty@cs.tamu.edu>
  */

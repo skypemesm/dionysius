@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "SRPPMessage.hpp"
+#include "libSRPP/SRPPMessage.hpp"
 
 using namespace std;
 
