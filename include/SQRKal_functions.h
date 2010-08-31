@@ -11,7 +11,7 @@ using namespace std;
 	int init_SQRKal();
 
 	//create SRPP session
-	int create_SRPPSession(string address,int port);
+	int start_SRPP(string address,int port);
 
 	// initialize the GUI
 	int init_GUI();

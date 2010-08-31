@@ -5,11 +5,12 @@
  */
 
 #include "ClientSocket.h"
-#include "libSRPP/SRPPMessage.hpp"
+
+
 
 using namespace std;
 
-	ClientSocket::ClientSocket(string address,int port)
+	ClientSocket::ClientSocket(SRPPSession* mysession,string address,int port)
 	{
 		cout << "Creating a client socket..\n";
 
@@ -30,6 +31,8 @@ using namespace std;
 
 		addr_len = sizeof(struct sockaddr);
 
+		thissession = mysession;
+
 	}
 
 
@@ -48,45 +51,56 @@ using namespace std;
 	/** Get data from the server socket  **/
 	string ClientSocket::getData()
 	{
-		unsigned char buff[65536];
-		SRPPMessage * srpp_msg = new SRPPMessage(buff);
+		SRPPMessage srpp_msg = srpp::create_srpp_message("");
 
-		bytes_read = recvfrom(sock,srpp_msg,sizeof(*srpp_msg),0,
+		bytes_read = recvfrom(sock,&srpp_msg,sizeof(srpp_msg),0,
 				(struct sockaddr *)&server_addr,
 								(socklen_t *)&addr_len);
 
 		//Decrypt
+		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
+
+		srpp_msg = srpp::decrypt_srpp(&srpp_msg,crypto,thissession);
 
 
-		srpp_msg->encrypted_part.original_payload[bytes_read] = '\0';
+		srpp_msg.encrypted_part.original_payload[bytes_read] = '\0';
 
 
 		if (bytes_read > 0)
 		{
 			printf("\n(%s , %d) said : ",inet_ntoa(server_addr.sin_addr),
 							ntohs(server_addr.sin_port));
-			printf("%s\n", (srpp_msg->encrypted_part.original_payload));
+			printf("%s\n", (srpp_msg.encrypted_part.original_payload));
 		}
 
 		fflush(stdout);
-		return string(srpp_msg->encrypted_part.original_payload);
+		return string(srpp_msg.encrypted_part.original_payload);
 	}
 
 	/** Send data to the server socket  **/
 	int ClientSocket::putData(string data)
 	{
-		unsigned char buff[65536];
-		SRPPMessage* srpp_msg = new SRPPMessage(buff);
-		data.copy((srpp_msg->encrypted_part.original_payload),data.length(),0);
+		//Create a SRPPMessage with data in its payload
+		SRPPMessage srpp_msg = srpp::create_srpp_message(data);
 
 		//encrypt
+		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
 
+		srpp_msg = srpp::encrypt_srpp(&srpp_msg,crypto,thissession);
 
-		sendto(sock, srpp_msg, sizeof(*srpp_msg), 0,
+/*
+		if (!(data == srpp_msg.encrypted_part.original_payload))
+		{
+			cout << "ERROR" << srpp_msg.encrypted_part.original_payload << endl;
+			exit (-1);
+		}
+*/
+
+		sendto(sock, &srpp_msg, sizeof(srpp_msg), 0,
 			              (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
 
-		cout << "\nWriting " << sizeof(*srpp_msg) << " bytes \""
-				<< srpp_msg->encrypted_part.original_payload << "\" to server" << endl;
+		cout << "\nWriting " << sizeof(srpp_msg) << " bytes \""
+				<< srpp_msg.encrypted_part.original_payload << "\" to server" << endl;
 
 
 	}

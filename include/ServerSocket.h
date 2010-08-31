@@ -17,7 +17,11 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "libSRPP/SRPPMessage.hpp"
+
+#ifndef SRPP_FUNCTIONS_H
+	#define  SRPP_FUNCTIONS_H
+	#include "SRPP_functions.h"
+#endif
 
 using namespace std;
 
@@ -27,9 +31,10 @@ class ServerSocket {
     int addr_len, bytes_read;
     char recv_data[1024];
     struct sockaddr_in server_addr , client_addr;
+    SRPPSession * thissession;
 
 public:
-	ServerSocket(int ServerPort);
+	ServerSocket(SRPPSession * mysession, int ServerPort);
 	~ServerSocket();
 
 	string getData();
