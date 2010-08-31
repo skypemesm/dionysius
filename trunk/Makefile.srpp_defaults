@@ -1,0 +1,27 @@
+#set debug specific variables
+ifeq (${debug}, 0)
+	DEFS += -DINTERMEDIATE_FILES=0
+else
+	ifeq (${debug}, 1)
+		DEFS += -DINTERMEDIATE_FILES=1
+#	else
+#		@echo ""
+#		@echo "Invalid debug value: ${debug}"
+#		@echo "debug must be either 0 or 1"
+#		@echo ""
+	endif
+endif
+
+# srpp macros
+SRPP_DIR = .
+SRPP_LIB =  -L${SRPP_DIR} -lsrpp
+SRPP_LIBFILE = ${SRPP_DIR}/libsrpp.a
+  
+SRPP_OBJS = \
+  src/SQRKal_functions.o \
+  src/ServerSocket.o \
+  src/ClientSocket.o \
+  src/libSRPP/SRPP_functions.o \
+  src/libSRPP/Padding_functions.o \
+  src/libSRPP/Padding_Algorithms.o \
+    
