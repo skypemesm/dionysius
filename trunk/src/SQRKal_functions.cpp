@@ -7,10 +7,16 @@
 #include "SQRKal_functions.h"
 #include "ServerSocket.h"
 #include "ClientSocket.h"
-#include "libSRPP/SRPPSession.hpp"
+#ifndef SRPP_SESSION
+	#include "SRPPSession.hpp"
+#endif
 
 #include <iostream>
 #include <string>
+
+//include Qt franework
+#include <QTGui>
+
 
 using namespace std;
 
@@ -27,10 +33,11 @@ using namespace std;
 		//wait for SRPP connections
 		cout << "SQRKal waiting now for any SRPP connections......\n\n" << endl;
 
+		return 0;
 	}
 
 	//create SRPP session
-	int create_SRPPSession(string address, int port)
+	int start_SRPP(string address, int port)
 	{
 
 		//Create a SRPP Session
@@ -45,7 +52,7 @@ using namespace std;
 
 		if (address == "receiver")
 		{
-			ServerSocket* serversock = new ServerSocket(3530);
+			ServerSocket* serversock = new ServerSocket(newsession,3530);
 			while(true)
 			{
 				string data = serversock->getData();
@@ -57,7 +64,7 @@ using namespace std;
 		else
 		{
 			cout << " Trying to contact SQRKal endpoint at " << address << endl;
-			ClientSocket* clientsock = new ClientSocket(address,3530);
+			ClientSocket* clientsock = new ClientSocket(newsession,address,3530);
 
 			string data = "";
 			while (data.empty()){
@@ -71,11 +78,21 @@ using namespace std;
 
 		cout << "Session ending now...\n\n";
 
+		return 0;
 	}
 
 
 	// initialize the GUI
 	int init_GUI()
 	{
+		//As you already know we are using the QT Framework.
 
+		//General window .
+		// QApplication app(argc, argv);
+		/* QLabel label("Hello, world!");
+		 label.show();
+
+		 return app.exec();
+*/
+		//return 0;
 	}

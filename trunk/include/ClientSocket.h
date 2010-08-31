@@ -17,6 +17,11 @@
 #include <cstdio>
 #include <iostream>
 
+#ifndef SRPP_FUNCTIONS_H
+	#define  SRPP_FUNCTIONS_H
+	#include "SRPP_functions.h"
+#endif
+
 using namespace std;
 
 class ClientSocket
@@ -26,9 +31,10 @@ class ClientSocket
 	struct hostent *host;
 	int bytes_read, addr_len;
 	char recv_data[1024];
+	SRPPSession * thissession;
 
 public:
-	ClientSocket(string , int);
+	ClientSocket(SRPPSession* mysession,string , int);
 	~ClientSocket();
 
 	string getData();

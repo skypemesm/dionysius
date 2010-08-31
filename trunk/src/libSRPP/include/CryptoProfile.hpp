@@ -11,11 +11,15 @@ using namespace std;
 class CryptoProfile {
 
 	string encryption_algorithm;
+	int BLOCK_SIZE ;
 
+public:
 	CryptoProfile(string algo){
 		encryption_algorithm = algo;
+		BLOCK_SIZE = 2;
 	}
 
+	~CryptoProfile(){
 
-
+	}
 };

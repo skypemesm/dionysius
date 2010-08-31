@@ -5,14 +5,15 @@
  */
 
 #include <string>
+#include <stdint.h>
 
 #ifndef MAXPAYLOADSIZE
-	#define MAXPAYLOADSIZE     50           // 50 bytes
+	#define MAXPAYLOADSIZE     16384           // 16384 bytes
 #endif
 
 using namespace std;
 
-struct SRPPHeader {
+typedef struct SRPPHeader {
 	  uint16_t		version:2;	/** protocol version       */
 	  uint16_t		p:1;		/** padding flag           */
 	  uint16_t		x:1;		/** header extension flag  */
@@ -27,9 +28,9 @@ struct SRPPHeader {
 	  uint32_t		srpp_signalling;		/** rtp extension flag for srpp */
 
 
-};
+} SRPPHeader ;
 
-struct SRPPEncrypted {
+typedef struct SRPPEncrypted {
 	char 		original_payload[MAXPAYLOADSIZE];   /** original rtp/srtp payload **/
     char 		srpp_padding[MAXPAYLOADSIZE];       /** padding (can maximum be full packet)**/
 	uint32_t		pad_count;    					/** srpp pad count **/
@@ -37,14 +38,14 @@ struct SRPPEncrypted {
 	uint16_t		dummy_flag:15;					/** Dummy flag for srpp packet **/
 	uint16_t 		original_seq_number;			/** Original packet's seq. number **/
 
-} ;
+} SRPPEncrypted ;
 
 
 class SRPPMessage {
 
 public:
-	struct SRPPHeader srpp_header;						/** SRPP Header **/
-	struct SRPPEncrypted 	encrypted_part;				/** This is the encrypted part of the packet **/
+	SRPPHeader srpp_header;						/** SRPP Header **/
+	SRPPEncrypted 	encrypted_part;				/** This is the encrypted part of the packet **/
     uint32_t		authentication_tag;				/** Authentication Tag  **/
 
 
