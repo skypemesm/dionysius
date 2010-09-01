@@ -1,0 +1,136 @@
+\hypertarget{struct_r_t_p___header}{
+\section{RTP\_\-Header Struct Reference}
+\label{struct_r_t_p___header}\index{RTP\_\-Header@{RTP\_\-Header}}
+}
+
+
+{\ttfamily \#include $<$rtp.hpp$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_a0168330394469ead3fc335170f3af3a3}{version}:2
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_aeabffdd4140a4124c5bc789d8fe3f258}{p}:1
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_a1d0f8d9f53925ca9e420d9c4b78d1e31}{x}:1
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_af5491dd22e1e1f796837a27709345263}{cc}:4
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_a8ced1d32ad111aac77f73d3b671ec0c7}{m}:1
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_a2a81495ae755559520d0cecf66f1a125}{pt}:7
+\item 
+uint16\_\-t \hyperlink{struct_r_t_p___header_a9a43990de1ed2f04d711bf090360172d}{seq}
+\item 
+uint32\_\-t \hyperlink{struct_r_t_p___header_afa91b2845c6256f0a389eb0e186bf398}{ts}
+\item 
+uint32\_\-t \hyperlink{struct_r_t_p___header_a895a7627b17b1d241539f94c806a901d}{ssrc}
+\item 
+uint32\_\-t \hyperlink{struct_r_t_p___header_acdfaa8f4452ef3bf02041d4b2f79ef45}{csrc} \mbox{[}10\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 15 of file rtp.hpp.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{struct_r_t_p___header_af5491dd22e1e1f796837a27709345263}{
+\index{RTP\_\-Header@{RTP\_\-Header}!cc@{cc}}
+\index{cc@{cc}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{cc}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::cc}}}
+\label{struct_r_t_p___header_af5491dd22e1e1f796837a27709345263}
+header extension flag 
+
+Definition at line 17 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_acdfaa8f4452ef3bf02041d4b2f79ef45}{
+\index{RTP\_\-Header@{RTP\_\-Header}!csrc@{csrc}}
+\index{csrc@{csrc}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{csrc}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf RTP\_\-Header::csrc}\mbox{[}10\mbox{]}}}
+\label{struct_r_t_p___header_acdfaa8f4452ef3bf02041d4b2f79ef45}
+synchronization source 
+
+Definition at line 23 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_a8ced1d32ad111aac77f73d3b671ec0c7}{
+\index{RTP\_\-Header@{RTP\_\-Header}!m@{m}}
+\index{m@{m}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{m}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::m}}}
+\label{struct_r_t_p___header_a8ced1d32ad111aac77f73d3b671ec0c7}
+CSRC count 
+
+Definition at line 18 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_aeabffdd4140a4124c5bc789d8fe3f258}{
+\index{RTP\_\-Header@{RTP\_\-Header}!p@{p}}
+\index{p@{p}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{p}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::p}}}
+\label{struct_r_t_p___header_aeabffdd4140a4124c5bc789d8fe3f258}
+protocol version 
+
+Definition at line 15 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_a2a81495ae755559520d0cecf66f1a125}{
+\index{RTP\_\-Header@{RTP\_\-Header}!pt@{pt}}
+\index{pt@{pt}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{pt}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::pt}}}
+\label{struct_r_t_p___header_a2a81495ae755559520d0cecf66f1a125}
+marker bit 
+
+Definition at line 19 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_a9a43990de1ed2f04d711bf090360172d}{
+\index{RTP\_\-Header@{RTP\_\-Header}!seq@{seq}}
+\index{seq@{seq}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{seq}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::seq}}}
+\label{struct_r_t_p___header_a9a43990de1ed2f04d711bf090360172d}
+payload type 
+
+Definition at line 20 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_a895a7627b17b1d241539f94c806a901d}{
+\index{RTP\_\-Header@{RTP\_\-Header}!ssrc@{ssrc}}
+\index{ssrc@{ssrc}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{ssrc}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf RTP\_\-Header::ssrc}}}
+\label{struct_r_t_p___header_a895a7627b17b1d241539f94c806a901d}
+timestamp 
+
+Definition at line 22 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_afa91b2845c6256f0a389eb0e186bf398}{
+\index{RTP\_\-Header@{RTP\_\-Header}!ts@{ts}}
+\index{ts@{ts}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{ts}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf RTP\_\-Header::ts}}}
+\label{struct_r_t_p___header_afa91b2845c6256f0a389eb0e186bf398}
+sequence number 
+
+Definition at line 21 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_a0168330394469ead3fc335170f3af3a3}{
+\index{RTP\_\-Header@{RTP\_\-Header}!version@{version}}
+\index{version@{version}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{version}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::version}}}
+\label{struct_r_t_p___header_a0168330394469ead3fc335170f3af3a3}
+
+
+Definition at line 14 of file rtp.hpp.
+
+\hypertarget{struct_r_t_p___header_a1d0f8d9f53925ca9e420d9c4b78d1e31}{
+\index{RTP\_\-Header@{RTP\_\-Header}!x@{x}}
+\index{x@{x}!RTP_Header@{RTP\_\-Header}}
+\subsubsection[{x}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf RTP\_\-Header::x}}}
+\label{struct_r_t_p___header_a1d0f8d9f53925ca9e420d9c4b78d1e31}
+padding flag 
+
+Definition at line 16 of file rtp.hpp.
+
+
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/home/saswat/workspacep/srpp/src/libSRPP/include/\hyperlink{rtp_8hpp}{rtp.hpp}\end{DoxyCompactItemize}
