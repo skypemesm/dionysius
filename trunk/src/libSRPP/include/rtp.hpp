@@ -1,4 +1,5 @@
 /**
+ * \file rtp.hpp
  * This file implements the major functions of rtp.
  *
  * Saswat Mohanty <smohanty@cs.tamu.edu>
@@ -11,7 +12,7 @@
 #endif
 
 
-struct RTPHeader{
+struct RTP_Header{
 
 	  uint16_t		version:2;	/** protocol version       */
 	  uint16_t		p:1;		/** padding flag           */
@@ -30,7 +31,7 @@ struct RTPHeader{
 
 class RTPMessage {
 public:
-	struct RTPHeader rtp_header;						/** RTP Header **/
+	struct RTP_Header rtp_header;						/** RTP Header **/
 	char payload[MAXPAYLOADSIZE];
 
     RTPMessage(unsigned char * buff)

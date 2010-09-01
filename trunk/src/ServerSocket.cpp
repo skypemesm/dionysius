@@ -13,7 +13,9 @@
 	#include "SRPP_functions.h"
 #endif
 
-	using namespace std;
+
+
+using namespace std;
 
 	/** Constructor **/
     ServerSocket::ServerSocket(SRPPSession * mysession,int ServerPort)
