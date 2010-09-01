@@ -1,0 +1,92 @@
+\hypertarget{struct_s_r_p_p_encrypted}{
+\section{SRPPEncrypted Struct Reference}
+\label{struct_s_r_p_p_encrypted}\index{SRPPEncrypted@{SRPPEncrypted}}
+}
+
+
+{\ttfamily \#include $<$SRPPMessage.hpp$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char \hyperlink{struct_s_r_p_p_encrypted_a33ecea6c4097b5cfce9b5b9dea56d8c6}{original\_\-payload} \mbox{[}MAXPAYLOADSIZE\mbox{]}
+\item 
+char \hyperlink{struct_s_r_p_p_encrypted_ad4b65478c1d0521bba8788166acc6340}{srpp\_\-padding} \mbox{[}MAXPAYLOADSIZE\mbox{]}
+\item 
+uint32\_\-t \hyperlink{struct_s_r_p_p_encrypted_acbe8fec63c0347dc4021e38a9e2dbcc5}{pad\_\-count}
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_encrypted_abed0d941f10c16d5ad1d6e78db68ccbc}{original\_\-padding}:1
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_encrypted_a5925a07c2fdc31c4d0c68de304169a43}{dummy\_\-flag}:15
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_encrypted_a9b74b2f6e42139739ab9248296702a14}{original\_\-seq\_\-number}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 33 of file SRPPMessage.hpp.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{struct_s_r_p_p_encrypted_a5925a07c2fdc31c4d0c68de304169a43}{
+\index{SRPPEncrypted@{SRPPEncrypted}!dummy\_\-flag@{dummy\_\-flag}}
+\index{dummy\_\-flag@{dummy\_\-flag}!SRPPEncrypted@{SRPPEncrypted}}
+\subsubsection[{dummy\_\-flag}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPEncrypted::dummy\_\-flag}}}
+\label{struct_s_r_p_p_encrypted_a5925a07c2fdc31c4d0c68de304169a43}
+original packet's padding bit 
+
+Definition at line 38 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_encrypted_abed0d941f10c16d5ad1d6e78db68ccbc}{
+\index{SRPPEncrypted@{SRPPEncrypted}!original\_\-padding@{original\_\-padding}}
+\index{original\_\-padding@{original\_\-padding}!SRPPEncrypted@{SRPPEncrypted}}
+\subsubsection[{original\_\-padding}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPEncrypted::original\_\-padding}}}
+\label{struct_s_r_p_p_encrypted_abed0d941f10c16d5ad1d6e78db68ccbc}
+srpp pad count 
+
+Definition at line 37 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_encrypted_a33ecea6c4097b5cfce9b5b9dea56d8c6}{
+\index{SRPPEncrypted@{SRPPEncrypted}!original\_\-payload@{original\_\-payload}}
+\index{original\_\-payload@{original\_\-payload}!SRPPEncrypted@{SRPPEncrypted}}
+\subsubsection[{original\_\-payload}]{\setlength{\rightskip}{0pt plus 5cm}char {\bf SRPPEncrypted::original\_\-payload}\mbox{[}MAXPAYLOADSIZE\mbox{]}}}
+\label{struct_s_r_p_p_encrypted_a33ecea6c4097b5cfce9b5b9dea56d8c6}
+
+
+Definition at line 34 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_encrypted_a9b74b2f6e42139739ab9248296702a14}{
+\index{SRPPEncrypted@{SRPPEncrypted}!original\_\-seq\_\-number@{original\_\-seq\_\-number}}
+\index{original\_\-seq\_\-number@{original\_\-seq\_\-number}!SRPPEncrypted@{SRPPEncrypted}}
+\subsubsection[{original\_\-seq\_\-number}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPEncrypted::original\_\-seq\_\-number}}}
+\label{struct_s_r_p_p_encrypted_a9b74b2f6e42139739ab9248296702a14}
+Dummy flag for srpp packet 
+
+Definition at line 39 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_encrypted_acbe8fec63c0347dc4021e38a9e2dbcc5}{
+\index{SRPPEncrypted@{SRPPEncrypted}!pad\_\-count@{pad\_\-count}}
+\index{pad\_\-count@{pad\_\-count}!SRPPEncrypted@{SRPPEncrypted}}
+\subsubsection[{pad\_\-count}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf SRPPEncrypted::pad\_\-count}}}
+\label{struct_s_r_p_p_encrypted_acbe8fec63c0347dc4021e38a9e2dbcc5}
+padding (can maximum be full packet) 
+
+Definition at line 36 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_encrypted_ad4b65478c1d0521bba8788166acc6340}{
+\index{SRPPEncrypted@{SRPPEncrypted}!srpp\_\-padding@{srpp\_\-padding}}
+\index{srpp\_\-padding@{srpp\_\-padding}!SRPPEncrypted@{SRPPEncrypted}}
+\subsubsection[{srpp\_\-padding}]{\setlength{\rightskip}{0pt plus 5cm}char {\bf SRPPEncrypted::srpp\_\-padding}\mbox{[}MAXPAYLOADSIZE\mbox{]}}}
+\label{struct_s_r_p_p_encrypted_ad4b65478c1d0521bba8788166acc6340}
+original rtp/srtp payload 
+
+Definition at line 35 of file SRPPMessage.hpp.
+
+
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/home/saswat/workspacep/srpp/src/libSRPP/include/\hyperlink{_s_r_p_p_message_8hpp}{SRPPMessage.hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,120 @@
+\hypertarget{namespacesrpp}{
+\section{srpp Namespace Reference}
+\label{namespacesrpp}\index{srpp@{srpp}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespacesrpp_a8034bd54b6c3689cea2030fc208e372c}{init\_\-SRPP} ()
+\item 
+\hyperlink{class_s_r_p_p_session}{SRPPSession} \hyperlink{namespacesrpp_a8a85c1bdf3b2dbc45b48e485399482a7}{create\_\-SRPPSession} (string address, int port)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a177dc3d8977584c43874f34fe0afabfc}{rtp\_\-to\_\-srpp} (\hyperlink{class_r_t_p_message}{RTPMessage} $\ast$rtp\_\-msg)
+\item 
+\hyperlink{class_r_t_p_message}{RTPMessage} \hyperlink{namespacesrpp_ace8256ed4a8da891d842dc82e9747d31}{srpp\_\-to\_\-rtp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$srpp\_\-msg)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a2dc275aa82c32a995b8d9d33de00ecfa}{srtp\_\-to\_\-srpp} (\hyperlink{class_r_t_p_message}{RTPMessage} $\ast$srtp\_\-msg)
+\item 
+\hyperlink{class_r_t_p_message}{RTPMessage} \hyperlink{namespacesrpp_a2bf678c0bec2ec54e269523236390971}{srpp\_\-to\_\-srtp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$srpp\_\-msg)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a4ab1aebaf102fe3b46f250237a4e4f59}{create\_\-and\_\-encrypt\_\-srpp} (string data, \hyperlink{class_crypto_profile}{CryptoProfile} $\ast$crypto, \hyperlink{class_s_r_p_p_session}{SRPPSession} $\ast$srpp\_\-session)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_ae6f1d8d88738a904e0a72bb93837c60f}{create\_\-srpp\_\-message} (string data)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_adac1bae57907c468dda2ad2e546199e8}{encrypt\_\-srpp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$original\_\-pkt, \hyperlink{class_crypto_profile}{CryptoProfile} $\ast$crypto, \hyperlink{class_s_r_p_p_session}{SRPPSession} $\ast$srpp\_\-session)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a6385520ec7f4bb8c51595b66ad87f5de}{decrypt\_\-srpp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$encrypted\_\-pkt, \hyperlink{class_crypto_profile}{CryptoProfile} $\ast$crypto, \hyperlink{class_s_r_p_p_session}{SRPPSession} $\ast$srpp\_\-session)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{namespacesrpp_a4ab1aebaf102fe3b46f250237a4e4f59}{
+\index{srpp@{srpp}!create\_\-and\_\-encrypt\_\-srpp@{create\_\-and\_\-encrypt\_\-srpp}}
+\index{create\_\-and\_\-encrypt\_\-srpp@{create\_\-and\_\-encrypt\_\-srpp}!srpp@{srpp}}
+\subsubsection[{create\_\-and\_\-encrypt\_\-srpp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPMessage} srpp::create\_\-and\_\-encrypt\_\-srpp (string {\em data}, \/  {\bf CryptoProfile} $\ast$ {\em crypto}, \/  {\bf SRPPSession} $\ast$ {\em srpp\_\-session})}}
+\label{namespacesrpp_a4ab1aebaf102fe3b46f250237a4e4f59}
+
+
+Definition at line 50 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_ae6f1d8d88738a904e0a72bb93837c60f}{
+\index{srpp@{srpp}!create\_\-srpp\_\-message@{create\_\-srpp\_\-message}}
+\index{create\_\-srpp\_\-message@{create\_\-srpp\_\-message}!srpp@{srpp}}
+\subsubsection[{create\_\-srpp\_\-message}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPMessage} srpp::create\_\-srpp\_\-message (string {\em data})}}
+\label{namespacesrpp_ae6f1d8d88738a904e0a72bb93837c60f}
+
+
+Definition at line 70 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_a8a85c1bdf3b2dbc45b48e485399482a7}{
+\index{srpp@{srpp}!create\_\-SRPPSession@{create\_\-SRPPSession}}
+\index{create\_\-SRPPSession@{create\_\-SRPPSession}!srpp@{srpp}}
+\subsubsection[{create\_\-SRPPSession}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPSession} srpp::create\_\-SRPPSession (string {\em address}, \/  int {\em port})}}
+\label{namespacesrpp_a8a85c1bdf3b2dbc45b48e485399482a7}
+
+
+Definition at line 25 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_a6385520ec7f4bb8c51595b66ad87f5de}{
+\index{srpp@{srpp}!decrypt\_\-srpp@{decrypt\_\-srpp}}
+\index{decrypt\_\-srpp@{decrypt\_\-srpp}!srpp@{srpp}}
+\subsubsection[{decrypt\_\-srpp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPMessage} srpp::decrypt\_\-srpp ({\bf SRPPMessage} $\ast$ {\em encrypted\_\-pkt}, \/  {\bf CryptoProfile} $\ast$ {\em crypto}, \/  {\bf SRPPSession} $\ast$ {\em srpp\_\-session})}}
+\label{namespacesrpp_a6385520ec7f4bb8c51595b66ad87f5de}
+
+
+Definition at line 111 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_adac1bae57907c468dda2ad2e546199e8}{
+\index{srpp@{srpp}!encrypt\_\-srpp@{encrypt\_\-srpp}}
+\index{encrypt\_\-srpp@{encrypt\_\-srpp}!srpp@{srpp}}
+\subsubsection[{encrypt\_\-srpp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPMessage} srpp::encrypt\_\-srpp ({\bf SRPPMessage} $\ast$ {\em original\_\-pkt}, \/  {\bf CryptoProfile} $\ast$ {\em crypto}, \/  {\bf SRPPSession} $\ast$ {\em srpp\_\-session})}}
+\label{namespacesrpp_adac1bae57907c468dda2ad2e546199e8}
+
+
+Definition at line 84 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_a8034bd54b6c3689cea2030fc208e372c}{
+\index{srpp@{srpp}!init\_\-SRPP@{init\_\-SRPP}}
+\index{init\_\-SRPP@{init\_\-SRPP}!srpp@{srpp}}
+\subsubsection[{init\_\-SRPP}]{\setlength{\rightskip}{0pt plus 5cm}int srpp::init\_\-SRPP ()}}
+\label{namespacesrpp_a8034bd54b6c3689cea2030fc208e372c}
+
+
+Definition at line 18 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_a177dc3d8977584c43874f34fe0afabfc}{
+\index{srpp@{srpp}!rtp\_\-to\_\-srpp@{rtp\_\-to\_\-srpp}}
+\index{rtp\_\-to\_\-srpp@{rtp\_\-to\_\-srpp}!srpp@{srpp}}
+\subsubsection[{rtp\_\-to\_\-srpp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPMessage} srpp::rtp\_\-to\_\-srpp ({\bf RTPMessage} $\ast$ {\em rtp\_\-msg})}}
+\label{namespacesrpp_a177dc3d8977584c43874f34fe0afabfc}
+
+
+Definition at line 30 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_ace8256ed4a8da891d842dc82e9747d31}{
+\index{srpp@{srpp}!srpp\_\-to\_\-rtp@{srpp\_\-to\_\-rtp}}
+\index{srpp\_\-to\_\-rtp@{srpp\_\-to\_\-rtp}!srpp@{srpp}}
+\subsubsection[{srpp\_\-to\_\-rtp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf RTPMessage} srpp::srpp\_\-to\_\-rtp ({\bf SRPPMessage} $\ast$ {\em srpp\_\-msg})}}
+\label{namespacesrpp_ace8256ed4a8da891d842dc82e9747d31}
+
+
+Definition at line 35 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_a2bf678c0bec2ec54e269523236390971}{
+\index{srpp@{srpp}!srpp\_\-to\_\-srtp@{srpp\_\-to\_\-srtp}}
+\index{srpp\_\-to\_\-srtp@{srpp\_\-to\_\-srtp}!srpp@{srpp}}
+\subsubsection[{srpp\_\-to\_\-srtp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf RTPMessage} srpp::srpp\_\-to\_\-srtp ({\bf SRPPMessage} $\ast$ {\em srpp\_\-msg})}}
+\label{namespacesrpp_a2bf678c0bec2ec54e269523236390971}
+
+
+Definition at line 45 of file SRPP\_\-functions.cpp.
+
+\hypertarget{namespacesrpp_a2dc275aa82c32a995b8d9d33de00ecfa}{
+\index{srpp@{srpp}!srtp\_\-to\_\-srpp@{srtp\_\-to\_\-srpp}}
+\index{srtp\_\-to\_\-srpp@{srtp\_\-to\_\-srpp}!srpp@{srpp}}
+\subsubsection[{srtp\_\-to\_\-srpp}]{\setlength{\rightskip}{0pt plus 5cm}{\bf SRPPMessage} srpp::srtp\_\-to\_\-srpp ({\bf RTPMessage} $\ast$ {\em srtp\_\-msg})}}
+\label{namespacesrpp_a2dc275aa82c32a995b8d9d33de00ecfa}
+
+
+Definition at line 40 of file SRPP\_\-functions.cpp.
+

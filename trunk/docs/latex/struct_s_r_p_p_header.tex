@@ -1,0 +1,147 @@
+\hypertarget{struct_s_r_p_p_header}{
+\section{SRPPHeader Struct Reference}
+\label{struct_s_r_p_p_header}\index{SRPPHeader@{SRPPHeader}}
+}
+
+
+{\ttfamily \#include $<$SRPPMessage.hpp$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_a1e157a5384ef3d1691a3255b2b85ecc4}{version}:2
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_a5fea95f882c0d6dc145db5206179d09a}{p}:1
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_a4a16f54f96df9130f56a1b9e3f8348fa}{x}:1
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_abee69fd2801a6ead6de88d5989e26af7}{cc}:4
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_a873e88c91c1dff5650ff8cef39da6c5e}{m}:1
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_a14ab4eb6c4e2a8fd74d096e46889e9fd}{pt}:7
+\item 
+uint16\_\-t \hyperlink{struct_s_r_p_p_header_a4d1b2c6ff25a9a2b63c892a6bc6ed85a}{seq}
+\item 
+uint32\_\-t \hyperlink{struct_s_r_p_p_header_a52ccba459cf97fe589c90c4963214564}{ts}
+\item 
+uint32\_\-t \hyperlink{struct_s_r_p_p_header_abf4b7d9bb620d2535acc1c804d61334b}{ssrc}
+\item 
+uint32\_\-t \hyperlink{struct_s_r_p_p_header_a8f6ad282b736de43846c450e20976348}{csrc} \mbox{[}10\mbox{]}
+\item 
+uint32\_\-t \hyperlink{struct_s_r_p_p_header_a1868f11a71da0fc414496fa7bfc51600}{srpp\_\-signalling}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 16 of file SRPPMessage.hpp.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{struct_s_r_p_p_header_abee69fd2801a6ead6de88d5989e26af7}{
+\index{SRPPHeader@{SRPPHeader}!cc@{cc}}
+\index{cc@{cc}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{cc}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::cc}}}
+\label{struct_s_r_p_p_header_abee69fd2801a6ead6de88d5989e26af7}
+header extension flag 
+
+Definition at line 20 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a8f6ad282b736de43846c450e20976348}{
+\index{SRPPHeader@{SRPPHeader}!csrc@{csrc}}
+\index{csrc@{csrc}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{csrc}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf SRPPHeader::csrc}\mbox{[}10\mbox{]}}}
+\label{struct_s_r_p_p_header_a8f6ad282b736de43846c450e20976348}
+synchronization source 
+
+Definition at line 27 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a873e88c91c1dff5650ff8cef39da6c5e}{
+\index{SRPPHeader@{SRPPHeader}!m@{m}}
+\index{m@{m}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{m}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::m}}}
+\label{struct_s_r_p_p_header_a873e88c91c1dff5650ff8cef39da6c5e}
+CSRC count 
+
+Definition at line 21 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a5fea95f882c0d6dc145db5206179d09a}{
+\index{SRPPHeader@{SRPPHeader}!p@{p}}
+\index{p@{p}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{p}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::p}}}
+\label{struct_s_r_p_p_header_a5fea95f882c0d6dc145db5206179d09a}
+protocol version 
+
+Definition at line 18 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a14ab4eb6c4e2a8fd74d096e46889e9fd}{
+\index{SRPPHeader@{SRPPHeader}!pt@{pt}}
+\index{pt@{pt}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{pt}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::pt}}}
+\label{struct_s_r_p_p_header_a14ab4eb6c4e2a8fd74d096e46889e9fd}
+marker bit 
+
+Definition at line 22 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a4d1b2c6ff25a9a2b63c892a6bc6ed85a}{
+\index{SRPPHeader@{SRPPHeader}!seq@{seq}}
+\index{seq@{seq}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{seq}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::seq}}}
+\label{struct_s_r_p_p_header_a4d1b2c6ff25a9a2b63c892a6bc6ed85a}
+payload type 
+
+Definition at line 23 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a1868f11a71da0fc414496fa7bfc51600}{
+\index{SRPPHeader@{SRPPHeader}!srpp\_\-signalling@{srpp\_\-signalling}}
+\index{srpp\_\-signalling@{srpp\_\-signalling}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{srpp\_\-signalling}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf SRPPHeader::srpp\_\-signalling}}}
+\label{struct_s_r_p_p_header_a1868f11a71da0fc414496fa7bfc51600}
+contributing sources 
+
+Definition at line 28 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_abf4b7d9bb620d2535acc1c804d61334b}{
+\index{SRPPHeader@{SRPPHeader}!ssrc@{ssrc}}
+\index{ssrc@{ssrc}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{ssrc}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf SRPPHeader::ssrc}}}
+\label{struct_s_r_p_p_header_abf4b7d9bb620d2535acc1c804d61334b}
+srpp timestamp 
+
+Definition at line 25 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a52ccba459cf97fe589c90c4963214564}{
+\index{SRPPHeader@{SRPPHeader}!ts@{ts}}
+\index{ts@{ts}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{ts}]{\setlength{\rightskip}{0pt plus 5cm}uint32\_\-t {\bf SRPPHeader::ts}}}
+\label{struct_s_r_p_p_header_a52ccba459cf97fe589c90c4963214564}
+srpp sequence number 
+
+Definition at line 24 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a1e157a5384ef3d1691a3255b2b85ecc4}{
+\index{SRPPHeader@{SRPPHeader}!version@{version}}
+\index{version@{version}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{version}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::version}}}
+\label{struct_s_r_p_p_header_a1e157a5384ef3d1691a3255b2b85ecc4}
+
+
+Definition at line 17 of file SRPPMessage.hpp.
+
+\hypertarget{struct_s_r_p_p_header_a4a16f54f96df9130f56a1b9e3f8348fa}{
+\index{SRPPHeader@{SRPPHeader}!x@{x}}
+\index{x@{x}!SRPPHeader@{SRPPHeader}}
+\subsubsection[{x}]{\setlength{\rightskip}{0pt plus 5cm}uint16\_\-t {\bf SRPPHeader::x}}}
+\label{struct_s_r_p_p_header_a4a16f54f96df9130f56a1b9e3f8348fa}
+padding flag 
+
+Definition at line 19 of file SRPPMessage.hpp.
+
+
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/home/saswat/workspacep/srpp/src/libSRPP/include/\hyperlink{_s_r_p_p_message_8hpp}{SRPPMessage.hpp}\end{DoxyCompactItemize}

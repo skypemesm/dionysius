@@ -1,0 +1,33 @@
+\hypertarget{_s_r_p_p__functions_8cpp}{
+\section{/home/saswat/workspacep/srpp/src/libSRPP/SRPP\_\-functions.cpp File Reference}
+\label{_s_r_p_p__functions_8cpp}\index{/home/saswat/workspacep/srpp/src/libSRPP/SRPP\_\-functions.cpp@{/home/saswat/workspacep/srpp/src/libSRPP/SRPP\_\-functions.cpp}}
+}
+{\ttfamily \#include \char`\"{}SRPP\_\-functions.h\char`\"{}}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacesrpp}{srpp}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespacesrpp_a8034bd54b6c3689cea2030fc208e372c}{srpp::init\_\-SRPP} ()
+\item 
+\hyperlink{class_s_r_p_p_session}{SRPPSession} \hyperlink{namespacesrpp_a8a85c1bdf3b2dbc45b48e485399482a7}{srpp::create\_\-SRPPSession} (string address, int port)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a177dc3d8977584c43874f34fe0afabfc}{srpp::rtp\_\-to\_\-srpp} (\hyperlink{class_r_t_p_message}{RTPMessage} $\ast$rtp\_\-msg)
+\item 
+\hyperlink{class_r_t_p_message}{RTPMessage} \hyperlink{namespacesrpp_ace8256ed4a8da891d842dc82e9747d31}{srpp::srpp\_\-to\_\-rtp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$srpp\_\-msg)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a2dc275aa82c32a995b8d9d33de00ecfa}{srpp::srtp\_\-to\_\-srpp} (\hyperlink{class_r_t_p_message}{RTPMessage} $\ast$srtp\_\-msg)
+\item 
+\hyperlink{class_r_t_p_message}{RTPMessage} \hyperlink{namespacesrpp_a2bf678c0bec2ec54e269523236390971}{srpp::srpp\_\-to\_\-srtp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$srpp\_\-msg)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a4ab1aebaf102fe3b46f250237a4e4f59}{srpp::create\_\-and\_\-encrypt\_\-srpp} (string data, \hyperlink{class_crypto_profile}{CryptoProfile} $\ast$crypto, \hyperlink{class_s_r_p_p_session}{SRPPSession} $\ast$srpp\_\-session)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_ae6f1d8d88738a904e0a72bb93837c60f}{srpp::create\_\-srpp\_\-message} (string data)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_adac1bae57907c468dda2ad2e546199e8}{srpp::encrypt\_\-srpp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$original\_\-pkt, \hyperlink{class_crypto_profile}{CryptoProfile} $\ast$crypto, \hyperlink{class_s_r_p_p_session}{SRPPSession} $\ast$srpp\_\-session)
+\item 
+\hyperlink{class_s_r_p_p_message}{SRPPMessage} \hyperlink{namespacesrpp_a6385520ec7f4bb8c51595b66ad87f5de}{srpp::decrypt\_\-srpp} (\hyperlink{class_s_r_p_p_message}{SRPPMessage} $\ast$encrypted\_\-pkt, \hyperlink{class_crypto_profile}{CryptoProfile} $\ast$crypto, \hyperlink{class_s_r_p_p_session}{SRPPSession} $\ast$srpp\_\-session)
+\end{DoxyCompactItemize}
