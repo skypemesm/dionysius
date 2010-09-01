@@ -7,10 +7,10 @@
 - different SRPP messages
 - Threading
 - GUI
-- Encryption
+- Encryption Profiles and algorithms
 
-
-
+- clear functions
+- Doxygen intro.txt
 
 ------------
 * Remove fake encryption

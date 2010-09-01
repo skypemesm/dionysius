@@ -80,6 +80,7 @@ using namespace std;
 	/** Send data to the server socket  **/
 	int ClientSocket::putData(string data)
 	{
+
 		//Create a SRPPMessage with data in its payload
 		SRPPMessage srpp_msg = srpp::create_srpp_message(data);
 
@@ -104,3 +105,100 @@ using namespace std;
 
 
 	}
+
+
+
+
+	///// Get a RTP PAcket
+
+	void ClientSocket::get_rtp_packet()
+	{
+		RTPSession sess;
+		uint16_t portbase,destport;
+		uint32_t destip;
+		std::string ipstr;
+		int status,i,num;
+
+	    portbase = thissession->myPort;
+		destip = inet_addr((thissession->receiverIP).c_str());
+
+		if (destip == INADDR_NONE)
+		{
+			std::cerr << "Bad IP address specified" << std::endl;
+			return -1;
+		}
+
+		destip = ntohl(destip);
+		destport = thissession->receiverPort;
+
+		// Now, we'll create a RTP session, set the destination, send some
+		// packets and poll for incoming data.
+
+		RTPUDPv4TransmissionParams transparams;
+		RTPSessionParams sessparams;
+
+		// IMPORTANT: The local timestamp unit MUST be set, otherwise
+		//            RTCP Sender Report info will be calculated wrong
+		// In this case, we'll be sending 10 samples each second, so we'll
+		// put the timestamp unit to (1.0/10.0)
+		sessparams.SetOwnTimestampUnit(1.0/10.0);
+
+		sessparams.SetAcceptOwnPackets(true);
+		transparams.SetPortbase(portbase);
+		status = sess.Create(sessparams,&transparams);
+
+		if (status < 0)
+		{
+			std::cout << "ERROR: " << RTPGetErrorString(status) << std::endl;
+			exit(-1);
+		}
+
+		RTPIPv4Address addr(destip,destport);
+
+		status = sess.AddDestination(addr);
+
+		if (status < 0)
+		{
+			std::cout << "ERROR: " << RTPGetErrorString(status) << std::endl;
+			exit(-1);
+		}
+
+		//for (i = 1 ; i <= num ; i++)
+		//{
+
+
+			sess.BeginDataAccess();
+
+			// check incoming packets
+			if (sess.GotoFirstSourceWithData())
+			{
+				do
+				{
+					RTPPacket *pack;
+
+					while ((pack = sess.GetNextPacket()) != NULL)
+					{
+						// You can examine the data here
+						printf("Got packet !\n");
+
+						// we don't longer need the packet, so
+						// we'll delete it
+						sess.DeletePacket(pack);
+					}
+				} while (sess.GotoNextSourceWithData());
+			}
+
+			sess.EndDataAccess();
+
+	#ifndef RTP_SUPPORT_THREAD
+			status = sess.Poll();
+			checkerror(status);
+	#endif // RTP_SUPPORT_THREAD
+
+			RTPTime::Wait(RTPTime(1,0));
+		}
+
+		sess.BYEDestroy(RTPTime(10,0),0,0);
+
+
+}
