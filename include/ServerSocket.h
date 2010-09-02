@@ -17,6 +17,13 @@
 #include <cstdlib>
 #include <cstdio>
 
+#ifndef RTPPACKETBUILDER_H
+	#define RTPPACKETBILDER_H
+	//Using JRTPLIB
+	#include "rtppacketbuilder.h"
+	#include "rtppacket.h"
+#endif
+
 
 #ifndef SRPP_FUNCTIONS_H
 	#define  SRPP_FUNCTIONS_H

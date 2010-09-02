@@ -81,6 +81,12 @@ using namespace std;
 	int ClientSocket::putData(string data)
 	{
 
+		//get a rtp packet
+		RTPMessage * rtp_msg = get_rtp_packet("srpplib",data);
+
+		//Pad it and make a SRPP message
+		SRPPMessage srpp_msg_this = srpp::rtp_to_srpp(rtp_msg);
+
 		//Create a SRPPMessage with data in its payload
 		SRPPMessage srpp_msg = srpp::create_srpp_message(data);
 
@@ -109,96 +115,81 @@ using namespace std;
 
 
 
-	///// Get a RTP PAcket
+	/*** Get a RTP Packet using JRTPLIB library ***/
 
-	void ClientSocket::get_rtp_packet()
+	RTPMessage* ClientSocket::get_rtp_packet(string library, string data)
 	{
-		RTPSession sess;
-		uint16_t portbase,destport;
-		uint32_t destip;
-		std::string ipstr;
-		int status,i,num;
 
-	    portbase = thissession->myPort;
-		destip = inet_addr((thissession->receiverIP).c_str());
-
-		if (destip == INADDR_NONE)
+		if (library == "srpplib")
 		{
-			std::cerr << "Bad IP address specified" << std::endl;
-			return -1;
+			return &(srpp::create_rtp_message(data));
 		}
-
-		destip = ntohl(destip);
-		destport = thissession->receiverPort;
-
-		// Now, we'll create a RTP session, set the destination, send some
-		// packets and poll for incoming data.
-
-		RTPUDPv4TransmissionParams transparams;
-		RTPSessionParams sessparams;
-
-		// IMPORTANT: The local timestamp unit MUST be set, otherwise
-		//            RTCP Sender Report info will be calculated wrong
-		// In this case, we'll be sending 10 samples each second, so we'll
-		// put the timestamp unit to (1.0/10.0)
-		sessparams.SetOwnTimestampUnit(1.0/10.0);
-
-		sessparams.SetAcceptOwnPackets(true);
-		transparams.SetPortbase(portbase);
-		status = sess.Create(sessparams,&transparams);
-
-		if (status < 0)
+	else if (library == "jrtplib")
 		{
-			std::cout << "ERROR: " << RTPGetErrorString(status) << std::endl;
-			exit(-1);
+			/// Get a RTPPacket Builder object and get a RTP packet and return it
+			int status;
+			//string data = "abc";
+
+			//create and initialise a rtppacketbuilder object
+			RTPPacketBuilder* pkt_builder = new RTPPacketBuilder();
+
+			status = pkt_builder->Init(MAXPAYLOADSIZE);
+			if (status < 0)
+				cout << "ERROR INITIALISING RTPPACKETBUILDER: "<< status << endl;
+
+			//set default params
+			status = pkt_builder->SetDefaultPayloadType(27);
+			if (status < 0)
+				cout << "ERROR SETTING DEFAULT PAYLOADTYPE: "<< status << endl;
+
+			status = pkt_builder->SetDefaultMark(false);
+			if (status < 0)
+				cout << "ERROR SETTING DEFAULT MARK: "<< status << endl;
+
+			status = pkt_builder->SetDefaultTimestampIncrement(1);
+					if (status < 0)
+						cout << "ERROR SETTING DEFAULT TIMESTAMP: "<< status << endl;
+
+
+			//build a packet
+			status = pkt_builder->BuildPacket(&data,data.length());
+
+			if (status < 0)
+				cout << "ERROR BUILDING A PACKET: "<< status << endl;
+
+			cout << "PacketLength:" << pkt_builder->GetPacketLength() << endl;
+
+			//set it to rtppacket and return the pointer
+			RTPIPv4Address address(ntohl(inet_addr("127.0.0.1")),35000);
+			RTPTime thistime = RTPTime::CurrentTime();
+
+			void * nothing;
+
+			RTPRawPacket* rtp_rawpacket = new RTPRawPacket(
+										pkt_builder->GetPacket(),
+										pkt_builder->GetPacketLength(),
+										&address,
+										thistime,
+										true
+										);
+
+			RTPPacket * rtp_packet = new RTPPacket(*rtp_rawpacket);
+
+
+			cout << "payload type:"<< (int)(rtp_packet->GetPayloadType()) << endl;
+			cout << "sequence number:" << (rtp_packet->GetSequenceNumber()) << endl;
+
+			int len = (rtp_packet->GetPayloadLength());
+			uint8_t* str = rtp_packet->GetPayloadData();
+
+			for(int i = 0; i <len; i++)
+				printf("%c ",str[i]);
+
+			str[len] = '\0';
+			//printf("Nope:%s\n",itoa(str));
+			cout <<"This is it: " << str << endl;
+
+			return (RTPMessage *)rtp_packet;
+
 		}
-
-		RTPIPv4Address addr(destip,destport);
-
-		status = sess.AddDestination(addr);
-
-		if (status < 0)
-		{
-			std::cout << "ERROR: " << RTPGetErrorString(status) << std::endl;
-			exit(-1);
-		}
-
-		//for (i = 1 ; i <= num ; i++)
-		//{
-
-
-			sess.BeginDataAccess();
-
-			// check incoming packets
-			if (sess.GotoFirstSourceWithData())
-			{
-				do
-				{
-					RTPPacket *pack;
-
-					while ((pack = sess.GetNextPacket()) != NULL)
-					{
-						// You can examine the data here
-						printf("Got packet !\n");
-
-						// we don't longer need the packet, so
-						// we'll delete it
-						sess.DeletePacket(pack);
-					}
-				} while (sess.GotoNextSourceWithData());
-			}
-
-			sess.EndDataAccess();
-
-	#ifndef RTP_SUPPORT_THREAD
-			status = sess.Poll();
-			checkerror(status);
-	#endif // RTP_SUPPORT_THREAD
-
-			RTPTime::Wait(RTPTime(1,0));
-		}
-
-		sess.BYEDestroy(RTPTime(10,0),0,0);
-
-
 }

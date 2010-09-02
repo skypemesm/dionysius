@@ -28,6 +28,11 @@ namespace srpp {
 
 	// convert a RTP packet to SRPP packet
 	SRPPMessage rtp_to_srpp(RTPMessage * rtp_msg){
+		/*cout << "in funccc : seq_num" << rtp_msg->rtp_header.seq << endl;
+		cout << "in funccc : payload" << rtp_msg->payload << endl;
+		*/
+
+
 
 	}
 
@@ -79,6 +84,20 @@ namespace srpp {
 		return *srpp_msg;
 
 	}
+
+	// Only create a RTP Message and return it.
+		RTPMessage create_rtp_message(string data){
+
+			unsigned char buff[65536];
+			RTPMessage* rtp_msg = new RTPMessage(buff);
+
+			//put data, if any, in the payload
+			if(!data.empty())
+				data.copy((rtp_msg->payload),data.length(),0);
+
+			return *rtp_msg;
+
+		}
 
 	// Encrypt the given SRPP packet
 	SRPPMessage encrypt_srpp(

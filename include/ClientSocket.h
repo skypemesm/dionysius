@@ -18,13 +18,15 @@
 #include <iostream>
 
 
-//Using JRTPLIB
-#include "rtpsession.h"
-#include "rtppacket.h"
-#include "rtpudpv4transmitter.h"
-#include "rtpipv4address.h"
-#include "rtpsessionparams.h"
-#include "rtperrors.h"
+#ifndef RTPPACKETBUILDER_H
+	#define RTPPACKETBILDER_H
+	//Using JRTPLIB
+	#include "rtppacketbuilder.h"
+	#include "rtppacket.h"
+	#include "rtprawpacket.h"
+	#include "rtpaddress.h"
+	#include "rtpipv4address.h"
+#endif
 
 #ifndef SRPP_FUNCTIONS_H
 	#define  SRPP_FUNCTIONS_H
@@ -50,6 +52,6 @@ public:
 
 	int putData(string data);
 
-	void get_rtp_packet();
+	RTPMessage* get_rtp_packet(string library, string data);
 
 };

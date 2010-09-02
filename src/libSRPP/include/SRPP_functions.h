@@ -17,6 +17,9 @@
 #include "CryptoProfile.hpp"
 #include "Padding_functions.h"
 
+#include <ctime>
+#include <cstdlib>
+
 using namespace std;
 
 namespace srpp {
@@ -45,6 +48,9 @@ namespace srpp {
 	// Only create a SRPP Message and return it.
 	SRPPMessage create_srpp_message(string data);
 
+	// Only create a SRPP Message and return it.
+	RTPMessage create_rtp_message(string data);
+
 	// Encrypt the given SRPP packet
 	SRPPMessage encrypt_srpp(
 			SRPPMessage * original_pkt,
@@ -56,6 +62,17 @@ namespace srpp {
 			SRPPMessage * encrypted_pkt,
 			CryptoProfile * crypto,
 			SRPPSession * srpp_session);
+
+	/** Utility functions **/
+
+	// Pseudo-Random number between min and max
+	int srpp_rand(int min,int max){
+
+		srand(time(NULL));
+
+		return ((rand() % max) + min);
+
+	}
 
 
 }

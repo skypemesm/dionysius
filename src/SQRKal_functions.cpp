@@ -66,11 +66,13 @@ using namespace std;
 			cout << " Trying to contact SQRKal endpoint at " << address << endl;
 			ClientSocket* clientsock = new ClientSocket(newsession,address,3530);
 
+			//clientsock->get_rtp_packet("abc");
+
 			string data = "";
-			while (data.empty()){
+			//while (data.empty()){
 				clientsock->putData("sending from client");
 				//data = clientsock->getData();
-			}
+			//}
 
 		}
 

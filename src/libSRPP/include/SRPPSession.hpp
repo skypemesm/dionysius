@@ -18,7 +18,9 @@ class SRPPSession
 
 public:
 	string receiverIP, startTime;
-	int receiverPort,myPort;
+	int receiverPort,myPort, lastSeqNo;
+	time_t start_time;
+	double currentBurstTime;
 	unsigned int encryption_key;
 
 	/**
@@ -38,16 +40,38 @@ public:
 		myPort = thismyPort;
 
 		//get present date time
-		time_t rawtime;
 		struct tm * timeinfo;
-		time ( &rawtime );
-		timeinfo = localtime ( &rawtime );
+		time ( &start_time );
+		timeinfo = localtime ( &start_time );
 
 		startTime = asctime(timeinfo);
 
 		encryption_key = 1655;
 
+		lastSeqNo = 0;
+		currentBurstTime = 0;
+
 	}
 
+	int increment_seq()
+	{
+		return ++lastSeqNo;
+	}
 
+	int clear_seq()
+	{
+		return (lastSeqNo = 0);
+	}
+
+	void increment_bursttime()
+	{
+		time_t timenow;
+		time(&timenow);
+		currentBurstTime += difftime(timenow,start_time);
+	}
+
+	int clear_currentBurstTime()
+	{
+		return (currentBurstTime = 0);
+	}
 };
