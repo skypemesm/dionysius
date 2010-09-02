@@ -56,7 +56,7 @@ public:
 		  srpp_header.version = 2;
 		  srpp_header.p = 1;
 		  srpp_header.x = 0;
-		  srpp_header.cc = 0;
+		  srpp_header.cc = 10;
 		  srpp_header.m = 0;
 		  srpp_header.pt = 0;
 		  srpp_header.seq = 0;
@@ -75,5 +75,6 @@ public:
 	  {
 
 	  }
+
 };
 

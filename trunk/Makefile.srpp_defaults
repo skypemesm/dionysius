@@ -14,7 +14,10 @@ endif
 
 # srpp macros
 SRPP_DIR = .
-SRPP_LIB =  -L${SRPP_DIR} -lsrpp
+JRTP_DIR = /usr/local/lib/
+SRPP_LIB =  -L${SRPP_DIR} -lsrpp \
+			-L${JRTP_DIR} -ljrtp 
+			
 SRPP_LIBFILE = ${SRPP_DIR}/libsrpp.a
   
 SRPP_OBJS = \
