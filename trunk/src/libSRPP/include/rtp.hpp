@@ -6,10 +6,11 @@
  *
  */
 
-#ifndef SRPP_MESSAGE_HPP
-	#define SRPP_MESSAGE_HPP
-	#include "SRPPMessage.hpp"
-#endif
+#ifndef RTP_MESSAGE_HPP
+#define RTP_MESSAGE_HPP
+
+
+#include "SRPPMessage.hpp"
 
 
 struct RTP_Header{
@@ -54,3 +55,6 @@ public:
 
 	  }
 };
+
+
+#endif

@@ -7,11 +7,7 @@
 
 
 #include "ServerSocket.h"
-
-#ifndef SRPP_FUNCTIONS_H
-	#define  SRPP_FUNCTIONS_H
-	#include "SRPP_functions.h"
-#endif
+#include "SRPP_functions.h"
 
 
 

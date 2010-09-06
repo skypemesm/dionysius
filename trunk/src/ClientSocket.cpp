@@ -6,8 +6,6 @@
 
 #include "ClientSocket.h"
 
-
-
 using namespace std;
 
 	ClientSocket::ClientSocket(SRPPSession* mysession,string address,int port)

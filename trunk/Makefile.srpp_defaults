@@ -24,7 +24,8 @@ SRPP_OBJS = \
   src/SQRKal_functions.o \
   src/ServerSocket.o \
   src/ClientSocket.o \
-  src/libSRPP/SRPP_functions.o \
-  src/libSRPP/Padding_functions.o \
-  src/libSRPP/Padding_Algorithms.o \
-    
+  src/libSRPP/src/SRPP_functions.o \
+  src/libSRPP/src/Padding_functions.o \
+  src/libSRPP/src/Padding_Algorithms.o \
+  src/libSRPP/src/srpp_timer.o   
+  
