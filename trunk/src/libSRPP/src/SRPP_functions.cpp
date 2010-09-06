@@ -29,18 +29,35 @@ PaddingFunctions padding_functions;
 	}
 
 	//create SRPP session
-	SRPPSession * create_session(string address, int port){
-		srpp_session = new SRPPSession(address,port,port,PACKET_INTERVAL_TIME, SILENCE_INTERVAL_TIME);
+	SRPPSession * create_session(string address, int port, CryptoProfile crypto){
+
+		srpp_session = new SRPPSession(address,port,port,PACKET_INTERVAL_TIME, SILENCE_INTERVAL_TIME, crypto);
 		return srpp_session;
 	}
 
 	//start the srpp session
 	int start_session(){
-		//call signaling so that we negotiate the padding parameters
+		//So here we signal first..
+		if (signaling() < 0)
+		{
+			cout << " SRPP not supported in the other endpoint. " << endl;
+			//show message in the GUI, and exit
+			return -1;
+		}
+
+		//If we are able to set the get the proper srpp parameters from the other endpoint
+		//and set it in our session, then we start the session.
 
 		//then we start the srpp session
 		srpp_session->start_session();
 	}
+
+	//Signaling start
+	int signaling()
+	{
+
+	}
+
 
 	// convert a RTP packet to SRPP packet
 	SRPPMessage rtp_to_srpp(RTPMessage * rtp_msg){
@@ -73,7 +90,7 @@ PaddingFunctions padding_functions;
 		padding_functions.pad(&srpp_msg);
 
 		//Encrypt the message
-
+		encrypt_srpp(&srpp_msg);
 
 		//Return
 
@@ -90,6 +107,7 @@ PaddingFunctions padding_functions;
 	RTPMessage srpp_to_rtp(SRPPMessage * srpp_msg){
 
 		//Decrypt the SRPP Message
+		decrypt_srpp(srpp_msg);
 
 		//Unpad the SRPP Message
 		padding_functions.unpad(srpp_msg);
@@ -151,7 +169,7 @@ PaddingFunctions padding_functions;
 	}
 
 	//Create a SRPP Message with the data and encrypt it and return it
-	SRPPMessage create_and_encrypt_srpp(string data, CryptoProfile * crypto, SRPPSession* srpp_session1){
+	SRPPMessage create_and_encrypt_srpp(string data){
 
 		//create a buffer
 		unsigned char buff[65536];
@@ -164,7 +182,7 @@ PaddingFunctions padding_functions;
 
 
 		//encrypt the message
-		*srpp_msg = encrypt_srpp(srpp_msg, crypto,srpp_session);
+		*srpp_msg = encrypt_srpp(srpp_msg);
 
 		return *srpp_msg;
 
@@ -199,10 +217,7 @@ PaddingFunctions padding_functions;
 		}
 
 	// Encrypt the given SRPP packet
-	SRPPMessage encrypt_srpp(
-			SRPPMessage * original_pkt,
-			CryptoProfile * crypto,
-			SRPPSession * srpp_session)
+	SRPPMessage encrypt_srpp(SRPPMessage * original_pkt)
 	{
 		//TODO::: USE CRYPTO
 
@@ -226,10 +241,7 @@ PaddingFunctions padding_functions;
 	}
 
 	//Decrypt the given SRPP packet
-	SRPPMessage decrypt_srpp(
-			SRPPMessage * encrypted_pkt,
-			CryptoProfile * crypto,
-			SRPPSession * srpp_session)
+	SRPPMessage decrypt_srpp(SRPPMessage * encrypted_pkt)
 	{
 		//TODO::: USE CRYPTO
 
@@ -256,6 +268,24 @@ PaddingFunctions padding_functions;
 	PaddingFunctions* get_padding_functions(){
 		return &(padding_functions);
 	}
+
+
+	//USed by the interior functions to send a specific message
+	int send_message(SRPPMessage * srpp_msg)
+	{
+		//get the sockets
+
+		//send the message
+	}
+
+	//USed by the interior functions to receive message
+	SRPPMessage * send_message()
+	{
+		//get the sockets
+
+		//send the message
+	}
+
 
 // Pseudo-Random number between min and max
 	int srpp_rand(int min,int max){

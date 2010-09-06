@@ -71,9 +71,7 @@ using namespace std;
 		cout << bytes_read << endl;
 
 		//decrypt the packet
-		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
-
-		srpp_msg = srpp::decrypt_srpp(&srpp_msg,crypto,thissession);
+		srpp_msg = srpp::decrypt_srpp(&srpp_msg);
 
 
 		srpp_msg.encrypted_part.original_payload[bytes_read] = '\0';
@@ -95,9 +93,7 @@ using namespace std;
 		SRPPMessage srpp_msg = srpp::create_srpp_message(data);
 
 		//encrypt
-		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
-
-		srpp_msg = srpp::encrypt_srpp(&srpp_msg,crypto,thissession);
+		srpp_msg = srpp::encrypt_srpp(&srpp_msg);
 
 
 		data.copy((srpp_msg.encrypted_part.original_payload),data.length(),0);

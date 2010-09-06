@@ -8,6 +8,7 @@
 #include "ServerSocket.h"
 #include "ClientSocket.h"
 #include "SRPPSession.hpp"
+#include "CryptoProfile.hpp"
 
 #include <iostream>
 #include <string>
@@ -41,7 +42,8 @@ using namespace std;
 		srpp::init_SRPP();
 
 		//Create a SRPP Session
-		SRPPSession* newsession = srpp::create_session(address,port);
+		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
+		SRPPSession* newsession = srpp::create_session(address,port,*crypto);
 
 
 		cout << "Session started at " << newsession->startTime << endl;
