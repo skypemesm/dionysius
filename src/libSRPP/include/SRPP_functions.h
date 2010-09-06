@@ -30,7 +30,7 @@ namespace srpp {
 	int init_SRPP();
 
 	//create SRPP session
-	SRPPSession* create_session(string address, int port);
+	SRPPSession* create_session(string address, int port, CryptoProfile crypto);
 
 	//starts the srpp session
 	int start_session();
@@ -51,7 +51,7 @@ namespace srpp {
 	RTPMessage srpp_to_srtp(SRPPMessage* srpp_msg);
 
 	//Create a SRPP Message with the data and encrypt it and return it
-	SRPPMessage create_and_encrypt_srpp(string data, CryptoProfile * crypto, SRPPSession* srpp_session1);
+	SRPPMessage create_and_encrypt_srpp(string data);
 
 	// Only create a SRPP Message and return it.
 	SRPPMessage create_srpp_message(string data);
@@ -60,19 +60,16 @@ namespace srpp {
 	RTPMessage create_rtp_message(string data);
 
 	// Encrypt the given SRPP packet
-	SRPPMessage encrypt_srpp(
-			SRPPMessage * original_pkt,
-			CryptoProfile * crypto,
-			SRPPSession * srpp_session);
+	SRPPMessage encrypt_srpp(SRPPMessage * original_pkt);
 
 	//Decrypt the given SRPP packet
-	SRPPMessage decrypt_srpp(
-			SRPPMessage * encrypted_pkt,
-			CryptoProfile * crypto,
-			SRPPSession * srpp_session);
+	SRPPMessage decrypt_srpp(SRPPMessage * encrypted_pkt);
 
 	//Get the padding functions object used here
 	PaddingFunctions* get_padding_functions();
+
+	//USed by the interior functions to send a specific message
+	int send_message(SRPPMessage * srpp_msg);
 
 	/** Utility functions **/
 

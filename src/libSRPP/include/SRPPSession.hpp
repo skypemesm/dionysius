@@ -14,7 +14,13 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
+#include <CryptoProfile.hpp>
 #include <srpp_timer.h>
 
 using namespace std;
@@ -28,6 +34,9 @@ public:
 	time_t start_time;
 	double currentBurstTime;
 	unsigned int encryption_key;
+	CryptoProfile crypto_profile;
+	int sendersocket,receiversocket;
+	struct sockaddr_in sender_addr , receiver_addr;
 
 	SRPPTimer * srpp_timer;
 
@@ -44,7 +53,8 @@ public:
 			int thisreceiverPort,
 			int thismyPort,
 			int PACKET_INTERVAL_,
-			int SILENCE_INTERVAL_
+			int SILENCE_INTERVAL_,
+			CryptoProfile thisCryptoProfile
 			)
 	{
 		receiverIP = thisreceiverIP;
@@ -64,6 +74,21 @@ public:
 		currentBurstTime = 0;
 
 		srpp_timer = new SRPPTimer(PACKET_INTERVAL_, SILENCE_INTERVAL_);
+		crypto_profile = thisCryptoProfile;
+	}
+
+
+	//Set the socket parameters. You must call this function after creating the to and from channels i.e. client and server channels
+	int set_sockets(
+			int sender_sock, int receiver_sock,
+			struct sockaddr_in sender_addrr, struct sockaddr_in receiver_addrr
+			)
+	{
+		sendersocket = sender_sock;
+		receiversocket = receiver_sock;
+		sender_addr = sender_addrr;
+		receiver_addr = receiver_addrr;
+		return 0;
 	}
 
 	//We are done signaling.. start the session and timers
@@ -100,6 +125,18 @@ public:
 	{
 		return (currentBurstTime = 0);
 	}
+
+	//Setter and Getter method for CryptoProfile
+	int setCryptoProfile(CryptoProfile thisCryptoProfile)
+	{
+		crypto_profile = thisCryptoProfile;
+	}
+	CryptoProfile getCryptoProfile()
+	{
+		return crypto_profile;
+	}
+
+
 };
 
 
