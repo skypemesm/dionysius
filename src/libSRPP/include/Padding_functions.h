@@ -8,45 +8,41 @@
  *
  */
 
+#ifndef PADDING_FUNCTIONS_H
+#define PADDING_FUNCTIONS_H
 
-
-#ifndef SRPP_MESSAGE_HPP
-	#define SRPP_MESSAGE_HPP
-	#include "SRPPMessage.hpp"
-#endif
-#ifndef SRPP_FUNCTIONS_H
-	#define  SRPP_FUNCTIONS_H
-	#include "SRPP_functions.h"
-#endif
-#ifndef PADDING_ALGORITHMS_H
-	#define PADDING_ALGORITHMS_H
-	#include "Padding_Algorithms.h"
-#endif
+#include "SRPPMessage.hpp"
+#include "Padding_Algorithms.h"
 
 #define	MAXDUMMYCACHESIZE	100       /** dummy cache of 100 srpp packets **/
-using namespace std;
 
 class PaddingFunctions {
 
 public:
 	PaddingFunctions();
-	int packet_size_padding();
+
+	int pad(SRPPMessage * srpp_msg);
+
+	int packet_size_padding(SRPPMessage * srpp_msg);
 	int current_burst_padding();
 	int extra_burst_padding();
 	int variable_interarrival_time_padding();
 
+	int unpad(SRPPMessage * srpp_msg);
 
+	static SRPPMessage generate_dummy_pkt();
+	static SRPPMessage generate_dummy_pkt(int size);
+	static int	generate_dummy_data(int size, char * buff);
+
+	static int add_to_dummy_cache(SRPPMessage * srpp_msg);
 
 private:
 
-	SRPPMessage dummy_cache[100];
+	static SRPPMessage dummy_cache[100];
+	PaddingAlgos algos;
 
 
-	SRPPMessage generate_dummy_pkt();
-	SRPPMessage generate_dummy_pkt(int size);
-	char*	generate_dummy_data(int size);
 
-	int add_to_dummy_cache(SRPPMessage * srpp_msg);
 
 
 
@@ -54,3 +50,5 @@ private:
 
 
 };
+
+#endif

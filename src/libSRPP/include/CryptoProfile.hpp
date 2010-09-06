@@ -3,6 +3,8 @@
  *
  * Saswat Mohanty <smohanty@cs.tamu.edu>
  */
+#ifndef CRYPTO_PROFILE_H
+#define CRYPTO_PROFILE_H
 
 #include <string>
 
@@ -23,3 +25,6 @@ public:
 
 	}
 };
+
+
+#endif

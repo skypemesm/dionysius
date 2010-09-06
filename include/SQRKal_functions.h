@@ -5,6 +5,8 @@
  */
 
 #include <string>
+#include "SRPP_functions.h"
+
 using namespace std;
 
 	//initialize stuff

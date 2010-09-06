@@ -7,16 +7,13 @@
 #include "SQRKal_functions.h"
 #include "ServerSocket.h"
 #include "ClientSocket.h"
-#ifndef SRPP_SESSION
-	#include "SRPPSession.hpp"
-#endif
+#include "SRPPSession.hpp"
 
 #include <iostream>
 #include <string>
 
 //include Qt franework
-#include <QTGui>
-
+//#include <QTGui>
 
 using namespace std;
 
@@ -40,9 +37,11 @@ using namespace std;
 	int start_SRPP(string address, int port)
 	{
 
+		//initialize SRPP
+		srpp::init_SRPP();
+
 		//Create a SRPP Session
-		SRPPSession* newsession = new SRPPSession(
-									address,port,port);
+		SRPPSession* newsession = srpp::create_session(address,port);
 
 
 		cout << "Session started at " << newsession->startTime << endl;
@@ -53,6 +52,7 @@ using namespace std;
 		if (address == "receiver")
 		{
 			ServerSocket* serversock = new ServerSocket(newsession,3530);
+			srpp::start_session();
 			while(true)
 			{
 				string data = serversock->getData();
@@ -64,7 +64,9 @@ using namespace std;
 		else
 		{
 			cout << " Trying to contact SQRKal endpoint at " << address << endl;
+
 			ClientSocket* clientsock = new ClientSocket(newsession,address,3530);
+			srpp::start_session();
 
 			//clientsock->get_rtp_packet("abc");
 

@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
 	cout << "SQRKal starting up ........\n\n";
 
 	//initialize stuff
-	init_SQRKal();
+	init_SQRKal();//return 1;
 
 	//create SRPP session
 	if (*argv[1] == '0')      // This endpoint wants to start as a receiver
