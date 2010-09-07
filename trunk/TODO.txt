@@ -19,4 +19,5 @@
 * Remove constraints on CSRC and padding.
 * Remove constraint on Endian-ness
 * Remove strings etc, and use enums
-* Use /dev/random instead of rand()  
+* Use /dev/random instead of rand()
+* matching of signalling options  

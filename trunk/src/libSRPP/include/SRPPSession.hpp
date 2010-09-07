@@ -136,7 +136,6 @@ public:
 		return crypto_profile;
 	}
 
-
 };
 
 

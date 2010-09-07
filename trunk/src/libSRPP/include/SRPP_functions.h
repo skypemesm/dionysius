@@ -68,15 +68,17 @@ namespace srpp {
 	//Get the padding functions object used here
 	PaddingFunctions* get_padding_functions();
 
-	//USed by the interior functions to send a specific message
-	int send_message(SRPPMessage * srpp_msg);
-
 	/** Utility functions **/
 
 	// Pseudo-Random number between min and max
 	int srpp_rand(int min,int max);
 
+	//USed by the interior functions to send a specific message or receive a message
+	int send_message(SRPPMessage* msg);
+	SRPPMessage receive_message();
 
+	// parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
+	int isSignalingMessage (SRPPMessage * message);
 }
 
 
