@@ -113,7 +113,6 @@ using namespace std;
 		  if (setitimer(ITIMER_REAL, &pkt_tout_val, &pkt_tin_val) < 0)
 			  cerr << " ERROR: Unable to set the Timer ... " << endl;
 
-		  packet_ON = true;
 		  signal(SIGALRM,timer_fired);
 		  signal(SIGINT,SRPPTimer::stopTimer);
 	}

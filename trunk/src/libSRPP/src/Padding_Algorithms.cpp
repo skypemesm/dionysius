@@ -90,12 +90,15 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 		cout << "I will send one packet" << endl;
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
 		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
-
+		srpp::send_message(&dummy_msg);
 	}
 
 	int PaddingAlgos::default_ebp_pad_algo()
 	{
 		cout << "I will send one packet" << endl;
+		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
+		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
+		srpp::send_message(&dummy_msg);
 	}
 
 	int PaddingAlgos::default_vitp_pad_algo()

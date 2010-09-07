@@ -77,6 +77,16 @@ public:
 		crypto_profile = thisCryptoProfile;
 	}
 
+	//Destructors
+	~SRPPSession()
+	{
+		// close socket
+		if(close(sendersocket) == -1 || close(receiversocket) == -1)
+		{
+			cout << "\nCould not close socket\n";
+			return ;
+		}
+	}
 
 	//Set the socket parameters. You must call this function after creating the to and from channels i.e. client and server channels
 	int set_sockets(
@@ -87,6 +97,13 @@ public:
 		sendersocket = sender_sock;
 		receiversocket = receiver_sock;
 		sender_addr = sender_addrr;
+		receiver_addr = receiver_addrr;
+		return 0;
+	}
+	//Set the socket parameters. You must call this function after creating the to and from channels i.e. client and server channels
+	int set_sockets(int receiver_sock, struct sockaddr_in receiver_addrr)
+	{
+		receiversocket = receiver_sock;
 		receiver_addr = receiver_addrr;
 		return 0;
 	}

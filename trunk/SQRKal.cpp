@@ -10,13 +10,12 @@
 
 #include "SQRKal_functions.h"
 #include <iostream>
-#include <cstdlib>
 #include <string>
 
 using namespace std;
 
 /***
- * Usage: (As of now) sqrkal <1-if sender,0-if receiver>(<receiver-ip-address><receiver-port>)
+ * Usage: (As of now) sqrkal <1-if initiator,0-if not initiator><sender-port><receiver-port>(<endpoint-ip-address><endpoint-receiver-port>)
  *
  */
 
@@ -24,10 +23,11 @@ using namespace std;
 int main(int argc, char * argv[])
 {
 
-	if (argc < 2)
+	if (argc < 4 || (*argv[1] == '1' && argc < 6))
 	{
 		cout << " Usage: (As of now)" << argv[0] <<
-				" <1-if sender,0-if receiver>(<receiver-ip-address><receiver-port>)\n\n";
+				" <1-if initiator,0-if not initiator><sender-port><receiver-port>(<endpoint-ip-address><endpoint-receiver-port>)\n\n"
+				" You must specify the endpoint-ip-address and endpoint-receiver-port, if you are the initiator. \n\n";
 
 		return -1;
 	}
@@ -35,21 +35,16 @@ int main(int argc, char * argv[])
 	cout << "SQRKal starting up ........\n\n";
 
 	//initialize stuff
-	init_SQRKal();
-
-	//create SRPP session
-	if (*argv[1] == '0')      // This endpoint wants to start as a receiver
-	{
-		start_SRPP("receiver",0);
-	}
-	else if (*argv[1] == '1')  // This endpoint wants to start as a sender
-	{
-		start_SRPP(argv[2],atoi(argv[3]));
-	}
+	init_SQRKal(argc,argv);
 
 	// initialize the GUI
 	init_GUI();
 
+	//start the actual call + signaling NOW
+	start_call();
+
 	cout << "Arighty then ..We are done. \n";
+
+	destroy_SQRKal();
 
 }
