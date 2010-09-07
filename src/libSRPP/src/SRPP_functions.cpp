@@ -7,6 +7,7 @@
 #include "SRPP_functions.h"
 #include "srpp_timer.h"
 #include "SRPPSession.hpp"
+#include "Signaling_functions.hpp"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ namespace srpp {
 /** The session to which this is tied to **/
 SRPPSession * srpp_session;
 PaddingFunctions padding_functions;
+SignalingFunctions signaling_functions;
 
 	//initialize stuff
 	int init_SRPP(){
@@ -55,7 +57,7 @@ PaddingFunctions padding_functions;
 	//Signaling start
 	int signaling()
 	{
-
+		signaling_functions.signaling();
 	}
 
 
@@ -270,23 +272,6 @@ PaddingFunctions padding_functions;
 	}
 
 
-	//USed by the interior functions to send a specific message
-	int send_message(SRPPMessage * srpp_msg)
-	{
-		//get the sockets
-
-		//send the message
-	}
-
-	//USed by the interior functions to receive message
-	SRPPMessage * send_message()
-	{
-		//get the sockets
-
-		//send the message
-	}
-
-
 // Pseudo-Random number between min and max
 	int srpp_rand(int min,int max){
 
@@ -295,5 +280,59 @@ PaddingFunctions padding_functions;
 			return ((rand() % max) + min);
 
 		}
+
+
+
+int send_message(SRPPMessage * message)
+	{
+		int byytes = sendto(srpp_session->sendersocket, &message, sizeof(message), 0,
+					              (struct sockaddr *)&(srpp_session->receiver_addr), sizeof(struct sockaddr));
+
+		cout << "\nWriting " << sizeof(message) << " bytes \""
+						<< message->encrypted_part.original_payload << "\" to other endpoint" << endl;
+
+		return byytes;
+	}
+
+SRPPMessage receive_message()
+	{
+		SRPPMessage srpp_msg = srpp::create_srpp_message("");
+		int addr_len = sizeof(struct sockaddr);
+
+		int bytes_read = recvfrom(srpp_session->receiversocket,&srpp_msg,sizeof(srpp_msg),0,
+				(struct sockaddr *)&(srpp_session->sender_addr),
+				(socklen_t *)&addr_len);
+
+		// If this is a signaling message, point to the signaling handler
+			if (isSignalingMessage(&srpp_msg) == 1)
+			{
+
+				if (srpp_msg.srpp_header.srpp_signalling == 12)
+				{
+					signaling_functions.receivedHelloMessage();
+				} else if (srpp_msg.srpp_header.srpp_signalling == 13)
+				{
+					signaling_functions.receivedHelloAckMessage();
+				} else if (srpp_msg.srpp_header.srpp_signalling == 22)
+				{
+					signaling_functions.receivedByeMessage();
+				}else if (srpp_msg.srpp_header.srpp_signalling == 23)
+				{
+					signaling_functions.receivedByeAckMessage();
+				}
+
+			}
+		else
+			return srpp_msg;
+	}
+
+ // parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
+ int isSignalingMessage (SRPPMessage * message)
+ {
+	 if (message->srpp_header.srpp_signalling == 0 and message->srpp_header.pt != 69) //NOT A SIGNALING MESSAGE
+		 return -1;
+	 else if(message->srpp_header.srpp_signalling !=0 and message->srpp_header.pt == 69)
+		 return 1;
+ }
 
 } // end of namespace
