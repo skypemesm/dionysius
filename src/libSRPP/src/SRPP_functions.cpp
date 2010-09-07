@@ -285,23 +285,33 @@ SignalingFunctions signaling_functions;
 
 int send_message(SRPPMessage * message)
 	{
-		int byytes = sendto(srpp_session->sendersocket, &message, sizeof(message), 0,
-					              (struct sockaddr *)&(srpp_session->receiver_addr), sizeof(struct sockaddr));
+		int byytes = sendto(srpp_session->sendersocket, message, sizeof(*message), 0,
+					              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
 
-		cout << "\nWriting " << sizeof(message) << " bytes \""
-						<< message->encrypted_part.original_payload << "\" to other endpoint" << endl;
+		cout << "\nWriting " << sizeof(*message) << " bytes \""
+						<< message->encrypted_part.original_payload << "\" to other endpoint at "
+						<< inet_ntoa(srpp_session->sender_addr.sin_addr) << ":"
+						<< ntohs(srpp_session->sender_addr.sin_port) << endl;
 
 		return byytes;
 	}
 
 SRPPMessage receive_message()
 	{
-		SRPPMessage srpp_msg = srpp::create_srpp_message("");
 		int addr_len = sizeof(struct sockaddr);
+		SRPPMessage srpp_msg = srpp::create_srpp_message("");
+		cout << "Listening now " << endl;
 
 		int bytes_read = recvfrom(srpp_session->receiversocket,&srpp_msg,sizeof(srpp_msg),0,
 				(struct sockaddr *)&(srpp_session->sender_addr),
 				(socklen_t *)&addr_len);
+
+		srpp_msg.encrypted_part.original_payload[bytes_read] = '\0';
+
+		cout << "Read " << bytes_read << " from the other endpoint at "
+				<< inet_ntoa(srpp_session->sender_addr.sin_addr) << ":"
+				<< ntohs(srpp_session->sender_addr.sin_port)  << endl;
+
 
 		// If this is a signaling message, point to the signaling handler
 			if (isSignalingMessage(&srpp_msg) == 1)

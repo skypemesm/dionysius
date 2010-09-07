@@ -1,11 +1,4 @@
 
-
-- RTP library
-- prepare dummy traffic
-- pad & unpad according to blocksize from crypto
-- SIP Signaling 
-
-- different SRPP messages
 - Threading
 - GUI
 - Encryption Profiles and algorithms
@@ -20,4 +13,4 @@
 * Remove constraint on Endian-ness
 * Remove strings etc, and use enums
 * Use /dev/random instead of rand()
-* matching of signalling options  
+* matching of signalling options  (parameter negotiation)
