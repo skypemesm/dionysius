@@ -57,8 +57,10 @@ int PaddingFunctions::pad(SRPPMessage * srpp_msg)
 
 	//COIN TOSS AND add this to the dummy cache, if HEADS.
 	if (srpp::srpp_rand(0,10) <= 5 )
-		PaddingFunctions::add_to_dummy_cache(srpp_msg);
-
+	{
+		SRPPMessage new_dummy = *srpp_msg;
+		PaddingFunctions::add_to_dummy_cache(new_dummy);
+	}
 
 }
 
@@ -111,7 +113,12 @@ int PaddingFunctions::unpad(SRPPMessage * srpp_msg)
 	if (srpp_msg->encrypted_part.dummy_flag == 1)
 			return -1;
 	else
+	{
+		//remove the extra padding
+		//srpp_msg->encrypted_part.srpp_padding = "";
+		srpp_msg->encrypted_part.pad_count = 0;
 		return 1;
+	}
 
 }
 
@@ -122,8 +129,10 @@ int PaddingFunctions::unpad(SRPPMessage * srpp_msg)
  */
 SRPPMessage PaddingFunctions::generate_dummy_pkt()
 {
+
 	int dummy_index = srpp::srpp_rand(1,MAXDUMMYCACHESIZE);
-		return dummy_cache[dummy_index];
+	dummy_cache[dummy_index].srpp_header.seq = ++lastSequenceNo;
+	return dummy_cache[dummy_index];
 }
 
 /**
@@ -132,14 +141,17 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 SRPPMessage PaddingFunctions::generate_dummy_pkt(int size)
 {
 	int dummy_index = srpp::srpp_rand(1,MAXDUMMYCACHESIZE);
+
+	dummy_cache[dummy_index].srpp_header.seq = ++lastSequenceNo;
 	return dummy_cache[dummy_index];
 
 }
 
 /** Generates a character array containing some dummy payload data (Useful for PSP algos)**/
-int	PaddingFunctions::generate_dummy_data(int size, char * buff)
+int	PaddingFunctions::generate_dummy_data (int size, char * buff)
 {
 	int dummy_index = srpp::srpp_rand(1,MAXDUMMYCACHESIZE);
+
 	SRPPMessage thisdummy = dummy_cache[dummy_index];
 	char * dataStart = thisdummy.encrypted_part.original_payload;
 
@@ -153,7 +165,7 @@ int	PaddingFunctions::generate_dummy_data(int size, char * buff)
 }
 
 /** This functions handles adding of a newly generated SRPPMessage to the Dummy cache **/
-int PaddingFunctions::add_to_dummy_cache(SRPPMessage * srpp_msg)
+int PaddingFunctions::add_to_dummy_cache(SRPPMessage srpp_msg)
 {
 	//We add this message after encrypting the message and also repadding it.
 
@@ -164,11 +176,11 @@ int PaddingFunctions::add_to_dummy_cache(SRPPMessage * srpp_msg)
 	thisdummysize = srpp::srpp_rand(1, MAXPAYLOADSIZE);
 
 	for (int j = 0; j < thisdummysize; j++)
-			srpp_msg->encrypted_part.original_payload[j] = srpp::srpp_rand(1,255) ^ srpp::srpp_rand(0,65536); // characters xored with some random number
+			srpp_msg.encrypted_part.original_payload[j] = srpp::srpp_rand(1,255) ^ srpp::srpp_rand(0,65536); // characters xored with some random number
 
-	srpp_msg->encrypted_part.dummy_flag = 1;
+	srpp_msg.encrypted_part.dummy_flag = 1;
 
-	dummy_cache[dummy_index] = *srpp_msg;
+	dummy_cache[dummy_index] = srpp_msg;
 
 	return 0;
 

@@ -8,8 +8,14 @@
 #include "srpp_timer.h"
 #include "SRPPSession.hpp"
 #include "Signaling_functions.hpp"
+#include <errno.h>
+#include <cstring>
+#include <sys/time.h>
+
 
 using namespace std;
+
+int lastSequenceNo = 0;
 
 namespace srpp {
 
@@ -54,6 +60,28 @@ SignalingFunctions signaling_functions;
 		srpp_session->start_session();
 	}
 
+	//stOP the srpp session
+	int stop_session(){
+		cout << "------------------------------------------------------------------------------------\n\n";
+
+		//we stop the srpp session object
+		srpp_session->stop_session();
+
+		//We send BYE message
+		signaling_functions.sendByeMessage();
+		receive_message();
+
+		if(isMediaSessionComplete() == 1)
+		{
+			return 1;
+		}
+		else
+		{
+			cout << "ERROR IN STOPPING THE MEDIA SESSION.." << endl;
+			return -1;
+		}
+	}
+
 	//Signaling start
 	int signaling()
 	{
@@ -64,8 +92,8 @@ SignalingFunctions signaling_functions;
 	// convert a RTP packet to SRPP packet
 	SRPPMessage rtp_to_srpp(RTPMessage * rtp_msg){
 
-		cout << "in funccc : seq_num" << rtp_msg->rtp_header.seq << endl;
-		cout << "in funccc : payload" << rtp_msg->payload << endl;
+/*		cout << "in funccc : seq_num" << rtp_msg->rtp_header.seq << endl;
+		cout << "in funccc : payload" << rtp_msg->payload << endl;*/
 
 
 		//Create a SRPPMessage with the data from RTP packet
@@ -96,10 +124,10 @@ SignalingFunctions signaling_functions;
 
 		//Return
 
-		cout << "THIS SRPP MSG HAS VALUE:" << srpp_msg.encrypted_part.original_payload << endl;
+	/*	cout << "THIS SRPP MSG HAS VALUE:" << srpp_msg.encrypted_part.original_payload << endl;
 		cout << "THIS SRPP MSG HAS Pad count:" << srpp_msg.encrypted_part.pad_count << endl;
 		cout << "THIS SRPP MSG HAS Padding bytes:" << srpp_msg.encrypted_part.srpp_padding << endl;
-
+*/
 
 		return srpp_msg;
 
@@ -111,8 +139,19 @@ SignalingFunctions signaling_functions;
 		//Decrypt the SRPP Message
 		decrypt_srpp(srpp_msg);
 
+
 		//Unpad the SRPP Message
-		padding_functions.unpad(srpp_msg);
+		RTPMessage rtp_msg;
+		if (padding_functions.unpad(srpp_msg) == -1 )
+		{
+			//Create a RTPMessage with the data from SRPP packet
+			rtp_msg = create_rtp_message("");
+		}
+		else
+		{
+			//Create a RTPMessage with the data from SRPP packet
+			rtp_msg = create_rtp_message(srpp_msg->encrypted_part.original_payload);
+		}
 /*
 
 		cout << "in funccc : seq_num" << rtp_msg->rtp_header.seq << endl;
@@ -120,8 +159,7 @@ SignalingFunctions signaling_functions;
 */
 
 
-		//Create a RTPMessage with the data from SRPP packet
-		RTPMessage rtp_msg = create_rtp_message(srpp_msg->encrypted_part.original_payload);
+
 
 		rtp_msg.rtp_header.version = srpp_msg->srpp_header.version;
 		rtp_msg.rtp_header.p = srpp_msg->encrypted_part.original_padding_bit;
@@ -137,9 +175,7 @@ SignalingFunctions signaling_functions;
 			rtp_msg.rtp_header.csrc[i]= srpp_msg->srpp_header.csrc[i];
 
 
-		//Return
-
-		cout << "THIS RTP MSG HAS VALUE:" << rtp_msg.payload << endl;
+		//cout << "THIS RTP MSG HAS VALUE:" << rtp_msg.payload << endl;
 
 
 		return rtp_msg;
@@ -275,7 +311,9 @@ SignalingFunctions signaling_functions;
 // Pseudo-Random number between min and max
 	int srpp_rand(int min,int max){
 
-			srand(time(NULL));
+		timeval a;
+		gettimeofday(&a, NULL);
+		srand(1000*a.tv_sec + a.tv_usec);      // SEED ON MICROSECONDS
 
 			return ((rand() % max) + min);
 
@@ -287,11 +325,14 @@ int send_message(SRPPMessage * message)
 	{
 		int byytes = sendto(srpp_session->sendersocket, message, sizeof(*message), 0,
 					              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
+		if (byytes < 0)
+			cout << "ERROR IN SENDING DATA: " << strerror(errno)<< endl;
 
-		cout << "\nWriting " << sizeof(*message) << " bytes \""
-						<< message->encrypted_part.original_payload << "\" to other endpoint at "
+
+	/*	cout << "\nWriting " << byytes << " bytes \""
+				//		<< message->encrypted_part.original_payload << "\" to other endpoint at "
 						<< inet_ntoa(srpp_session->sender_addr.sin_addr) << ":"
-						<< ntohs(srpp_session->sender_addr.sin_port) << endl;
+						<< ntohs(srpp_session->sender_addr.sin_port) << endl << endl;*/
 
 		return byytes;
 	}
@@ -300,17 +341,27 @@ SRPPMessage receive_message()
 	{
 		int addr_len = sizeof(struct sockaddr);
 		SRPPMessage srpp_msg = srpp::create_srpp_message("");
-		cout << "Listening now " << endl;
 
+		cout << "\nWaiting for messages ... " << endl;
+
+
+		//TODO: WE NEED TO ADD A SELECT OR POLL SO AS TO AVOID WAITING FOR A LONG TIME
 		int bytes_read = recvfrom(srpp_session->receiversocket,&srpp_msg,sizeof(srpp_msg),0,
 				(struct sockaddr *)&(srpp_session->sender_addr),
 				(socklen_t *)&addr_len);
 
+		if (bytes_read < 0)
+					cout << "ERROR IN RECEIVING DATA: " << strerror(errno)<< endl;
+
+
 		srpp_msg.encrypted_part.original_payload[bytes_read] = '\0';
 
-		cout << "Read " << bytes_read << " from the other endpoint at "
+	/*	cout << "Read " << bytes_read << " bytes from the other endpoint at "
 				<< inet_ntoa(srpp_session->sender_addr.sin_addr) << ":"
-				<< ntohs(srpp_session->sender_addr.sin_port)  << endl;
+				<< ntohs(srpp_session->sender_addr.sin_port ) << endl;
+*/
+			//Set the sender_addr's port correctly
+			srpp_session->sender_addr.sin_port = htons(ntohs(srpp_session->sender_addr.sin_port) + 2);
 
 
 		// If this is a signaling message, point to the signaling handler
@@ -319,30 +370,87 @@ SRPPMessage receive_message()
 
 				if (srpp_msg.srpp_header.srpp_signalling == 12)
 				{
+					cout << "\n\n----------------------------------------------------------------------------------------------\n";
+					cout << "Received HELLO message " << endl;
+
+					//extract key from the payload
+					string options = srpp_msg.encrypted_part.original_payload;
+					string thiskey = options.substr(0,options.find_first_of(','));
+					setKey(atoi(thiskey.c_str()));
+
 					signaling_functions.receivedHelloMessage();
-				} else if (srpp_msg.srpp_header.srpp_signalling == 13)
+
+				}
+				else if (srpp_msg.srpp_header.srpp_signalling == 13)
 				{
-					signaling_functions.receivedHelloAckMessage();
-				} else if (srpp_msg.srpp_header.srpp_signalling == 22)
+					cout << "Received HELLO ACK message " << endl;
+
+					if (signaling_functions.receivedHelloAckMessage() < 0)
+						cout << "ERROR IN PROCESSING HELLOACK" << endl;
+
+					if (signaling_functions.isSignalingComplete() == 1)
+					{
+						cout << "\n\n SIGNALING IS COMPLETE NOW. STARTING MEDIA SESSION with key " <<
+												srpp_session->encryption_key << "... \n\n" ;
+						cout << "-----------------------------------------------------------------------------------------------\n";
+					}
+
+				}
+				else if (srpp_msg.srpp_header.srpp_signalling == 22)
 				{
+					cout << "\n\n------------------------------------------------------------------------------------------------\n";
+					cout << "Received BYE message " << endl;
 					signaling_functions.receivedByeMessage();
-				}else if (srpp_msg.srpp_header.srpp_signalling == 23)
+				}
+				else if (srpp_msg.srpp_header.srpp_signalling == 23)
 				{
+					cout << "Received BYE ACK message " << endl;
 					signaling_functions.receivedByeAckMessage();
+
+					if (signaling_functions.isSessionComplete() == 1)
+					{
+						cout << "\n\n SESSION IS COMPLETE NOW. EXITING NOW... \n\n" ;
+						cout << "-----------------------------------------------------------------------------------------------\n";
+					}
+
 				}
 
 			}
 		else
+		{
+
+			//cout << "Not a signaling message" << endl;
 			return srpp_msg;
+		}
 	}
 
  // parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
  int isSignalingMessage (SRPPMessage * message)
  {
+
 	 if (message->srpp_header.srpp_signalling == 0 and message->srpp_header.pt != 69) //NOT A SIGNALING MESSAGE
 		 return -1;
 	 else if(message->srpp_header.srpp_signalling !=0 and message->srpp_header.pt == 69)
 		 return 1;
  }
+
+
+ //Check whether the signaling is complete
+ int isSignalingComplete()
+ {
+	 return signaling_functions.isSignalingComplete();
+ }
+
+ //Check whether media session is complete
+ int isMediaSessionComplete()
+ {
+	 return signaling_functions.isSessionComplete();
+ }
+
+ int setKey(int key)
+ {
+	 srpp_session->encryption_key = key;
+ }
+
 
 } // end of namespace

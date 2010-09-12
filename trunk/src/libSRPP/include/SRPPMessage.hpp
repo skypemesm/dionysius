@@ -41,6 +41,7 @@ typedef struct SRPPEncrypted {
 
 } SRPPEncrypted ;
 
+extern int lastSequenceNo;
 
 class SRPPMessage {
 
@@ -54,11 +55,11 @@ public:
 
     		  srpp_header.version = 2;
     		  srpp_header.p = 1;
-    		  srpp_header.x = 0;
+    		  srpp_header.x = 1;
     		  srpp_header.cc = 10;
     		  srpp_header.m = 0;
     		  srpp_header.pt = 0;
-    		  srpp_header.seq = 0;
+    		  srpp_header.seq = ++lastSequenceNo;
     		  srpp_header.ts = 0;
     		  srpp_header.ssrc = 0;
 
@@ -75,11 +76,11 @@ public:
 
 		  srpp_header.version = 2;
 		  srpp_header.p = 1;
-		  srpp_header.x = 0;
+		  srpp_header.x = 1;
 		  srpp_header.cc = 10;
 		  srpp_header.m = 0;
 		  srpp_header.pt = 0;
-		  srpp_header.seq = 0;
+		  srpp_header.seq = ++lastSequenceNo;
 		  srpp_header.ts = 0;
 		  srpp_header.ssrc = 0;
 

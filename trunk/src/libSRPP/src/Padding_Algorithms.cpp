@@ -71,9 +71,16 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 	int PaddingAlgos::default_psp_pad_algo(SRPPMessage * srpp_msg)
 	{
+
 		// I will get a random extra size and add the extra bytes to the packet
 		int extra_size = srpp::srpp_rand(1,MAXPAYLOADSIZE);
 		char * ptr = srpp_msg->encrypted_part.srpp_padding;
+
+
+/*
+cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->encrypted_part.original_payload) << "::"
+		<< &(srpp_msg->encrypted_part.srpp_padding) <<"|"<< extra_size<< endl;
+*/
 
 		int status = PaddingFunctions::generate_dummy_data(extra_size, ptr);
 

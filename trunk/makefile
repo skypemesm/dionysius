@@ -11,7 +11,7 @@ CXXFLAGS := ${CFLAGS}
     ifeq (${debug}, 0)
         OPTS = -O3 -w
     else
-        OPTS = -g #-Wall
+        OPTS = -g  #-Wall  
     endif
     AR = ar rc 
 

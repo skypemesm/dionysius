@@ -18,8 +18,8 @@
 #include <cstdlib>
 
 
-#define PACKET_INTERVAL_TIME	5000	           /** This is time interval in ms we wait before we start current burst padding  **/
-#define SILENCE_INTERVAL_TIME	15000              /** This is time interval in ms we wait in silence before we start extra burst padding  **/
+#define PACKET_INTERVAL_TIME	10000	           /** This is time interval in ms we wait before we start current burst padding  **/
+#define SILENCE_INTERVAL_TIME	35000              /** This is time interval in ms we wait in silence before we start extra burst padding  **/
 
 class SRPPSession;									/** Forward Declaration  **/
 
@@ -34,6 +34,9 @@ namespace srpp {
 
 	//starts the srpp session
 	int start_session();
+
+	//stops the srpp session
+	int stop_session();
 
 	//Signaling start
 	int signaling();
@@ -79,6 +82,15 @@ namespace srpp {
 
 	// parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
 	int isSignalingMessage (SRPPMessage * message);
+
+	//Check whether the signaling is complete
+	 int isSignalingComplete();
+
+	 //Check whether media session is complete
+	  int isMediaSessionComplete();
+
+	  //Set the encryption in the session
+	  int setKey(int key);
 }
 
 

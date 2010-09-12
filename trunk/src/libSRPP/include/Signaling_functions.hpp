@@ -16,6 +16,8 @@
 #include "SRPPMessage.hpp"
 #include <string>
 #include <iostream>
+#include <cstdio>
+
 using namespace std;
 
 
@@ -23,6 +25,7 @@ class SignalingFunctions {
 
 private:
 	int hellosent, hellorecvd, helloacksent, helloackrecvd, byesent , byerecvd, byeacksent, byeackrecvd;
+	int signaling_complete, session_complete;
 
 
 public:
@@ -37,15 +40,30 @@ public:
 		byerecvd =0;
 		byeacksent =0;
 		byeackrecvd=0;
+
+		signaling_complete = 0;
+		session_complete = 0;
 	}
 
+	int isSignalingComplete()
+	{
+		return signaling_complete;
+	}
+
+	int isSessionComplete()
+		{
+			return session_complete;
+		}
 	int signaling()
 	{
 
 		//wait for sometime- this is to mitigate the deadlock in case
 		//both endpoints start signaling at same time and send hello packets to each other
 
-		sendHelloMessage();
+		int r = srpp::srpp_rand(5000,10000);
+		while (r-- != 0);
+
+		return sendHelloMessage();
 
 
 	}
@@ -54,6 +72,7 @@ public:
 	int receivedHelloMessage()
 	{
 		hellorecvd = 1;
+
 
 		return sendHelloAckMessage();
 
@@ -64,27 +83,42 @@ public:
 		helloackrecvd = 1;
 
 		//check to see if the options match or not..
-		//if they do and if we have not sent out a helloack earlier
-		if ( helloacksent == 0 )
-			return sendHelloAckMessage();
-		else
-			return 0;
+
+			//if they do and if we have not sent out a helloack earlier
+			// if they dont, they we can send a helloack once more, if we can support the new params
+
+
+			if ( helloacksent == 0 )
+			{
+				signaling_complete = 1;
+				return sendHelloAckMessage();
+			}
+			else
+			{
+				signaling_complete = 1;
+				return 0;
+			}
+
+	// If options do not match
 	}
 	int receivedByeMessage()
 	{
 		byerecvd = 1;
-		return sendHelloAckMessage();
+		return sendByeAckMessage();
 
 	}
 	int receivedByeAckMessage()
 	{
 		byeackrecvd = 1;
-		//if they do and if we have not sent out a helloack earlier
-		if ( helloacksent == 0 )
+		//if they do and if we have not sent out a byeack earlier
+		if ( byeacksent == 0 )
+		{
+			session_complete = 1;
 			return sendByeAckMessage();
+		}
 		else
 		{
-			//TODO:stop session.
+			session_complete = 1;
 			return 0;
 		}
 	}
@@ -97,25 +131,38 @@ public:
 		if (hellosent == 1 || hellorecvd == 1 || helloacksent == 1 || helloackrecvd == 1)
 			return -1;
 
-		string options = "YES, YES, YES,YES, DEFAULT, DEFAULT, DEFAULT";
+		//generate a key now.
+		int key = srpp::srpp_rand(0,65535);
+		srpp::setKey(key);
+		char buf[5];
+		sprintf(buf,"%d",key);
+		string options = buf;
+
+		options.append(", YES, YES, YES,YES, DEFAULT, DEFAULT, DEFAULT");
+
+
 		// PSP YES/NO, CBP YES/NO, EBP YES/NO, VITP YES/NO, PSP_ALGO, CBP_ALGO, EBP_ALGO
 
 		SRPPMessage srpp_msg = srpp::create_srpp_message(options);
 		srpp_msg.srpp_header.pt = 69;
 		srpp_msg.srpp_header.srpp_signalling = 12;
+		srpp_msg.srpp_header.x = 1;
+
 
 
 		srpp::send_message(&srpp_msg);
 
 		hellosent = 1;
+		srpp::receive_message();
+
 		return 0;
+
 	}
 
 	int sendHelloAckMessage()
 	{
-
-		//If we have not received the hello or have sent the helloack or hello message, then we should not send this message
-		if (hellorecvd != 1 || helloacksent == 1 || helloackrecvd == 1)
+		//If we have not sent or received the hello or have sent the helloack message, then we should not send this message
+		if ((hellorecvd != 1 && hellosent != 1)|| helloacksent == 1)
 			return -1;
 
 		string options = "YES, YES, YES, DEFAULT, DEFAULT, DEFAULT";
@@ -123,10 +170,17 @@ public:
 		SRPPMessage srpp_msg = srpp::create_srpp_message(options);
 		srpp_msg.srpp_header.pt = 69;
 		srpp_msg.srpp_header.srpp_signalling = 13;
+		srpp_msg.srpp_header.x = 1;
 
+		cout << "Sending a HELLO ACK message now " <<endl;
 		srpp::send_message(&srpp_msg);
 
 		helloacksent = 1;
+
+		if (signaling_complete == 0)
+			srpp::receive_message();
+		// If we do not get a message within a timeout, then signaling failed.
+
 		return 0;
 	}
 
@@ -135,7 +189,9 @@ public:
 			SRPPMessage srpp_msg = srpp::create_srpp_message("");
 			srpp_msg.srpp_header.pt = 69;
 			srpp_msg.srpp_header.srpp_signalling = 22;
+			srpp_msg.srpp_header.x = 1;
 
+			cout << "Sending a BYE message now " << endl;
 			srpp::send_message(&srpp_msg);
 
 			byesent = 1;
@@ -145,10 +201,17 @@ public:
 
 	int sendByeAckMessage()
 		{
+			//If we have not sent or received the bye message or have sent the byeack message, then we should not send this message
+			if ((byerecvd != 1 && byesent != 1)|| byeacksent == 1)
+				return -1;
+
+
 			SRPPMessage srpp_msg = srpp::create_srpp_message("");
 			srpp_msg.srpp_header.pt = 69;
 			srpp_msg.srpp_header.srpp_signalling = 23;
+			srpp_msg.srpp_header.x = 1;
 
+			cout << "Sending a BYE ACK message now " <<endl;
 			srpp::send_message(&srpp_msg);
 
 			byeacksent = 1;
