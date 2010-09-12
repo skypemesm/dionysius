@@ -50,6 +50,20 @@ public:
 
 	  }
 
+    RTPMessage()
+    	  {
+
+    		  rtp_header.version = 2;
+    		  rtp_header.p = 1;
+    		  rtp_header.x = 0;
+    		  rtp_header.cc = 0;
+    		  rtp_header.m = 0;
+    		  rtp_header.pt = 0;
+    		  rtp_header.seq = 0;
+    		  rtp_header.ts = 0;
+    		  rtp_header.ssrc = 0;
+
+    	  }
 	  ~RTPMessage()
 	  {
 

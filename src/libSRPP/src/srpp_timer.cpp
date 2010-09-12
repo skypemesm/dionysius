@@ -66,7 +66,7 @@ using namespace std;
 	void SRPPTimer::stopTimer(int i)
 	{
 		pauseTimer();
-		cout << "Packet Timer stopped..." << endl;
+		cout << "All SRPP Timers stopped..." << endl;
 		signal(SIGINT,SIG_DFL);
 	}
 

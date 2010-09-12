@@ -2,10 +2,12 @@
 - Threading
 - GUI
 - Encryption Profiles and algorithms
+- Key Exchange
 
-- clearVariable methods??
 - Doxygen intro.txt
 - Authentication
+- Discovery
+
 
 ------------
 * Remove fake encryption + member in SRPPEncrypted
@@ -14,3 +16,4 @@
 * Remove strings etc, and use enums
 * Use /dev/random instead of rand()
 * matching of signalling options  (parameter negotiation)
+* Finalize the payload type of the message;

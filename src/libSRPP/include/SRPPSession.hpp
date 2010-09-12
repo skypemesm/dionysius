@@ -19,6 +19,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <csignal>
 
 #include <CryptoProfile.hpp>
 #include <srpp_timer.h>
@@ -30,7 +31,7 @@ class SRPPSession
 
 public:
 	string receiverIP, startTime;
-	int receiverPort,myPort, lastSeqNo;
+	int receiverPort,myPort;
 	time_t start_time;
 	double currentBurstTime;
 	unsigned int encryption_key;
@@ -70,7 +71,6 @@ public:
 
 		encryption_key = 1655;
 
-		lastSeqNo = 0;
 		currentBurstTime = 0;
 
 		srpp_timer = new SRPPTimer(PACKET_INTERVAL_, SILENCE_INTERVAL_);
@@ -116,17 +116,10 @@ public:
 		srpp_timer->start_silence();
 	}
 
-
-	//Increase the sequence number
-	int increment_seq()
+	//We are done signaling.. start the session and timers
+	int stop_session()
 	{
-		return ++lastSeqNo;
-	}
-
-	//clear the sequence number
-	int clear_seq()
-	{
-		return (lastSeqNo = 0);
+		srpp_timer->pauseTimer();
 	}
 
 	//increment the burst time

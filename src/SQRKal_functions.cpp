@@ -4,9 +4,13 @@
  * Saswat Mohanty <smohanty@cs.tamu.edu>
  */
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
 #include "SQRKal_functions.h"
-#include "ServerSocket.h"
-#include "ClientSocket.h"
 #include "SRPPSession.hpp"
 #include "CryptoProfile.hpp"
 
@@ -19,7 +23,7 @@
 
 
 #include <iostream>
-#include <string>
+#include <cstring>
 #include <cstdlib>
 
 //include Qt framework
@@ -49,9 +53,9 @@ using namespace std;
 			endpoint_receiver_port = atoi(args[5]);
 		}
 
-		cout << initiator << "::" << sender_port << "::" << receiver_port << "::" << endpoint_ip_address << ":: "
+		/*cout << initiator << "::" << sender_port << "::" << receiver_port << "::" << endpoint_ip_address << ":: "
 				<< endpoint_receiver_port << endl;
-
+*/
 		//setup the basic parameters
 		cout << "Setting up the basic parameters in SQRKal......." << endl;
 
@@ -80,7 +84,6 @@ using namespace std;
 
 
 		cout << "Session started at " << newsession->startTime << endl;
-		cout << "FOR receiver with IP " << newsession->receiverIP << endl << endl;
 
 		//Create the socket threads for sending and receiving channels
 		create_sockets();
@@ -111,7 +114,6 @@ using namespace std;
 	int create_sockets()
 	{
 		//Create the Receiver (Server ) Socket
-		cout << "Creating the server socket..\n\n";
 		if ((receiver_sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
 			cerr << "Cannot create server socket. Exiting... \n\n";
 					exit(1);
@@ -130,16 +132,9 @@ using namespace std;
 							<< ". Exiting... \n\n";
 					exit(1);
 				}
-
-
-			cout << "\nServer Waiting for client on port " << receiver_port << endl;
 			fflush(stdout);
 
-		if (initiator == 1)
-		{
 			//Create the Sender (Client Socket)
-			cout << "Creating a client socket..\n";
-
 			if ((sender_sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
 			{
 				cerr << "Cannot create client socket. Exiting... \n\n";
@@ -147,12 +142,28 @@ using namespace std;
 			}
 
 			sender_addr.sin_family = AF_INET;
+			sender_addr.sin_port = htons(sender_port);
+			sender_addr.sin_addr.s_addr = INADDR_ANY;
+			bzero(&(sender_addr.sin_zero),8);
+
+			if (bind(sender_sock,(struct sockaddr *)&sender_addr,
+								sizeof(struct sockaddr)) == -1)
+			{
+				cerr << "Cannot bind client socket to " << sender_port
+						<< ". Exiting... \n\n";
+				exit(1);
+			}
+
+
+		// If we are the initiator, we will need to contact the other endpoint and hence we set the appropriate sender_addr structure
+		if (initiator == 1)
+		{
+			//SET SENDER_ADDR TO POINT TO THE ENDPOINT RECEIVER
+			sender_addr.sin_family = AF_INET;
 			sender_addr.sin_port = htons(endpoint_receiver_port);
 			struct hostent * host = (struct hostent *) gethostbyname(endpoint_ip_address.c_str());
 			sender_addr.sin_addr = *((struct in_addr *)host->h_addr);
 			bzero(&(sender_addr.sin_zero),8);
-
-
 
 			//set the sockets etc in the session
 			newsession->set_sockets(sender_sock,receiver_sock,sender_addr,receiver_addr);
@@ -161,6 +172,7 @@ using namespace std;
 		else  /// we will create the sending socket once we receive a message from an initiator endpoint
 		{
 			newsession->set_sockets(receiver_sock,receiver_addr);
+			newsession->sendersocket = sender_sock;
 		}
 
 	}
@@ -170,25 +182,94 @@ using namespace std;
 	{
 
 		//In general there has to be two threads running - one for the server and other for the client.
+
+		//If we are the initiator, we will start the session
 		if (initiator == 1)
 		{
-			SRPPMessage srpp_msg = srpp::create_srpp_message ("SENDING FROM INITIATOR");
-			int bytes = srpp::send_message(&srpp_msg);
 
-			// Send the message using the sender socket
-			//srpp::start_session(); // Right now we are not testing signaling
+			// Initiate the session..
+			if (srpp::start_session() > 0)
+			{
+				//newsession->srpp_timer->pauseTimer();
 
+				char data[40];
+				//The signaling etc has been complete
+				//Now start sending and receiving messages
+				for (int i = 0; i < 3 ; i++)
+				{
+					sprintf(data,"Test message no. %d", i);
+
+
+					//get a rtp packet
+					RTPMessage * rtp_msg = get_rtp_packet("srpplib",data);
+
+					//Pad it and make a SRPP message
+					SRPPMessage srpp_msg = srpp::rtp_to_srpp(rtp_msg);
+
+					//encrypt it
+					srpp_msg = srpp::encrypt_srpp(&srpp_msg);
+
+					//send it through
+					srpp::send_message(&srpp_msg);
+
+					cout << "..Sending packet with data " << data << "..." << endl;
+
+				}
+
+			}
+			else
+			{
+				cout << "\n\n SIGNALING FAILED.. SQRKAL CANNOT WORK SINCE SRPP IS NOT SUPPORTED AT OTHER END.. EXITING.."<< endl;
+				return -1;
+			}
+
+			// Stop the session now.
+			//srpp::stop_session();
+			while(true);
 		}
-		else
+		else     // If we are NOT the initiator, we need to wait for an incoming session
 		{
+
 			//wait till you receive the first message from an initiator, create the sender socket, and then
 			//{send a message, wait for a message}*  _ THIS IS TILL WE ADD THREADING _
 			SRPPMessage srpp_msg = srpp::receive_message();
-			while (true)
+			RTPMessage rtp_msg;
+
+			//Block for other signaling messages.
+			while (srpp::isSignalingComplete() != 1)
 			{
-				cout << "Payload received right now: " << srpp_msg.encrypted_part.original_payload << endl;
+				//cout << "Payload received right now (SIGNALING): " << srpp_msg.encrypted_part.original_payload << endl;
 				srpp_msg = srpp::receive_message();
 			}
+
+			//Block to receive and send media messages
+			while(srpp::isMediaSessionComplete() != 1)
+			{
+				srpp_msg = srpp::receive_message();
+
+				if (srpp::isSignalingMessage(&srpp_msg) != 1)
+				{
+					cout << ".. Received SRPP Packet has Sequence Number:" << srpp_msg.srpp_header.seq << "..." << endl;
+					//decrypt the message
+					srpp_msg = srpp::decrypt_srpp(&srpp_msg);
+
+					// Convert to RTP message
+					rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
+
+					if (!string(rtp_msg.payload).empty())
+					{
+						cout << ".. Received Packet has Media Payload:" << rtp_msg.payload << "..." << endl;
+						cout << ".. Received Packet has Sequence Number:" << rtp_msg.rtp_header.seq << "..." << endl;
+					}
+					else
+					{
+						cout << " -- Received a dummy packet --- \n\n";
+					}
+				}
+
+			}
+
+
 
 		}
 
@@ -201,7 +282,7 @@ using namespace std;
 
 	/*** Get a RTP Packet using JRTPLIB or SRPPLIB library ***/
 
-	RTPMessage* ClientSocket::get_rtp_packet(string library, string data)
+	RTPMessage* get_rtp_packet(string library, string data)
 	{
 
 		if (library == "srpplib")
