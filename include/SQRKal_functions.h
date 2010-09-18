@@ -10,7 +10,7 @@
 using namespace std;
 
 	//initialize stuff
-	int init_SQRKal(int argcount, char * args[]);
+	int init_SQRKal(int argcount, char ** args);
 
 	//create SRPP session
 	int start_SRPP();

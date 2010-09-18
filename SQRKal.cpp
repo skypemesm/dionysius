@@ -23,14 +23,16 @@ using namespace std;
 // Main entry point
 int main(int argc, char * argv[])
 {
-
-	if (argc < 4 || (*argv[1] == '1' && argc < 6))
+	if (argc < 6 )
 	{
+		if (argc < 4 || *argv[1] == '1')
+		{
 		cout << " Usage: (As of now)" << argv[0] <<
 				" <1-if initiator,0-if not initiator><sender-port><receiver-port>(<endpoint-ip-address><endpoint-receiver-port>)\n\n"
 				" You must specify the endpoint-ip-address and endpoint-receiver-port, if you are the initiator. \n\n";
 
 		return -1;
+		}
 	}
 
 	cout << "SQRKal starting up ........\n\n";
