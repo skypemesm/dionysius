@@ -32,7 +32,7 @@ public:
 
 	static SRPPMessage generate_dummy_pkt();
 	static SRPPMessage generate_dummy_pkt(int size);
-	static int	generate_dummy_data(int size, char * buff);
+	static string	generate_dummy_data(int size);
 
 	static int add_to_dummy_cache(SRPPMessage srpp_msg);
 

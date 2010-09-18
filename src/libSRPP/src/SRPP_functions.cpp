@@ -117,10 +117,10 @@ SignalingFunctions signaling_functions;
 		srpp_msg.encrypted_part.dummy_flag = 0;
 
 		//Pad the SRPPMessage
-		padding_functions.pad(&srpp_msg);
+		//padding_functions.pad(&srpp_msg);
 
 		//Encrypt the message
-		encrypt_srpp(&srpp_msg);
+		//encrypt_srpp(&srpp_msg);
 
 		//Return
 
@@ -137,21 +137,21 @@ SignalingFunctions signaling_functions;
 	RTPMessage srpp_to_rtp(SRPPMessage * srpp_msg){
 
 		//Decrypt the SRPP Message
-		decrypt_srpp(srpp_msg);
+		//decrypt_srpp(srpp_msg);
 
 
 		//Unpad the SRPP Message
 		RTPMessage rtp_msg;
-		if (padding_functions.unpad(srpp_msg) == -1 )
+		/*if (padding_functions.unpad(srpp_msg) == -1 )
 		{
 			//Create a RTPMessage with the data from SRPP packet
 			rtp_msg = create_rtp_message("");
 		}
 		else
-		{
+		{*/
 			//Create a RTPMessage with the data from SRPP packet
 			rtp_msg = create_rtp_message(srpp_msg->encrypted_part.original_payload);
-		}
+		//}
 /*
 
 		cout << "in funccc : seq_num" << rtp_msg->rtp_header.seq << endl;
@@ -209,14 +209,11 @@ SignalingFunctions signaling_functions;
 	//Create a SRPP Message with the data and encrypt it and return it
 	SRPPMessage create_and_encrypt_srpp(string data){
 
-		//create a buffer
-		unsigned char buff[65536];
 		//create the message
-		SRPPMessage* srpp_msg = new SRPPMessage(buff);
+		SRPPMessage* srpp_msg = new SRPPMessage();
 
-		//put data, if any, in the payload
 		if(!data.empty())
-			data.copy((srpp_msg->encrypted_part.original_payload),data.length(),0);
+		{	srpp_msg->encrypted_part.original_payload = data;}
 
 
 		//encrypt the message
@@ -229,12 +226,11 @@ SignalingFunctions signaling_functions;
 	// Only create a SRPP Message and return it.
 	SRPPMessage create_srpp_message(string data){
 
-		unsigned char buff[65536];
-		SRPPMessage* srpp_msg = new SRPPMessage(buff);
+		SRPPMessage* srpp_msg = new SRPPMessage();
 
 		//put data, if any, in the payload
 		if(!data.empty())
-			data.copy((srpp_msg->encrypted_part.original_payload),data.length(),0);
+		{	srpp_msg->encrypted_part.original_payload = data;}
 
 		return *srpp_msg;
 
@@ -320,11 +316,17 @@ SignalingFunctions signaling_functions;
 		}
 
 
-
 int send_message(SRPPMessage * message)
 	{
-		int byytes = sendto(srpp_session->sendersocket, message, sizeof(*message), 0,
-					              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
+
+		int size = sizeof(message->srpp_header) + message->encrypted_part.original_payload.length()  +
+					message->encrypted_part.srpp_padding.length() + 3* sizeof(uint32_t);
+
+		char * buff = new char[size];
+		message->srpp_to_network(buff);
+cout << size << " bytes\n" ;
+		int byytes = sendto(srpp_session->sendersocket, buff, size, 0,
+							              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
 		if (byytes < 0)
 			cout << "ERROR IN SENDING DATA: " << strerror(errno)<< endl;
 
@@ -346,15 +348,15 @@ SRPPMessage receive_message()
 
 
 		//TODO: WE NEED TO ADD A SELECT OR POLL SO AS TO AVOID WAITING FOR A LONG TIME
-		int bytes_read = recvfrom(srpp_session->receiversocket,&srpp_msg,sizeof(srpp_msg),0,
-				(struct sockaddr *)&(srpp_session->sender_addr),
-				(socklen_t *)&addr_len);
+		char buff[MAXPAYLOADSIZE];
+		int bytes_read = recvfrom(srpp_session->receiversocket,buff,sizeof(buff),0,
+						(struct sockaddr *)&(srpp_session->sender_addr),
+						(socklen_t *)&addr_len);
 
 		if (bytes_read < 0)
 					cout << "ERROR IN RECEIVING DATA: " << strerror(errno)<< endl;
 
-
-		srpp_msg.encrypted_part.original_payload[bytes_read] = '\0';
+		srpp_msg.network_to_srpp(buff,bytes_read);
 
 	/*	cout << "Read " << bytes_read << " bytes from the other endpoint at "
 				<< inet_ntoa(srpp_session->sender_addr.sin_addr) << ":"
@@ -374,10 +376,12 @@ SRPPMessage receive_message()
 					cout << "Received HELLO message " << endl;
 
 					//extract key from the payload
-					string options = srpp_msg.encrypted_part.original_payload;
-					string thiskey = options.substr(0,options.find_first_of(','));
+					string thiskey = srpp_msg.encrypted_part.original_payload.substr(
+										0,srpp_msg.encrypted_part.original_payload.find_first_of(',')
+										);
 					setKey(atoi(thiskey.c_str()));
 
+					cout << "KEY RECVD: " << thiskey << endl;
 					signaling_functions.receivedHelloMessage();
 
 				}

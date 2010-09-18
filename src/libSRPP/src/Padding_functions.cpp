@@ -29,8 +29,7 @@ PaddingFunctions::PaddingFunctions()
 	//put random data in dummy cache
 	for(int i = 0; i < MAXDUMMYCACHESIZE; i++)
 	{
-		unsigned char buff[MAXPAYLOADSIZE];
-		SRPPMessage* thisdummy = new SRPPMessage(buff);
+		SRPPMessage* thisdummy = new SRPPMessage();
 		thisdummysize = srpp::srpp_rand(1, MAXPAYLOADSIZE);
 
 		for (int j = 0; j < thisdummysize; j++)
@@ -115,7 +114,7 @@ int PaddingFunctions::unpad(SRPPMessage * srpp_msg)
 	else
 	{
 		//remove the extra padding
-		//srpp_msg->encrypted_part.srpp_padding = "";
+		srpp_msg->encrypted_part.srpp_padding = "";
 		srpp_msg->encrypted_part.pad_count = 0;
 		return 1;
 	}
@@ -148,20 +147,20 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt(int size)
 }
 
 /** Generates a character array containing some dummy payload data (Useful for PSP algos)**/
-int	PaddingFunctions::generate_dummy_data (int size, char * buff)
+string	PaddingFunctions::generate_dummy_data (int size)
 {
 	int dummy_index = srpp::srpp_rand(1,MAXDUMMYCACHESIZE);
 
 	SRPPMessage thisdummy = dummy_cache[dummy_index];
-	char * dataStart = thisdummy.encrypted_part.original_payload;
 
-	//Basically take size amount
-	for (int i = 0; i < size; i++)
-	{
-		buff[i] = dataStart[i];
-	}
+	const char * str = thisdummy.encrypted_part.original_payload.c_str();
+	string thisone;
 
-	return 0;
+	for(int i =0; i< size; i++)
+		thisone[i] = str[i];
+
+	return str;
+
 }
 
 /** This functions handles adding of a newly generated SRPPMessage to the Dummy cache **/

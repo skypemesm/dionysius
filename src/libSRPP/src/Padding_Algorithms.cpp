@@ -74,7 +74,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		// I will get a random extra size and add the extra bytes to the packet
 		int extra_size = srpp::srpp_rand(1,MAXPAYLOADSIZE);
-		char * ptr = srpp_msg->encrypted_part.srpp_padding;
+		//vector<char> ptr = srpp_msg->encrypted_part.srpp_padding;
 
 
 /*
@@ -82,11 +82,12 @@ cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->en
 		<< &(srpp_msg->encrypted_part.srpp_padding) <<"|"<< extra_size<< endl;
 */
 
-		int status = PaddingFunctions::generate_dummy_data(extra_size, ptr);
+		string status = PaddingFunctions::generate_dummy_data(extra_size);
 
-		if (status < 0)
+		if (status.length() < 0)
 				cout << "ERROR IN GENERATING DUMMY DATA.." << endl;
 
+		srpp_msg->encrypted_part.srpp_padding = status;
 		srpp_msg->encrypted_part.pad_count = extra_size;
 
 		return 0;

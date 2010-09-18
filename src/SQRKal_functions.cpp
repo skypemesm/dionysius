@@ -186,6 +186,17 @@ using namespace std;
 		//If we are the initiator, we will start the session
 		if (initiator == 1)
 		{
+			/*SRPPMessage sr = srpp::create_srpp_message("TEST MESSAGE");
+			sr.srpp_header.version = 3;
+			sr.authentication_tag = 1755;
+			sr.encrypted_part.original_seq_number = 1012;
+			sr.encrypted_part.dummy_flag = 1;
+
+			sr.encrypted_part.srpp_padding = "DUMMY HERE";
+			sr.encrypted_part.pad_count = sr.encrypted_part.srpp_padding.length();
+
+			srpp::send_message(&sr);
+			return -1;*/
 
 			// Initiate the session..
 			if (srpp::start_session() > 0)
@@ -203,11 +214,14 @@ using namespace std;
 					//get a rtp packet
 					RTPMessage * rtp_msg = get_rtp_packet("srpplib",data);
 
+					cout << "RTP message generated\n";
+
 					//Pad it and make a SRPP message
 					SRPPMessage srpp_msg = srpp::rtp_to_srpp(rtp_msg);
+					cout << "SRPP message generated\n";
 
 					//encrypt it
-					srpp_msg = srpp::encrypt_srpp(&srpp_msg);
+					//srpp_msg = srpp::encrypt_srpp(&srpp_msg);
 
 					//send it through
 					srpp::send_message(&srpp_msg);
@@ -233,6 +247,7 @@ using namespace std;
 			//wait till you receive the first message from an initiator, create the sender socket, and then
 			//{send a message, wait for a message}*  _ THIS IS TILL WE ADD THREADING _
 			SRPPMessage srpp_msg = srpp::receive_message();
+
 			RTPMessage rtp_msg;
 
 			//Block for other signaling messages.
@@ -251,7 +266,7 @@ using namespace std;
 				{
 					cout << ".. Received SRPP Packet has Sequence Number:" << srpp_msg.srpp_header.seq << "..." << endl;
 					//decrypt the message
-					srpp_msg = srpp::decrypt_srpp(&srpp_msg);
+					//srpp_msg = srpp::decrypt_srpp(&srpp_msg);
 
 					// Convert to RTP message
 					rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
