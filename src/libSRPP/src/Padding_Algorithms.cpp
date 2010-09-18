@@ -87,7 +87,7 @@ cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->en
 		if (status.length() < 0)
 				cout << "ERROR IN GENERATING DUMMY DATA.." << endl;
 
-		srpp_msg->encrypted_part.srpp_padding = status;
+		srpp_msg->encrypted_part.srpp_padding = vector<char>(status.begin(),status.end());
 		srpp_msg->encrypted_part.pad_count = extra_size;
 
 		return 0;
