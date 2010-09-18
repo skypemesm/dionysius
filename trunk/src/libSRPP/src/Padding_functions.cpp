@@ -33,7 +33,7 @@ PaddingFunctions::PaddingFunctions()
 		thisdummysize = srpp::srpp_rand(1, MAXPAYLOADSIZE);
 
 		for (int j = 0; j < thisdummysize; j++)
-			thisdummy->encrypted_part.original_payload[j] = srpp::srpp_rand(1,255) ^ srpp::srpp_rand(0,65536); // characters xored with some random number
+			thisdummy->encrypted_part.original_payload.push_back( srpp::srpp_rand(1,255) ^ srpp::srpp_rand(0,65536)); // characters xored with some random number
 
 		thisdummy->encrypted_part.dummy_flag = 1;
 		dummy_cache[i] = *thisdummy;
@@ -58,6 +58,7 @@ int PaddingFunctions::pad(SRPPMessage * srpp_msg)
 	if (srpp::srpp_rand(0,10) <= 5 )
 	{
 		SRPPMessage new_dummy = *srpp_msg;
+		printf("%d %d\n\n",srpp_msg, &new_dummy);
 		PaddingFunctions::add_to_dummy_cache(new_dummy);
 	}
 
@@ -114,7 +115,7 @@ int PaddingFunctions::unpad(SRPPMessage * srpp_msg)
 	else
 	{
 		//remove the extra padding
-		srpp_msg->encrypted_part.srpp_padding = "";
+		srpp_msg->encrypted_part.srpp_padding.clear();
 		srpp_msg->encrypted_part.pad_count = 0;
 		return 1;
 	}
@@ -153,13 +154,14 @@ string	PaddingFunctions::generate_dummy_data (int size)
 
 	SRPPMessage thisdummy = dummy_cache[dummy_index];
 
-	const char * str = thisdummy.encrypted_part.original_payload.c_str();
+
+	const char * str = (const char *)&thisdummy;
 	string thisone;
 
 	for(int i =0; i< size; i++)
-		thisone[i] = str[i];
+		thisone += str[i];
 
-	return str;
+	return thisone;
 
 }
 
@@ -175,7 +177,7 @@ int PaddingFunctions::add_to_dummy_cache(SRPPMessage srpp_msg)
 	thisdummysize = srpp::srpp_rand(1, MAXPAYLOADSIZE);
 
 	for (int j = 0; j < thisdummysize; j++)
-			srpp_msg.encrypted_part.original_payload[j] = srpp::srpp_rand(1,255) ^ srpp::srpp_rand(0,65536); // characters xored with some random number
+			srpp_msg.encrypted_part.original_payload.push_back( srpp::srpp_rand(1,255) ^ srpp::srpp_rand(0,65536)); // characters xored with some random number
 
 	srpp_msg.encrypted_part.dummy_flag = 1;
 
