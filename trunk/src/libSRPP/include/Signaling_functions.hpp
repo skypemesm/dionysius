@@ -147,8 +147,6 @@ public:
 		srpp_msg.srpp_header.pt = 69;
 		srpp_msg.srpp_header.srpp_signalling = 12;
 		srpp_msg.srpp_header.x = 1;
-string original_payload (srpp_msg.encrypted_part.original_payload.begin(),srpp_msg.encrypted_part.original_payload.end());
-cout << "PAYLOAD HERE " << original_payload << endl;
 
 		srpp::send_message(&srpp_msg);
 
@@ -166,8 +164,6 @@ cout << "PAYLOAD HERE " << original_payload << endl;
 			return -1;
 
 		string options = "YES, YES, YES, DEFAULT, DEFAULT, DEFAULT";
-
-		cout << options << "again \n";
 		SRPPMessage srpp_msg = srpp::create_srpp_message(options);
 		srpp_msg.srpp_header.pt = 69;
 		srpp_msg.srpp_header.srpp_signalling = 13;
@@ -175,9 +171,6 @@ cout << "PAYLOAD HERE " << original_payload << endl;
 
 		cout << "Sending a HELLO ACK message now " <<endl;
 		srpp::send_message(&srpp_msg);
-string original_payload (srpp_msg.encrypted_part.original_payload.begin(),srpp_msg.encrypted_part.original_payload.end());
-cout << "PAYLOAD HERE " << original_payload << endl;
-
 
 		helloacksent = 1;
 

@@ -12,6 +12,7 @@
 
 #include "SRPPMessage.hpp"
 
+extern int rtpSequenceNo;
 
 struct RTP_Header{
 
@@ -35,22 +36,7 @@ public:
 	struct RTP_Header rtp_header;						/** RTP Header **/
 	char payload[MAXPAYLOADSIZE];
 
-    RTPMessage(unsigned char * buff)
-	  {
-
-		  rtp_header.version = 2;
-		  rtp_header.p = 1;
-		  rtp_header.x = 0;
-		  rtp_header.cc = 0;
-		  rtp_header.m = 0;
-		  rtp_header.pt = 0;
-		  rtp_header.seq = 0;
-		  rtp_header.ts = 0;
-		  rtp_header.ssrc = 0;
-
-	  }
-
-    RTPMessage()
+   RTPMessage()
     	  {
 
     		  rtp_header.version = 2;
@@ -59,7 +45,7 @@ public:
     		  rtp_header.cc = 0;
     		  rtp_header.m = 0;
     		  rtp_header.pt = 0;
-    		  rtp_header.seq = 0;
+    		  rtp_header.seq = ++rtpSequenceNo;
     		  rtp_header.ts = 0;
     		  rtp_header.ssrc = 0;
 
