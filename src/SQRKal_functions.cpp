@@ -186,7 +186,7 @@ using namespace std;
 		//If we are the initiator, we will start the session
 		if (initiator == 1)
 		{
-			/*SRPPMessage sr = srpp::create_srpp_message("TEST MESSAGE");
+/*			SRPPMessage sr = srpp::create_srpp_message("TEST MESSAGE");
 			sr.srpp_header.version = 3;
 			sr.authentication_tag = 1755;
 			sr.encrypted_part.original_seq_number = 1012;
@@ -198,7 +198,8 @@ using namespace std;
 
 			srpp::send_message(&sr);
 			return -1;*/
-/*char data[40];
+/*
+char data[40];
 			sprintf(data,"Test message no. 3");
 
 			//get a rtp packet
@@ -207,24 +208,28 @@ using namespace std;
 			//Pad it and make a SRPP message
 			SRPPMessage srpp_msg = srpp::rtp_to_srpp(rtp_msg);
 
+			srpp_msg.print();
 			//encrypt it
-			//srpp_msg = srpp::encrypt_srpp(&srpp_msg);
+			srpp_msg = srpp::encrypt_srpp(&srpp_msg);
+
+			srpp_msg.print();
 
 			//send it through
 			srpp::send_message(&srpp_msg);
 
-return -1;*/
+return -1;
+*/
 
 			// Initiate the session..
 			if (srpp::start_session() > 0)
 			{
-				newsession->srpp_timer->pauseTimer();
+				//newsession->srpp_timer->pauseTimer();
 
 				char data[40];
 
 				//The signaling etc has been complete
 				//Now start sending and receiving messages
-				for (int i = 0; i < 3 ; i++)
+				for (int i = 0; i < 300 ; i++)
 				{
 					sprintf(data,"Test message no. %d", i);
 
@@ -254,6 +259,7 @@ return -1;*/
 			// Stop the session now.
 			//srpp::stop_session();
 
+			while (true);
 		}
 		else     // If we are NOT the initiator, we need to wait for an incoming session
 		{
@@ -278,6 +284,7 @@ return -1;*/
 				if (srpp::isSignalingMessage(&srpp_msg) != 1)
 				{
 					cout << ".. Received SRPP Packet has Sequence Number:" << srpp_msg.srpp_header.seq << endl;
+					//srpp_msg.print();
 
 					//decrypt the message
 					//srpp_msg = srpp::decrypt_srpp(&srpp_msg);

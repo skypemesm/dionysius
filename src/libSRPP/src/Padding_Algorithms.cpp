@@ -98,6 +98,7 @@ cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->en
 		cout << "I will send one packet" << endl;
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
 		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
+		srpp::encrypt_srpp(&dummy_msg);
 		srpp::send_message(&dummy_msg);
 	}
 
@@ -106,6 +107,7 @@ cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->en
 		cout << "I will send one packet" << endl;
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
 		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
+		srpp::encrypt_srpp(&dummy_msg);
 		srpp::send_message(&dummy_msg);
 	}
 
