@@ -83,7 +83,7 @@ public:
 
     	  }
 
-   int srpp_to_network(char * buff)
+   int srpp_to_network(char * buff, int key)
 	  {
 
 	 //  printf("initial: %d\n", buff);
@@ -104,14 +104,26 @@ public:
 		//copy the padding
 		data = &data[str.length()];
 
+		if (key > 0 && srpp_header.srpp_signalling == 0)
+		{
+			encrypted_part.pad_count ^= key;
+		}
+
+	if (encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0)
+	 {
 //		printf("Start padding: %d %d\n", data,encrypted_part.pad_count);
 		string str_pad (encrypted_part.srpp_padding.begin(),encrypted_part.srpp_padding.end());
 		strcpy(data, str_pad.c_str());
 		data = &data[encrypted_part.pad_count];
-
+	 }
 //		printf("Start pad count etc: %d %d\n", data, 8/sizeof(char));
 
 		//copy other bits
+		if (key > 0 && srpp_header.srpp_signalling == 0)
+		{
+			encrypted_part.pad_count ^= key;
+		}
+
 		memcpy(data, (const char *)&encrypted_part.pad_count, 8);
 
 		//copy the tag
@@ -131,9 +143,12 @@ public:
 
 	  }
 
-   int network_to_srpp(char * buff, int bytes)
+   /**
+    * Converts the network packet to corresponding SRPP packet and
+    * decrypt the pad_count if its not a signaling message
+    */
+   int network_to_srpp(char * buff, int bytes, int key)
 	  {
-
 //	   printf("Initial:%d %d\n", buff, bytes);
 
 	    SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
@@ -165,6 +180,13 @@ public:
 
 //		cout << encrypted_part.pad_count << "::" << encrypted_part.dummy_flag << "::" << encrypted_part.original_seq_number << endl;
 
+		if (srpp_header.srpp_signalling == 0 && key > 0)
+			encrypted_part.pad_count ^= key;
+
+//		cout << encrypted_part.pad_count << "::" << srpp_header.srpp_signalling<< endl;
+
+     if (encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0)
+     {
 		//copy the padding bytes
 		data = (char *)thisnow;
 		data -= encrypted_part.pad_count;
@@ -173,6 +195,13 @@ public:
 		string str_pad = string ((const char *)data,encrypted_part.pad_count);
 		encrypted_part.srpp_padding = vector<char>(str_pad.begin(),str_pad.end());
 //		cout << str_pad << endl;
+		encrypted_part.pad_count ^= key;
+
+     }
+     else
+     {
+    	 encrypted_part.pad_count = 0;
+     }
 
 		char * thisnow1 = &buff[sizeof(srpp_header)];
 //		printf("Start payload:%d \n", thisnow1);
@@ -205,12 +234,77 @@ public:
 	  //ENCRYPT THE MESSAGE USING A KEY
 	  int encrypt( unsigned int key)
 	  {
+		  //encrypt the payload
+		  for (int i = 0; i< encrypted_part.original_payload.size(); i++)
+			  encrypted_part.original_payload[i] ^= key;
+
+		  //encrypt the padding
+		  for (int i = 0; i< encrypted_part.srpp_padding.size(); i++)
+			  encrypted_part.srpp_padding[i] ^= key;
+
+		  //encrypt the other flags
+		  encrypted_part.original_seq_number ^= key;
+		  encrypted_part.dummy_flag ^= key;
+		  encrypted_part.pad_count ^= key;
+		  encrypted_part.original_padding_bit ^= key;
 
 	  }
 
 	  //DECRYPT THE MESSAGE USING A KEY
 	  int decrypt( unsigned int key)
 	  {
+		  //decrypt the payload
+		  for (int i = 0; i< encrypted_part.original_payload.size(); i++)
+			  encrypted_part.original_payload[i] ^= key;
+
+
+		  //decrypt the padding
+		  for (int i = 0; i< encrypted_part.srpp_padding.size(); i++)
+			  encrypted_part.srpp_padding[i] ^= key;
+
+
+		  //decrypt the other flags
+		  encrypted_part.original_seq_number ^= key;
+		  encrypted_part.dummy_flag ^= key;
+		  encrypted_part.pad_count ^= key;
+		  encrypted_part.original_padding_bit ^= key;
+
+	  }
+
+	  // Print the details of this message
+	  int print()
+	  {
+		  //Print the header
+		 cout << "---------------------------------------------------------------------------------\n";
+		 cout << "SRPP Header:" << endl;
+		 cout << "Version: " << srpp_header.version << endl ;
+		 cout << "Padding bit: " <<  srpp_header.p << endl;
+		 cout << "Extension bit: " <<  srpp_header.x << endl;
+		 cout << "CC bit: " <<  srpp_header.cc << endl;
+		 cout << "Marking bit: " <<  srpp_header.m << endl;
+		 cout << "Sequence Number: " <<  srpp_header.seq << endl;
+		 cout << "TimeStamp: " <<  srpp_header.ts << endl;
+		 cout << "SSRC: " <<  srpp_header.ssrc << endl;
+
+		  //Print the payload
+		 string str (encrypted_part.original_payload.begin(), encrypted_part.original_payload.end());
+		 cout << "Original Payload: " <<  str << endl;
+
+		  // Print the padding bits
+		 /*string str_pad (encrypted_part.srpp_padding.begin(), encrypted_part.srpp_padding.end());
+		 cout << "SRPP Padding bits: " <<  str_pad << endl;
+		 */
+		  //Print the flags
+
+		 cout << "Pad count: " <<  encrypted_part.pad_count << endl;
+		 cout << "Original Sequence Number: " <<  encrypted_part.original_seq_number << endl;
+		 cout << "Original Padding bit: " <<  encrypted_part.original_padding_bit << endl;
+		 cout << "Dummy Flag: " <<  encrypted_part.dummy_flag << endl;
+
+		  //Print the authentication tag
+
+		   cout << "Authenticaion Tag: " <<  authentication_tag << endl;
+			 cout << "---------------------------------------------------------------------------------\n\n";
 
 	  }
 

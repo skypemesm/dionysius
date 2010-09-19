@@ -122,7 +122,7 @@ SignalingFunctions signaling_functions;
 		srpp_msg.encrypted_part.pad_count = srpp_msg.encrypted_part.srpp_padding.size();
 
 		//Encrypt the message
-		//encrypt_srpp(&srpp_msg);
+		encrypt_srpp(&srpp_msg);
 
 		//Return
 
@@ -139,7 +139,7 @@ SignalingFunctions signaling_functions;
 	RTPMessage srpp_to_rtp(SRPPMessage * srpp_msg){
 
 		//Decrypt the SRPP Message
-		//decrypt_srpp(srpp_msg);
+		decrypt_srpp(srpp_msg);
 
 
 		//Unpad the SRPP Message
@@ -259,18 +259,19 @@ SignalingFunctions signaling_functions;
 	{
 		//TODO::: USE CRYPTO
 
-		SRPPEncrypted * to_encrypt = &(original_pkt->encrypted_part);
+		original_pkt->encrypt(srpp_session->encryption_key);
+		//SRPPEncrypted * to_encrypt = &(original_pkt->encrypted_part);
 
 		//Encrypt the "encrypted_part" of the SRPP Packet.
 	//		cout << "DATA:" << to_encrypt->original_payload << endl;
 
 		//encrypt each unsigned int part with the key from the session
-		unsigned int * orig = reinterpret_cast<unsigned int *>(to_encrypt);
+		/*unsigned int * orig = reinterpret_cast<unsigned int *>(to_encrypt);
 		int i = 0;
 		for (i = 0;i<= (sizeof(*to_encrypt)/sizeof(unsigned int));i++)
 		{
 			(*(orig+i)) ^= srpp_session->encryption_key;
-		}
+		}*/
 
 //		cout << "ENCRYPTED DATA:" << to_encrypt->original_payload << endl;
 
@@ -283,12 +284,16 @@ SignalingFunctions signaling_functions;
 	{
 		//TODO::: USE CRYPTO
 
-		SRPPEncrypted * to_decrypt = &(encrypted_pkt->encrypted_part);
+
+		encrypted_pkt->decrypt(srpp_session->encryption_key);
+
+		//SRPPEncrypted * to_decrypt = &(encrypted_pkt->encrypted_part);
 
 		//Encrypt the "encrypted_part" of the SRPP Packet.
 		//		cout << "DATA:" << to_decrypt->original_payload << endl;
 
 		//encrypt each unsigned int part with the key from the session
+/*
 		unsigned int * orig = reinterpret_cast<unsigned int *>(to_decrypt);
 		int i = 0;
 		for (i = 0;i<= (sizeof(*to_decrypt)/sizeof(unsigned int));i++)
@@ -296,6 +301,7 @@ SignalingFunctions signaling_functions;
 			(*(orig+i)) ^= srpp_session->encryption_key;
 		}
 
+*/
 		//cout << "DECRYPTED DATA:" << to_decrypt->original_payload << endl;
 
 
@@ -326,13 +332,15 @@ int send_message(SRPPMessage * message)
 		int size = sizeof(message->srpp_header) + message->encrypted_part.original_payload.size()  +
 					message->encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
 
+/*
 		cout << sizeof(message->srpp_header) << "::" << message->encrypted_part.original_payload.size()   << "::" <<
 							message->encrypted_part.srpp_padding.size()  << "::" << 3* sizeof(uint32_t) << ":: " << message->encrypted_part.pad_count << endl;
 
+*/
 		char * buff = new char[size];
-		message->srpp_to_network(buff);
+		message->srpp_to_network(buff, srpp_session->encryption_key);
 
-cout << size << " bytes\n\n" ;
+cout << "SENT " << size << " bytes\n\n" ;
 		int byytes = sendto(srpp_session->sendersocket, buff, size, 0,
 							              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
 		if (byytes < 0)
@@ -356,7 +364,7 @@ SRPPMessage receive_message()
 
 
 		//TODO: WE NEED TO ADD A SELECT OR POLL SO AS TO AVOID WAITING FOR A LONG TIME
-		char buff[MAXPAYLOADSIZE];
+		char buff[65535];
 		int bytes_read = recvfrom(srpp_session->receiversocket,buff,sizeof(buff),0,
 						(struct sockaddr *)&(srpp_session->sender_addr),
 						(socklen_t *)&addr_len);
@@ -364,7 +372,7 @@ SRPPMessage receive_message()
 		if (bytes_read < 0)
 					cout << "ERROR IN RECEIVING DATA: " << strerror(errno)<< endl;
 
-		srpp_msg.network_to_srpp(buff,bytes_read);
+		srpp_msg.network_to_srpp(buff,bytes_read, srpp_session->encryption_key);
 
 	/*	cout << "Read " << bytes_read << " bytes from the other endpoint at "
 				<< inet_ntoa(srpp_session->sender_addr.sin_addr) << ":"

@@ -58,7 +58,6 @@ int PaddingFunctions::pad(SRPPMessage * srpp_msg)
 	if (srpp::srpp_rand(0,10) <= 5 )
 	{
 		SRPPMessage new_dummy = *srpp_msg;
-		printf("%d %d\n\n",srpp_msg, &new_dummy);
 		PaddingFunctions::add_to_dummy_cache(new_dummy);
 	}
 
