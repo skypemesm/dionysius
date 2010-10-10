@@ -6,8 +6,8 @@
  * Saswat Mohanty <smohanty@cs.tamu.edu>
  */
 
-#include <srpp_timer.h>
-#include "SRPP_functions.h"
+#include "../include/srpp_timer.h"
+#include "../include/SRPP_functions.h"
 
 #include <cstdlib>
 
@@ -115,7 +115,8 @@ using namespace std;
 
 		  signal(SIGALRM,timer_fired);
 		  signal(SIGINT,SRPPTimer::stopTimer);
-	}
+			return 0;
+}
 
 	/**
 	 * Start: obviously start the individual timers
@@ -127,26 +128,32 @@ using namespace std;
 	int SRPPTimer::start_packet()
 	{
 		packet_ON = true;
+		return 0;
 	}
 	int SRPPTimer::start_silence()
 	{
 		silence_ON = true;
+		return 0;
 	}
 	int SRPPTimer::pause_packet()
 	{
 		packet_ON = false;
+		return 0;
 	}
 	int SRPPTimer::pause_silence()
 	{
 		silence_ON = false;
+		return 0;
 	}
 	int SRPPTimer::reset_packet()
 	{
 		packet_counter = 0;
+		return 0;
 	}
 	int SRPPTimer::reset_silence()
 	{
 		silence_counter = 0;
+		return 0;
 	}
 	//Pause the timer. This function might just not be needed at all.
 	// Start the timer to unpause
@@ -155,6 +162,7 @@ using namespace std;
 		packet_ON = false;
 		silence_ON = false;
 		cout << "Paused both the timers" << endl;
+		return 0;
 	}
 
 	int SRPPTimer::startTimer()
@@ -163,5 +171,6 @@ using namespace std;
 		silence_ON = true;
 
 		cout << "Started both the timers" << endl;
+		return 0;
 	}
 

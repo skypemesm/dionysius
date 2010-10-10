@@ -14,12 +14,13 @@
 #include "SRPPMessage.hpp"
 #include "Padding_Algorithms.h"
 
-#define	MAXDUMMYCACHESIZE	100       /** dummy cache of 100 srpp packets **/
+#define	MAXDUMMYCACHESIZE	99       /** dummy cache of 100 srpp packets **/
 
 class PaddingFunctions {
 
 public:
 	PaddingFunctions();
+	~PaddingFunctions();
 
 	int pad(SRPPMessage * srpp_msg);
 

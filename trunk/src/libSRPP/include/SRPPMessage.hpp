@@ -13,6 +13,8 @@
 #include <string>
 #include <stdint.h>
 #include <vector>
+#include <sys/time.h>
+#include <netinet/in.h>
 
 #ifndef MAXPAYLOADSIZE
 	#define MAXPAYLOADSIZE     16384           // 16384 bytes
@@ -21,17 +23,36 @@
 using namespace std;
 
 typedef struct SRPPHeader {
-	  uint16_t		version:2;	/** protocol version       */
-	  uint16_t		p:1;		/** padding flag           */
-	  uint16_t		x:1;		/** header extension flag  */
+
+#if __BYTE_ORDER == __BIG_ENDIAN
+
+	  uint16_t		version:2;	/* protocol version */
+	  uint16_t		p:1;		/* padding flag */
+	  uint16_t		x:1;		/* header extension flag */
+	  uint16_t		cc:4;		/* CSRC count */
+	  uint16_t		m:1;		/* marker bit */
+	  uint16_t		pt:7;		/* payload type */
+
+#else
 	  uint16_t		cc:4;		/** CSRC count             */
-	  uint16_t		m:1;		/** marker bit             */
+	  uint16_t		x:1;		/** padding flag           */
+	  uint16_t		p:1;		/** header extension flag  */
+	  uint16_t		version:2;	/** protocol version       */
 	  uint16_t		pt:7;		/** payload type           */
+	  uint16_t		m:1;		/** marker bit             */
+
+#endif
+
 	  uint16_t		seq;		/** srpp sequence number        */
+
 	  uint32_t		ts;			/** srpp timestamp              */
 	  uint32_t		ssrc;		/** synchronization source */
 
-	  uint32_t		csrc[10];		/** contributing sources  */
+	  uint32_t		csrc[15];		/** contributing sources  */
+
+
+	  uint16_t		defined_by_profile;   /** SET THE EXTENSION HEADER **/
+	  uint16_t		extension_header;
 	  uint32_t		srpp_signalling;		/** rtp extension flag for srpp */
 
 } SRPPHeader ;
@@ -40,13 +61,21 @@ typedef struct SRPPEncrypted {
 	vector<char> 		original_payload;  					 /** original rtp/srtp payload **/
     vector<char> 		srpp_padding;       				 /** padding (can maximum be full packet)**/
 	uint32_t			pad_count;    					 /** srpp pad count **/
+
+#if __BYTE_ORDER == __BIG_ENDIAN
 	uint16_t			original_padding_bit:1;			 /** original packet's padding bit  **/
 	uint16_t			dummy_flag:15;					 /** Dummy flag for srpp packet **/
+#else
+	uint16_t			dummy_flag:15;					 /** Dummy flag for srpp packet **/
+	uint16_t			original_padding_bit:1;			 /** original packet's padding bit  **/
+#endif
+
 	uint16_t 			original_seq_number;			 /** Original packet's seq. number **/
 
 } SRPPEncrypted ;
 
 extern int lastSequenceNo;
+extern uint32_t srppssrc;
 
 class SRPPMessage {
 
@@ -59,25 +88,27 @@ public:
     	  {
 
     		  srpp_header.version = 2;
-    		  srpp_header.p = 1;
+    		  srpp_header.p = 0;
     		  srpp_header.x = 1;
-    		  srpp_header.cc = 10;
+    		  srpp_header.cc = 15;
     		  srpp_header.m = 0;
-    		  srpp_header.pt = 0;
+    		  srpp_header.pt = 121;
     		  srpp_header.seq = ++lastSequenceNo;
-    		  srpp_header.ts = 0;
-    		  srpp_header.ssrc = 0;
+    		  srpp_header.defined_by_profile = 9999;  /** SRPP PROFILE NOT DEFINED YET :P **/
+    		  srpp_header.extension_header = 1;
+
+    		  timeval a;
+    		  gettimeofday(&a, NULL);
+    		  srpp_header.ts = 1000000*a.tv_sec + a.tv_usec;
+    		  srpp_header.ssrc = srppssrc;
 
     		  encrypted_part.pad_count = 0;
     		  encrypted_part.original_padding_bit = 0;
     		  encrypted_part.dummy_flag = 0;
     		  encrypted_part.original_seq_number = 0;
 
-    		 /* encrypted_part.original_payload.resize(MAXPAYLOADSIZE);
-    		  encrypted_part.srpp_padding.resize(MAXPAYLOADSIZE);
-*/
-    		  //encrypted_part.original_payload = "";
-    		  //encrypted_part.srpp_padding = "";
+    		  for (int i = 0;i<15; i++)
+    			  srpp_header.csrc[i] = 0;
 
     		  authentication_tag = 0;
 
@@ -86,19 +117,27 @@ public:
    int srpp_to_network(char * buff, int key)
 	  {
 
-	 //  printf("initial: %d\n", buff);
-
 	    SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
+
 	    *srpp_header1 = srpp_header;
 
-//	    printf("Start header:%d || %d\n", srpp_header1,sizeof(SRPPHeader));
+	    //----------FORMAT NETWORK BYTE ORDER TO INTS-------------
+	    srpp_header1->seq = htons(srpp_header.seq);
+	    srpp_header1->ts = htonl(srpp_header.ts);
+	    srpp_header1->ssrc = htonl(srpp_header.ssrc);
+
+	    for (int i = 0; i< srpp_header.cc; i++)
+	    	srpp_header1->csrc[i] = htonl(srpp_header.csrc[i]);
+
+	    srpp_header1->defined_by_profile = htons(srpp_header.defined_by_profile);
+	    srpp_header1->extension_header = htons(srpp_header.extension_header);
+
+	    srpp_header1->srpp_signalling = htonl(srpp_header.srpp_signalling);
+	    // -------------------------------------------------------
+
 		char* data = (char *) &buff[sizeof(SRPPHeader)];
-
-//		printf("Start payload :%d :: %d\n", data, encrypted_part.original_payload.size());
-
 		//copy the payload
 		string str (encrypted_part.original_payload.begin(),encrypted_part.original_payload.end());
-//		cout << str << endl;
 		strcpy(data, str.c_str());
 
 		//copy the padding
@@ -111,12 +150,10 @@ public:
 
 	if (encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0)
 	 {
-//		printf("Start padding: %d %d\n", data,encrypted_part.pad_count);
 		string str_pad (encrypted_part.srpp_padding.begin(),encrypted_part.srpp_padding.end());
 		strcpy(data, str_pad.c_str());
 		data = &data[encrypted_part.pad_count];
 	 }
-//		printf("Start pad count etc: %d %d\n", data, 8/sizeof(char));
 
 		//copy other bits
 		if (key > 0 && srpp_header.srpp_signalling == 0)
@@ -129,16 +166,11 @@ public:
 		//copy the tag
 		data += 8/sizeof(char);
 
-//		printf("Start tag:%d\n", data);
 
 		uint32_t * thisnow = (uint32_t *)data ;
-		*thisnow = authentication_tag;
+		*thisnow = htonl(authentication_tag);
 		thisnow ++ ;
 
-//		printf("Final:%d\n", thisnow);
-
-//		cout << encrypted_part.pad_count << "::" << encrypted_part.dummy_flag << "::" << encrypted_part.original_seq_number << endl;
-//		cout << "-----------------------------------\n";
 		return 0;
 
 	  }
@@ -149,52 +181,48 @@ public:
     */
    int network_to_srpp(char * buff, int bytes, int key)
 	  {
-//	   printf("Initial:%d %d\n", buff, bytes);
 
 	    SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
 	    srpp_header = *srpp_header1;
 
-//		cout << "VERSION : " << srpp_header.version << endl;
+	    //----------FORMAT FROM NETWORK BYTE ORDER TO INTS-------------
+	    srpp_header.seq = ntohs(srpp_header1->seq);
+	    srpp_header.ts = ntohl(srpp_header1->ts);
+	    srpp_header.ssrc = ntohl(srpp_header1->ssrc);
+
+	    for (int i = 0; i< srpp_header.cc; i++)
+	    	srpp_header.csrc[i] = ntohl(srpp_header1->csrc[i]);
+
+	    srpp_header.defined_by_profile = ntohs(srpp_header1->defined_by_profile);
+	    srpp_header.extension_header = ntohs(srpp_header1->extension_header);
+
+	    srpp_header.srpp_signalling = ntohl(srpp_header1->srpp_signalling);
+	    // -------------------------------------------------------
 
 	    char* data = (char *) &buff[bytes];
 
-//	    printf("Final: %d\n", data);
-
 	    //copy the tag
 		data -= 4/sizeof(char);
-
-//	    printf("Tag:%d\n", data);
-
 		uint32_t * thisnow = (uint32_t *)data ;
 
-//	    printf("Tag:%d\n", thisnow);
-		authentication_tag = *thisnow;
-
-//		cout << "Authentication : " << authentication_tag << endl;
+		authentication_tag = ntohl(*thisnow);
 
 		thisnow -= 2;
-//		printf("Pad count etc:%d\n", thisnow);
 
 		//copy other bits
 		memcpy((char *)&encrypted_part.pad_count, (const char *)thisnow, 8);
 
-//		cout << encrypted_part.pad_count << "::" << encrypted_part.dummy_flag << "::" << encrypted_part.original_seq_number << endl;
-
 		if (srpp_header.srpp_signalling == 0 && key > 0)
 			encrypted_part.pad_count ^= key;
-
-//		cout << encrypted_part.pad_count << "::" << srpp_header.srpp_signalling<< endl;
 
      if (encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0)
      {
 		//copy the padding bytes
 		data = (char *)thisnow;
 		data -= encrypted_part.pad_count;
-//		printf("Start padding:%d \n", data);
 
 		string str_pad = string ((const char *)data,encrypted_part.pad_count);
 		encrypted_part.srpp_padding = vector<char>(str_pad.begin(),str_pad.end());
-//		cout << str_pad << endl;
 		encrypted_part.pad_count ^= key;
 
      }
@@ -204,18 +232,14 @@ public:
      }
 
 		char * thisnow1 = &buff[sizeof(srpp_header)];
-//		printf("Start payload:%d \n", thisnow1);
 
 		bytes = (data - thisnow1);
-
-//		cout << "NO OF BYTES " << bytes << endl;
 
 
 		//copy the payload
 		string str = string((const char *)thisnow1,bytes);
 		encrypted_part.original_payload = vector<char>(str.begin(),str.end());
 
-//		cout << "PAYLOAD: " << str  << endl;
 		return 0;
 
 	  }
@@ -235,11 +259,11 @@ public:
 	  int encrypt( unsigned int key)
 	  {
 		  //encrypt the payload
-		  for (int i = 0; i< encrypted_part.original_payload.size(); i++)
+		  for (int i = 0; i< (int)encrypted_part.original_payload.size(); i++)
 			  encrypted_part.original_payload[i] ^= key;
 
 		  //encrypt the padding
-		  for (int i = 0; i< encrypted_part.srpp_padding.size(); i++)
+		  for (int i = 0; i< (int)encrypted_part.srpp_padding.size(); i++)
 			  encrypted_part.srpp_padding[i] ^= key;
 
 		  //encrypt the other flags
@@ -247,6 +271,7 @@ public:
 		  encrypted_part.dummy_flag ^= key;
 		  encrypted_part.pad_count ^= key;
 		  encrypted_part.original_padding_bit ^= key;
+			return 0;
 
 	  }
 
@@ -254,12 +279,12 @@ public:
 	  int decrypt( unsigned int key)
 	  {
 		  //decrypt the payload
-		  for (int i = 0; i< encrypted_part.original_payload.size(); i++)
+		  for (int i = 0; i< (int)encrypted_part.original_payload.size(); i++)
 			  encrypted_part.original_payload[i] ^= key;
 
 
 		  //decrypt the padding
-		  for (int i = 0; i< encrypted_part.srpp_padding.size(); i++)
+		  for (int i = 0; i< (int)encrypted_part.srpp_padding.size(); i++)
 			  encrypted_part.srpp_padding[i] ^= key;
 
 
@@ -268,6 +293,7 @@ public:
 		  encrypted_part.dummy_flag ^= key;
 		  encrypted_part.pad_count ^= key;
 		  encrypted_part.original_padding_bit ^= key;
+			return 0;
 
 	  }
 
@@ -306,6 +332,7 @@ public:
 		   cout << "Authenticaion Tag: " <<  authentication_tag << endl;
 			 cout << "---------------------------------------------------------------------------------\n\n";
 
+			 return 0;
 	  }
 
 };
