@@ -221,9 +221,9 @@ return -1;
 */
 
 			// Initiate the session..
-			if (srpp::start_session() > 0)
+			if (srpp::start_session() >= 0)
 			{
-				//newsession->srpp_timer->pauseTimer();
+				newsession->srpp_timer->pauseTimer();
 
 				char data[40];
 
