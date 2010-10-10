@@ -21,8 +21,8 @@
 #include <netdb.h>
 #include <csignal>
 
-#include <CryptoProfile.hpp>
-#include <srpp_timer.h>
+#include "CryptoProfile.hpp"
+#include "srpp_timer.h"
 
 using namespace std;
 
@@ -38,6 +38,8 @@ public:
 	CryptoProfile crypto_profile;
 	int sendersocket,receiversocket;
 	struct sockaddr_in sender_addr , receiver_addr;
+	int maxpacketsize;
+	bool is_srtp;
 
 	SRPPTimer * srpp_timer;
 
@@ -75,6 +77,8 @@ public:
 
 		srpp_timer = new SRPPTimer(PACKET_INTERVAL_, SILENCE_INTERVAL_);
 		crypto_profile = thisCryptoProfile;
+		maxpacketsize = MAXPAYLOADSIZE;
+		is_srtp = 0;
 	}
 
 	//Destructors
@@ -114,12 +118,14 @@ public:
 		// now enable the packets based on which one is required.
 		srpp_timer->start_packet();
 		srpp_timer->start_silence();
+		return 0;
 	}
 
 	//We are done signaling.. start the session and timers
 	int stop_session()
 	{
 		srpp_timer->pauseTimer();
+		return 0;
 	}
 
 	//increment the burst time
@@ -140,10 +146,17 @@ public:
 	int setCryptoProfile(CryptoProfile thisCryptoProfile)
 	{
 		crypto_profile = thisCryptoProfile;
+		return 0;
 	}
 	CryptoProfile getCryptoProfile()
 	{
 		return crypto_profile;
+	}
+
+
+	int getMaxpacketsize()
+	{
+		return maxpacketsize;
 	}
 
 };

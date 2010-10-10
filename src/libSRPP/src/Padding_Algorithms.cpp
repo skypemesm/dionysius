@@ -10,12 +10,15 @@
  */
 
 #include <iostream>
-#include "Padding_Algorithms.h"
-#include "SRPP_functions.h"
-#include "Padding_functions.h"
+#include "../include/Padding_Algorithms.h"
+#include "../include/SRPP_functions.h"
+#include "../include/Padding_functions.h"
 
 
 using namespace std;
+extern int packet_to_send;
+
+int cbp_packet_count = 0;
 
 	/** Redirects to the specified Packet Size Padding algo **/
 	int PaddingAlgos::psp_pad_algo(psp_algo_type atype,SRPPMessage * srpp_msg)
@@ -26,6 +29,8 @@ using namespace std;
 
 		if (atype == DEFAULT_PSP)
 			return default_psp_pad_algo(srpp_msg);
+		else
+			return -1;
 
 	}
 
@@ -41,6 +46,8 @@ using namespace std;
 	{
 		if (atype == DEFAULT_CBP)
 					return default_cbp_pad_algo();
+		else
+			return -1;
 	}
 
 	/** Redirects to the specified Packet Size Padding algo
@@ -54,10 +61,10 @@ using namespace std;
 int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 
-
-
 		if (atype == DEFAULT_EBP)
 						return default_ebp_pad_algo();
+		else
+			return -1;
 	}
 
 	/** Redirects to the specified Packet Size Padding algo **/
@@ -65,6 +72,8 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 		if (atype == DEFAULT_VITP)
 						return default_vitp_pad_algo();
+		else
+			return -1;
 	}
 
 
@@ -73,15 +82,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 
 		// I will get a random extra size and add the extra bytes to the packet
-		int extra_size = srpp::srpp_rand(1,MAXPAYLOADSIZE);
-		//vector<char> ptr = srpp_msg->encrypted_part.srpp_padding;
-
-
-/*
-cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->encrypted_part.original_payload) << "::"
-		<< &(srpp_msg->encrypted_part.srpp_padding) <<"|"<< extra_size<< endl;
-*/
-
+		int extra_size = srpp::srpp_rand(1,50);
 		string status = PaddingFunctions::generate_dummy_data(extra_size);
 
 		if (status.length() < 0)
@@ -90,16 +91,46 @@ cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->en
 		srpp_msg->encrypted_part.srpp_padding = vector<char>(status.begin(),status.end());
 		srpp_msg->encrypted_part.pad_count = extra_size;
 
+		//reset both packet and silence timers
+		srpp::resetPacketTimer();
+		srpp::resetSilenceTimer();
+
 		return 0;
 	}
 
 	int PaddingAlgos::default_cbp_pad_algo()
 	{
-		cout << "I will send one packet" << endl;
-		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
-		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
-		srpp::encrypt_srpp(&dummy_msg);
-		srpp::send_message(&dummy_msg);
+		int calculated_burst_dummies = 1; // THIS IS WHAT WE WILL CALCULATE BASED ON CURRENT BURST SIZE
+
+		if ((++cbp_packet_count) <= calculated_burst_dummies)
+		{
+			cout << "I will send one packet" << endl;
+			SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
+			//cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
+			srpp::encrypt_srpp(&dummy_msg);
+
+			//check if we already have a packet to send
+			//send if NO
+			if (packet_to_send == 0){
+				srpp::send_message(&dummy_msg);
+
+			} else
+				packet_to_send = 0;
+
+			//reset both packet and silence timers
+			srpp::resetPacketTimer();
+			srpp::resetSilenceTimer();
+
+
+		} else // We are done sending packets
+		{
+			//reset packet timer
+			srpp::resetPacketTimer();
+
+		}
+
+
+		return 0;
 	}
 
 	int PaddingAlgos::default_ebp_pad_algo()
@@ -108,11 +139,20 @@ cout << &(*ptr) << "::" << &(srpp_msg->encrypted_part)  << "::"<< &(srpp_msg->en
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
 		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 		srpp::encrypt_srpp(&dummy_msg);
+
+		//check if we already have a packet to send
+		//send if NO
 		srpp::send_message(&dummy_msg);
+		//Reset packet and silence timers
+
+		return 0;
 	}
 
 	int PaddingAlgos::default_vitp_pad_algo()
 	{
 		//Add delays
+
+
+		return 0;
 	}
 

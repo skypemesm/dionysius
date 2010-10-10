@@ -50,6 +50,11 @@ public:
 		return signaling_complete;
 	}
 
+	int isHelloSent()
+	{
+		return hellosent;
+	}
+
 	int isSessionComplete()
 		{
 			return session_complete;
@@ -91,11 +96,18 @@ public:
 			if ( helloacksent == 0 )
 			{
 				signaling_complete = 1;
-				return sendHelloAckMessage();
+				int i = sendHelloAckMessage();
+
+				hellosent = 0;
+				helloackrecvd = 0;
+				return i;
 			}
 			else
 			{
 				signaling_complete = 1;
+
+				hellosent = 0;
+				helloackrecvd = 0;
 				return 0;
 			}
 
@@ -128,30 +140,43 @@ public:
 	{
 
 		//If we have received the helloack or hello message, then we should not send this message
-		if (hellosent == 1 || hellorecvd == 1 || helloacksent == 1 || helloackrecvd == 1)
+		if ( hellosent == 1 || hellorecvd == 1 || helloacksent == 1 || helloackrecvd == 1)
 			return -1;
 
 		//generate a key now.
 		int key = srpp::srpp_rand(0,65535);
-		srpp::setKey(key);
-		char buf[5];
-		sprintf(buf,"%d",key);
+		int psize = srpp::get_session()->maxpacketsize;
+
+		char buf[15];
+		snprintf(buf,15,"%d,%d",key, psize);
 		string options = buf;
 
-		options.append(", YES, YES, YES,YES, DEFAULT, DEFAULT, DEFAULT");
-
+		options.append(", YES, YES, YES, YES, DEFAULT, DEFAULT, DEFAULT");
+		srpp::setKey(key);
 
 		// PSP YES/NO, CBP YES/NO, EBP YES/NO, VITP YES/NO, PSP_ALGO, CBP_ALGO, EBP_ALGO
 
 		SRPPMessage srpp_msg = srpp::create_srpp_message(options);
-		srpp_msg.srpp_header.pt = 69;
+		srpp_msg.srpp_header.pt = 124;
 		srpp_msg.srpp_header.srpp_signalling = 12;
 		srpp_msg.srpp_header.x = 1;
 
-		srpp::send_message(&srpp_msg);
+		for (int i = 0; i < 1; i++)
+		{
+			if (helloackrecvd != 1)
+			{
+				hellosent = 1;
+				srpp::send_message(&srpp_msg);
+			}
+			else
+				return 0;
+		}
 
-		hellosent = 1;
+		cout << "SENT HELLO MESSAGE\n";
 		srpp::receive_message();
+
+		if (srpp::SRPP_Enabled() == 0)
+			return -10;
 
 		return 0;
 
@@ -160,22 +185,40 @@ public:
 	int sendHelloAckMessage()
 	{
 		//If we have not sent or received the hello or have sent the helloack message, then we should not send this message
-		if ((hellorecvd != 1 && hellosent != 1)|| helloacksent == 1)
+		if ((hellorecvd != 1 && hellosent != 1) || helloacksent == 1)
 			return -1;
 
-		string options = "YES, YES, YES, DEFAULT, DEFAULT, DEFAULT";
+		// Add maxpacketsize
+		char buf[6];
+		int psize = srpp::get_session()->maxpacketsize;
+		snprintf(buf,6,"%d", psize);
+		string options = buf;
+
+		options.append("YES, YES, YES, DEFAULT, DEFAULT, DEFAULT");
+
 		SRPPMessage srpp_msg = srpp::create_srpp_message(options);
-		srpp_msg.srpp_header.pt = 69;
+		srpp_msg.srpp_header.pt = 124;
 		srpp_msg.srpp_header.srpp_signalling = 13;
 		srpp_msg.srpp_header.x = 1;
 
-		cout << "Sending a HELLO ACK message now " <<endl;
-		srpp::send_message(&srpp_msg);
+		for (int i = 0; i < 1; i++)
+		{
+			if (helloackrecvd != 1 || hellosent == 1){
+				srpp::send_message(&srpp_msg);
+				cout << "Sent a HELLO ACK message now " <<endl;
+
+			}
+			else
+				return 0;
+		}
+
+		//srpp::send_message(&srpp_msg);
 
 		helloacksent = 1;
 
 		if (signaling_complete == 0)
 			srpp::receive_message();
+
 		// If we do not get a message within a timeout, then signaling failed.
 
 		return 0;
@@ -184,7 +227,7 @@ public:
 	int sendByeMessage()
 		{
 			SRPPMessage srpp_msg = srpp::create_srpp_message("");
-			srpp_msg.srpp_header.pt = 69;
+			srpp_msg.srpp_header.pt = 124;
 			srpp_msg.srpp_header.srpp_signalling = 22;
 			srpp_msg.srpp_header.x = 1;
 
@@ -204,7 +247,7 @@ public:
 
 
 			SRPPMessage srpp_msg = srpp::create_srpp_message("");
-			srpp_msg.srpp_header.pt = 69;
+			srpp_msg.srpp_header.pt = 124;
 			srpp_msg.srpp_header.srpp_signalling = 23;
 			srpp_msg.srpp_header.x = 1;
 
@@ -217,5 +260,10 @@ public:
 
 
 
-
+	int setSignalingComplete(int a)
+	{
+		if (a <= 1)
+			signaling_complete = a;
+		return 0;
+	}
 };

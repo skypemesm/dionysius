@@ -6,12 +6,12 @@
  *
  */
 
-#ifndef RTP_MESSAGE_HPP
-#define RTP_MESSAGE_HPP
+#ifndef SRTP_MESSAGE_HPP
+#define SRTP_MESSAGE_HPP
 
-extern int rtpSequenceNo;
+extern int srtpSequenceNo;
 
-struct RTP_Header{
+struct SRTP_Header{
 
 	  uint16_t		version:2;	/** protocol version       */
 	  uint16_t		p:1;		/** padding flag           */
@@ -28,27 +28,32 @@ struct RTP_Header{
 };
 
 
-class RTPMessage {
+class SRTPMessage {
 public:
-	struct RTP_Header rtp_header;						/** RTP Header **/
+	struct SRTP_Header srtp_header;						/** SRTP Header **/
 	char payload[MAXPAYLOADSIZE];
+	uint32_t mki;
+	uint32_t authentication_tag;
 
-   RTPMessage()
+   SRTPMessage()
     	  {
 
-    		  rtp_header.version = 2;
-    		  rtp_header.p = 1;
-    		  rtp_header.x = 0;
-    		  rtp_header.cc = 15;
-    		  rtp_header.m = 0;
-    		  rtp_header.pt = 0;
-    		  rtp_header.seq = ++rtpSequenceNo;
-    		  rtp_header.ts = 0;
-    		  rtp_header.ssrc = 0;
+    		  srtp_header.version = 2;
+    		  srtp_header.p = 1;
+    		  srtp_header.x = 0;
+    		  srtp_header.cc = 15;
+    		  srtp_header.m = 0;
+    		  srtp_header.pt = 0;
+    		  srtp_header.seq = ++srtpSequenceNo;
+    		  srtp_header.ts = 0;
+    		  srtp_header.ssrc = 0;
+
+    		  mki = 0;
+    		  authentication_tag = 0;
 
 
     	  }
-	  ~RTPMessage()
+	  ~SRTPMessage()
 	  {
 
 	  }

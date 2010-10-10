@@ -41,7 +41,7 @@ public:
 
 
 private:
-
+	int cbp_packet_count;
 
 	int default_psp_pad_algo(SRPPMessage * srpp_msg);
 	int default_cbp_pad_algo();
