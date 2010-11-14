@@ -13,6 +13,7 @@
 #include "SQRKal_functions.h"
 #include "SRPPSession.hpp"
 #include "CryptoProfile.hpp"
+#include "sqrkal_discovery.h"
 
 //Using JRTPLIB
 #include "rtppacketbuilder.h"
@@ -70,6 +71,7 @@ using namespace std;
 
 		return 0;
 	}
+
 
 	//create SRPP session
 	int start_SRPP()

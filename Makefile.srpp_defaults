@@ -16,7 +16,8 @@ endif
 SRPP_DIR = .
 JRTP_DIR = /usr/local/lib/
 SRPP_LIB =  -L${SRPP_DIR} -lsrpp \
-			-L${JRTP_DIR} -ljrtp 
+			-L${JRTP_DIR} -ljrtp \
+			-lipq
 			
 SRPP_LIBFILE = ${SRPP_DIR}/libsrpp.a
   
@@ -26,6 +27,7 @@ SRPP_OBJS = \
   src/libSRPP/src/Padding_functions.o \
   src/libSRPP/src/Padding_Algorithms.o \
   src/libSRPP/src/srpp_timer.o \
-  src/libSRPP/src/md5.o  
+  src/libSRPP/src/md5.o \
+  src/sqrkal_discovery/sqrkal_discovery.o
     
   
