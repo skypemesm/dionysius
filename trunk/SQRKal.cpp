@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include "md5.h"
+#include "sqrkal_discovery.h"
 
 using namespace std;
 
@@ -23,6 +24,9 @@ using namespace std;
 // Main entry point
 int main(int argc, char * argv[])
 {
+	sqrkal_discovery::discover_sessions();
+	return 0;
+
 	if (argc < 6 )
 	{
 		if (argc < 4 || *argv[1] == '1')
@@ -51,3 +55,4 @@ int main(int argc, char * argv[])
 	destroy_SQRKal();
 
 }
+
