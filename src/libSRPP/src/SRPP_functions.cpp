@@ -35,6 +35,11 @@ SignalingFunctions signaling_functions;
 int srpp_enabled = 3;
 int signaling_by_srpp = 1;
 
+int (*send_processor)(char*,int);
+SRPPMessage (*receive_processor)();
+int send_external = 0, receive_external = 0;
+
+
 
 	//initialize stuff
 	int init_SRPP(){
@@ -44,7 +49,8 @@ int signaling_by_srpp = 1;
 		//Initialize the SRPP parameter..
 
 
-		cout << "\nSRPP initiated inside CCRTP stack." << endl;
+		//cout << "\nSRPP initiated inside CCRTP stack." << endl;
+		cout << "SRPP initiated in sqrkal" << endl;
 		return 0;
 	}
 
@@ -341,8 +347,22 @@ int signaling_by_srpp = 1;
 		return *encrypted_pkt;
 	}
 
+	// Pass a process function or functor which takes in message and length of message and returns and int status
+	int setSendFunctor(int (*process_func)(char*,int))
+	{
+		send_processor = process_func;
+		send_external = 1;
+	}
 
-int send_message(SRPPMessage * message)
+	// Pass a process function or functor which takes in message and length of message and returns and int status
+	int setReceiveFunctor(SRPPMessage (*process_func)())
+	{
+		receive_processor = process_func;
+		receive_external = 1;
+	}
+
+
+	int send_message(SRPPMessage * message)
 	{
 		packet_to_send = 1;
 
@@ -365,8 +385,13 @@ int send_message(SRPPMessage * message)
 			message->srpp_to_network(buff, srpp_session->encryption_key);
 		}
 
-//cout << "SENT " << size << " bytes to "<< inet_ntoa(srpp_session->sender_addr.sin_addr)
-//		<< ":" << ntohs(srpp_session->sender_addr.sin_port) <<"\n\n" ;
+		//cout << "SENT " << size << " bytes to "<< inet_ntoa(srpp_session->sender_addr.sin_addr)
+		//		<< ":" << ntohs(srpp_session->sender_addr.sin_port) <<"\n\n" ;
+
+		if (send_external == 1) // We have a sender functor to process the sending action.
+		{
+			return send_processor(buff,size); //message,length
+		}
 
 		int byytes = sendto(srpp_session->sendersocket, buff, size, 0,
 							              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
@@ -384,6 +409,11 @@ int send_message(SRPPMessage * message)
 
 SRPPMessage receive_message()
 	{
+
+		if (receive_external == 1) // We have a sender functor to process the sending action.
+			{
+				return receive_processor(); //message,length
+			}
 
 		int addr_len = sizeof(struct sockaddr);
 
@@ -530,15 +560,19 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
  }
 
  // parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
-  int isSignalingMessage (char * buff)
+  int isSignalingMessage (char * buff1)
   {
+	  char buff[sizeof(SRPPHeader)+10];
+	  memcpy(buff,buff1,sizeof(SRPPHeader));
+
 	  SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
 	  	SRPPHeader srpp_header = *srpp_header1;
+
+	  	cout << "PAYLOAD TYPE :" << srpp_header.pt << "SIGNALING:" << srpp_header.srpp_signalling << "\n";
 
 	  if (srpp_header.srpp_signalling == 0 and srpp_header.pt != 124) //NOT A SIGNALING MESSAGE
  		 return -1;
  	 else if(srpp_header.srpp_signalling !=0 and srpp_header.pt == 124){
-
  		 return 1;
  	 }
 

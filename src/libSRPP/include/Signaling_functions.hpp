@@ -173,10 +173,20 @@ public:
 		}
 
 		cout << "SENT HELLO MESSAGE\n";
-		srpp::receive_message();
 
 		if (srpp::SRPP_Enabled() == 0)
 			return -10;
+
+
+		int wait_count = 1000; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
+
+		while (signaling_complete == 0)
+		{
+			srpp::receive_message();
+			if (wait_count-- == 0)
+				return -1;
+
+		}
 
 		return 0;
 

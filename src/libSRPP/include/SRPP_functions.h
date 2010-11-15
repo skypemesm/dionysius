@@ -89,6 +89,8 @@ namespace srpp {
 	int send_message(SRPPMessage* msg);
 	SRPPMessage receive_message();
 	SRPPMessage processReceivedData(char * buff, int bytes_read);
+	int setSendFunctor(int (*process_func)(char*,int)); // Pass a process function or functor which takes in message and length of message and returns and int status
+	int setReceiveFunctor(SRPPMessage (*process_func)()); // Pass a process function or functor which takes in message and length of message and returns and int status
 
 	// parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
 	int isSignalingMessage (SRPPMessage * message);
