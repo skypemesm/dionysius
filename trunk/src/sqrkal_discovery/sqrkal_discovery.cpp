@@ -24,6 +24,7 @@
 
 #include "sqrkal_proto_formats.hpp"
 #include "sqrkal_discovery.h"
+#include "SRPPSession.hpp"
 #include "SRPP_functions.h"
 
 
@@ -39,7 +40,7 @@ namespace sqrkal_discovery {
 
 
  /**
-  * Global variables
+  * Namespace variables
   */
 	string firewall_path;
 	int udp_added = 0;
@@ -51,8 +52,9 @@ namespace sqrkal_discovery {
 	int is_udp = 0;
 	int is_srtp = 0;
 	int is_srpp = 0;
+	int apply_srpp = 0;
 	int is_session_on = 0;
-	int inport,outport;
+	int inport,outport;  //inport is my RTP port and output port is the other endpoint's RTP port
 
 	int saw_invite_already = 0;
 
@@ -67,6 +69,8 @@ namespace sqrkal_discovery {
 	struct sockaddr_in out_addr, back_out_addr;
 	unsigned int last_out_dest;
 	unsigned int rtp_dest, rtp_src;
+	char rtp_header[28];
+	int rtp_hdset = 0;
 
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
@@ -461,6 +465,95 @@ namespace sqrkal_discovery {
      }
 
 
+ 	/**
+ 	 * SEND RTP Message (for dummy messages)
+ 	 */
+      int send_rtp_message(char *buff, int length )
+      {
+
+		if (length <= 0)
+			return -1;
+
+		char * point = new char[BUFSIZE];
+
+		//Add headers
+		memcpy(point,rtp_header,28);
+		point += 28;
+		memcpy(point,buff,length);
+
+		// RECALCULATE THE CHECKSUM
+		form_checksums((char * )point);
+
+
+		//set out_addr.
+		out_addr.sin_addr.s_addr = rtp_dest;
+		out_addr.sin_port = htons(outport);
+
+		//send data
+		int byytes = sendto(sip_socket, point, length+28, 0,
+						 (struct sockaddr *)&(out_addr), sizeof(struct sockaddr));
+		if (byytes < 0)
+		{
+			cout << "ERROR IN SENDING DATA: " << strerror(errno) << "\nLENGTH:" << length << endl << endl;
+			for (int i = 0; i<length;i++)
+			 printf("%c",buff[i]);
+		}
+
+		cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+
+		return byytes;
+   	  }
+
+      /**
+       * RECEIVE RTP Message (for dummy messages)
+       */
+      SRPPMessage receive_rtp_message()
+		{
+
+			unsigned char* buf = new unsigned char[BUFSIZE];
+
+			// Read a packet from the queue
+			int timeout = 120000000; // 2 minute
+			int status = ipq_read(sqrkal_discovery_ipqh, buf, BUFSIZE, timeout);
+			if (status < 0)
+			{
+				cerr << "ERROR while receiving RTP from ipqueue.. Exiting for status " << status << "\n";
+				printf("Received error message %d\n",ipq_get_msgerr(buf)); //return SRPPMessage();
+			}
+
+			switch (ipq_message_type(buf)) {
+			 case NLMSG_ERROR:
+				printf("Received error message %d\n",
+				ipq_get_msgerr(buf));
+				return SRPPMessage();
+
+			 case IPQM_PACKET: {
+				ipq_packet_msg_t *m = ipq_get_packet(buf);
+
+				if (((int)m->data_len) <= 0)
+				{
+					cout << "Empty packet \n";
+					return SRPPMessage();
+				}
+				// DROP THIS PACKET, if not marked
+				status = ipq_set_verdict(sqrkal_discovery_ipqh, m->packet_id, NF_DROP, m->data_len, buf);
+				if (status < 0) {
+					cerr << " PASSER while setting verdict for message \n ";
+					break;
+				}
+
+				// process the received packet
+				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
+					{SRPPMessage srpp_msg = srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);cout << "Sig\n";}
+				else
+					{process_packet(m->payload, m->data_len);cout << "NOT Sig\n";}
+
+			 }
+			}
+
+	}
+
+
 	/** Verify if this string is an IP ADDRESS */
 	bool isValidIpAddress(const char *ipAddress)
 	{
@@ -489,16 +582,50 @@ namespace sqrkal_discovery {
  	int start_SRPP()
  	{
 
- 	/*	//initialize SRPP
+ 		//initialize SRPP
  		srpp::init_SRPP();
 
  		//Create a SRPP Session with a particular CryptoProfile
  		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
- 		newsession = srpp::create_session(endpoint_ip_address, endpoint_receiver_port,*crypto);
-
-
+	    SRPPSession * newsession = srpp::create_session("127.0.0.1", inport,*crypto);//this is a dummy
  		cout << "Session started at " << newsession->startTime << endl;
- 		return 0;*/
+
+ 		srpp::setSendFunctor(send_rtp_message);
+ 		srpp::setReceiveFunctor(receive_rtp_message);
+
+ 		int status = srpp::start_session();
+ 		cout << "SIGNALING STATUS " << status << endl;
+
+        if(srpp::isSignalingComplete() == 0)
+        {
+        	cout << " SRPP NOT SUPPORTED AT OTHER ENDPOINT \n." << endl;
+        	srpp::disable_srpp();
+        	srpp::stop_session();
+
+        	//stop_discovering
+        	return -1;
+
+        }
+        else
+        {
+        	srpp::enable_srpp();
+        }
+
+ 		/*char data[40];
+ 		for (int i = 0; i < 120 ; i++)
+		{
+			sprintf(data,"Test message no. %d", i);
+
+			//Pad it and make a SRPP message
+			SRPPMessage srpp_msg = srpp::create_srpp_message(data);
+			//send it through
+			srpp::send_message(&srpp_msg);
+
+			cout << "..Sending packet with data " << data << "..." << endl;
+
+		}
+*/
+		return 0;
 
  	}
 
@@ -540,6 +667,10 @@ namespace sqrkal_discovery {
 			//srpp::stop_session();
 			add_all_rtp_rules(0,1); //remove rtp rules
 			is_session_on = 0;
+
+			if(apply_srpp == 1)
+				srpp::stop_session();
+
 			saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
 
@@ -548,10 +679,8 @@ namespace sqrkal_discovery {
 		{ /** CHECK for 400 error message **/
 
 			//stop the session
-			cout << "GOT A 400 error message. Stopping the session.\n";
-
+			//cout << "GOT A 400 error message. Stopping the session.\n";
 			//srpp::stop_session();
-
 			//is_session_on = 0;
 			//saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
@@ -618,48 +747,47 @@ namespace sqrkal_discovery {
 			cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
 
 			//start rtp session
-		     if (is_session_on == 0 && saw_invite_already != 0)
+		     if (saw_invite_already != 0)
 		     {
-			if ((!inport || !outport) )
-				{cout << "Donot have both ports info.. IN:" << inport << " OUT :" << outport << "\n"; return -100;}
-			else
-			{
-				cout << "BOTH ports info.. IN:" << inport << " OUT :" << outport << "\n";
-				cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
-
-
-
-				//if (srpp::start_session() >= 0)
+				if ((!inport || !outport) )
+					{cout << "Donot have both ports info.. IN:" << inport << " OUT :" << outport << "\n"; return -100;}
+				else
 				{
-					//newsession->srpp_timer->pauseTimer();
-					rtp_ports.push_back(inport);
-					rtp_ports.push_back(outport);
+					cout << "BOTH ports info.. IN:" << inport << " OUT :" << outport << "\n";
+					cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
 
-					add_all_rtp_rules(1,1);
-					is_session_on = 1;
+					// Get the receiver address from c=IN IP4...
+						unsigned int l,m;
+						if ((l = message.find("c=IN IP4 ")) != string::npos)
+						{
+							m = message.find_first_of(" \n",l+9);
+
+							if (direction == 0) // INwards
+							{
+								rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
+							}
+							else
+							{
+								rtp_src = inet_addr((message.substr(l+9,m-l-9)).c_str());
+							}
+						}
+
+						rtp_ports.push_back(inport);
+						rtp_ports.push_back(outport);
+
+						add_all_rtp_rules(1,1);
+
+						if (is_session_on == 0 )
+						{
+							if (start_SRPP() >= 0)
+							{
+								apply_srpp = 1;
+							}
+						}
+						is_session_on = 1;
+
 				}
-
-				// Get the receiver address from c=IN IP4...
-				unsigned int l,m;
-				if ((l = message.find("c=IN IP4 ")) != string::npos)
-				{
-					m = message.find_first_of(" \n",l+9);
-
-					if (direction == 0) // INwards
-					{
-						rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
-						cout << "RTP RTP RTP RTP: " << message.substr(l+9,m-l-9) << endl;
-					}
-					else
-					{
-						rtp_src = inet_addr((message.substr(l+9,m-l-9)).c_str());
-					}
-				}
-
-
-
-			}
-		   }
+			   }
 
 			saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
@@ -1030,10 +1158,10 @@ namespace sqrkal_discovery {
 		  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
 				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
 
-			 if (direction == 1){}
+			/* if (direction == 1){}
 					//cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
 			 else
-					cout << "INWARDS     <<<<<<<<<<<<-------------\n";
+					cout << "INWARDS     <<<<<<<<<<<<-------------\n";*/
 
 			if (direction == 0) // COMING IN
 			{
@@ -1042,13 +1170,18 @@ namespace sqrkal_discovery {
 				if (is_srtp == 0)
 				{
 					cout << " WE RECEIVED A RTP PACKET\n";
-					//run srpp_to_rtp
-
+					if (apply_srpp == 1)
+					{
+						//run srpp_to_rtp,
+					}
 				}
 				else
 				{
 					cout << " WE RECEIVED A SRTP PACKET\n";
-					//run srpp to srtp
+					if (apply_srpp == 1)
+					{
+						//run srpp to srtp
+					}
 				}
 
 				//send it forward
@@ -1089,12 +1222,18 @@ namespace sqrkal_discovery {
 				if (is_srtp == 0)
 				{
 					cout << " WE SENT A RTP PACKET\n";
-					//run rtp to srpp
+					if (apply_srpp == 1)
+					{
+						//run rtp to srpp
+					}
 				}
 				else
 				{
 					cout << " WE SENT A SRTP PACKET\n";
-					//run srtp to srpp
+					if (apply_srpp == 1)
+					{
+						//run srtp to srpp
+					}
 				}
 
 				//send forward
@@ -1110,6 +1249,10 @@ namespace sqrkal_discovery {
 
 				// MANGLE THE PACKET
 				ipHdr->ttl = 65;
+
+				//set rtp_header
+				if (rtp_hdset == 0)
+				{memcpy(rtp_header,buff,28);rtp_hdset=1;}
 
 				// RECALCULATE THE CHECKSUM
 				form_checksums((char * )buff);
@@ -1170,7 +1313,11 @@ namespace sqrkal_discovery {
 			// Read a packet from the queue
 			status = ipq_read(sqrkal_discovery_ipqh, buf, BUFSIZE, 0);
 			if (status < 0)
-				{ cerr << "ERROR while reading from ipqueue.. Exiting\n"; printf("Status:%d\n",status); return -1;}
+				{
+				cerr << "ERROR while receiving RTP from ipqueue.. Exiting for status " << status << "\n";
+				printf("Received error message %d\n",ipq_get_msgerr(buf));
+				//return -1;
+				}
 
 
 			switch (ipq_message_type(buf)) {

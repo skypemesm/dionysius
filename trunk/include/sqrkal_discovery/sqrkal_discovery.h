@@ -85,6 +85,8 @@ namespace sqrkal_discovery {
 
      /*****************             SRPP RELATED METHODS             ***************************/
 
+	//create SRPP session
+	 	int start_SRPP();
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~**/
 
