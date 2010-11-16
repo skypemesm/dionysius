@@ -178,7 +178,7 @@ public:
 			return -10;
 
 
-		int wait_count = 1000; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
+		int wait_count = 100; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
 
 		while (signaling_complete == 0)
 		{
