@@ -71,6 +71,7 @@ namespace sqrkal_discovery {
 	unsigned int rtp_dest, rtp_src;
 	char rtp_header[28];
 	int rtp_hdset = 0;
+	int frag_id = 0; // offset for fragmented packet id
 
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
@@ -465,6 +466,57 @@ namespace sqrkal_discovery {
      }
 
 
+     /** Fragments the IP message and sends it accordingly **/
+     int send_fragmented_message(char* buff,int bytes_read)
+     {
+/*			printf("###---------------------------------------\n");
+				for(int i = 0;i< 20;i++)
+					printf("%x",buff[i]);
+				printf ("\n");
+
+				for(int i = 20;i< bytes_read;i++)
+					printf("%c",buff[i]);
+				printf("\n---------------------------------------\n");*/
+
+				IP_Header* ipHdr  = (IP_Header*)(buff);
+
+				ipHdr->id = htons(15032+frag_id++);
+				ipHdr->frag_off = htons(8192);
+				ipHdr->tot_len=IP_MTU;
+
+				form_checksums((char * )buff);
+				send_raw_message((char *)buff,IP_MTU);
+
+				int bytes_left = bytes_read-IP_MTU;
+				char buff1[bytes_left+20];
+				memcpy(buff1,buff,20);//copy header
+				memcpy(buff1+20,buff+IP_MTU,bytes_left);
+
+				ipHdr  = (IP_Header*)(buff1);
+				ipHdr->frag_off = htons(185);
+				ipHdr->tot_len = bytes_left + 20;
+
+				form_checksums(buff1);
+				send_raw_message(buff1,bytes_left+20);
+
+				//-----------------------------------------------------
+	/*			for(int i = 0;i< 20;i++)
+					printf("%x",buff[i]);
+				printf ("\n");
+
+				for(int i = 20;i< IP_MTU;i++)
+					printf("%c",buff[i]);
+				printf("\n----------------\n");
+
+				for(int i = 0;i< 20;i++)
+					printf("%x",buff[i]);
+				printf( "\n");
+
+				for(int i = 20;i< bytes_left+20;i++)
+					printf("%c",buff1[i]);
+				printf("\n-------------------------###\n");*/
+     }
+
  	/**
  	 * SEND RTP Message (for dummy messages)
  	 */
@@ -518,7 +570,7 @@ namespace sqrkal_discovery {
 			if (status < 0)
 			{
 				cerr << "ERROR while receiving RTP from ipqueue.. Exiting for status " << status << "\n";
-				printf("Received error message %d\n",ipq_get_msgerr(buf)); //return SRPPMessage();
+				printf("Received error message %d\n",ipq_get_msgerr(buf)); return SRPPMessage();
 			}
 
 			switch (ipq_message_type(buf)) {
@@ -539,7 +591,7 @@ namespace sqrkal_discovery {
 				status = ipq_set_verdict(sqrkal_discovery_ipqh, m->packet_id, NF_DROP, m->data_len, buf);
 				if (status < 0) {
 					cerr << " PASSER while setting verdict for message \n ";
-					break;
+					return SRPPMessage();
 				}
 
 				// process the received packet
@@ -800,7 +852,12 @@ namespace sqrkal_discovery {
 
 			cout << " THIS IS AN INVITE MESSAGE WITH SDP \n";
 
-			cout << message << endl;
+			for(int i = 0; i < message.length(); i++)
+			{
+				printf("%c",message[i]);
+			}
+
+			//cout << message << endl;
 			// CHECK for m=audio %d RTP/AVP
 
 			saw_invite_already = 1;
@@ -881,7 +938,6 @@ namespace sqrkal_discovery {
 				if (direction == 0) // INwards
 				{
 					rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
-					cout << "RTP RTP RTP RTP: " << message.substr(l+9,m-l-9) << endl;
 				}
 				else
 				{
@@ -1125,15 +1181,20 @@ namespace sqrkal_discovery {
 				// MANGLE THE PACKET
 				//ipHdr->tos= 32;
 				ipHdr->ttl = 65;
-				//printf("%x\n",ipHdr->tos);
 
+				// Handle fragmentation if its greater than the MTU
+				if (bytes_read > IP_MTU)
+				{
+					send_fragmented_message((char*)buff,bytes_read);
+				}
+				else
+				{
+					// RECALCULATE THE CHECKSUM
+					form_checksums((char * )buff);
 
-				// RECALCULATE THE CHECKSUM
-				form_checksums((char * )buff);
-
-
-				// send raw message
-				send_raw_message((char *)buff,bytes_read);
+					// send raw message
+					send_raw_message((char *)buff,bytes_read);
+				}
 
 				//set out_addr.
 				if(direction == 0) //inside
@@ -1189,7 +1250,6 @@ namespace sqrkal_discovery {
 				struct UDP_Header* udpHdr = (struct UDP_Header*) (buff + offset);
 				udpHdr->destination = htons(inport);
 				ipHdr->daddr = rtp_src;
-				//ipHdr->daddr = inet_addr("192.168.2.6");
 
 				if (!rtp_src)
 				{	cout << " RTP SOURCE not set yet " << rtp_src << endl; ipHdr->daddr = inet_addr("127.0.0.1");}
@@ -1202,18 +1262,23 @@ namespace sqrkal_discovery {
 				// MANGLE THE PACKET
 				ipHdr->ttl = 65;
 
-				// RECALCULATE THE CHECKSUM
-				form_checksums((char * )buff);
-
 				//set out_addr.
 				out_addr.sin_addr.s_addr = ipHdr->daddr;
 				out_addr.sin_port = htons(inport);
 
-				printf("PORT %d",inport);
+				// Handle fragmentation if its greater than the MTU
+				if (bytes_read > IP_MTU)
+				{
+					send_fragmented_message((char*)buff,bytes_read);
+				}
+				else
+				{
+					// RECALCULATE THE CHECKSUM
+					form_checksums((char * )buff);
 
-				// send raw message
-				send_raw_message((char *)buff,bytes_read);
-
+					// send raw message
+					send_raw_message((char *)buff,bytes_read);
+				}
 			}
 			else
 			{
@@ -1237,7 +1302,6 @@ namespace sqrkal_discovery {
 				}
 
 				//send forward
-				//send it forward
 				//SET the IP and UDP header appropriately
 				struct UDP_Header* udpHdr = (struct UDP_Header*) (buff + offset);
 				udpHdr->destination = htons(outport);
@@ -1254,16 +1318,23 @@ namespace sqrkal_discovery {
 				if (rtp_hdset == 0)
 				{memcpy(rtp_header,buff,28);rtp_hdset=1;}
 
-				// RECALCULATE THE CHECKSUM
-				form_checksums((char * )buff);
-
 				//set out_addr.
 				out_addr.sin_addr.s_addr = rtp_dest;
 				out_addr.sin_port = htons(outport);
 
-				printf("PORT %d",outport);
-				// send raw message
-				send_raw_message((char *)buff,bytes_read);
+				// Handle fragmentation if its greater than the MTU
+				if (bytes_read > IP_MTU)
+				{
+					send_fragmented_message((char*)buff,bytes_read);
+				}
+				else
+				{
+					// RECALCULATE THE CHECKSUM
+					form_checksums((char * )buff);
+
+					// send raw message
+					send_raw_message((char *)buff,bytes_read);
+				}
 			}
 
 
@@ -1341,6 +1412,15 @@ namespace sqrkal_discovery {
 				} else
 				{
 				 //cout << "\nDROPPED QUEUED PACKET with id " << m->packet_id << endl;
+				}
+
+				if (m->data_len > 1500)
+				{
+					for(int i = 0; i < m->data_len;i++)
+					{
+						printf("%c",m->payload[i]);
+					}
+
 				}
 
 				// process the received packet

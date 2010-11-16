@@ -329,7 +329,7 @@ return -1;
 		}
 	else if (library == "jrtplib")
 		{
-			/// Get a RTPPacket Builder object and get a RTP packet and return it
+/*			/// Get a RTPPacket Builder object and get a RTP packet and return it
 			int status;
 			//string data = "abc";
 
@@ -392,7 +392,7 @@ return -1;
 			//printf("Nope:%s\n",itoa(str));
 			cout <<"This is it: " << str << endl;
 
-			return (RTPMessage *)rtp_packet;
+			return (RTPMessage *)rtp_packet;*/
 
 		}
 	}

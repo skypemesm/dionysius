@@ -17,6 +17,7 @@ using namespace std;
 namespace sqrkal_discovery {
 
 #define BUFSIZE 2048
+#define IP_MTU 1500
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 #define SIP_PROTOCOL 20
