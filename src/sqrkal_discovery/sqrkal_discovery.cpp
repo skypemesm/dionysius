@@ -620,7 +620,8 @@ namespace sqrkal_discovery {
 	{
 		 struct hostent     *he;
 		   if ((he = gethostbyname(hostname.c_str())) == NULL) {
-			cerr << "error resolving hostname.."<< hostname <<"\n";
+			cerr << "Error resolving hostname:"<< hostname << " Error No.:" << h_errno << "\n";
+			herror(hstrerror(h_errno));
 			return false;
 		   }
 
@@ -746,7 +747,7 @@ namespace sqrkal_discovery {
 				cout << "Invite not seen for us to get 200 OK or ack\n";	//return -1;
 			}
 			cout << " GOT A 200 OK OR ACK\n";
-			//cout << message << endl;
+			cout << message << endl;
 
 			//check for any SDP content and parse it
 			if(message.find("Content-Type: application/sdp") != string::npos)
@@ -799,15 +800,23 @@ namespace sqrkal_discovery {
 			cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
 
 			//start rtp session
-		     if (saw_invite_already != 0)
+		    // if (is_session_on == 0  && saw_invite_already != 0)
 		     {
 				if ((!inport || !outport) )
-					{cout << "Donot have both ports info.. IN:" << inport << " OUT :" << outport << "\n"; return -100;}
+				{
+					cout << "Donot have both ports info.. IN:" << inport << " OUT :" << outport << "\n";
+					if (saw_invite_already != 0)
+						return -100;
+					else
+						return 0;
+				}
 				else
 				{
 					cout << "BOTH ports info.. IN:" << inport << " OUT :" << outport << "\n";
 					cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
 
+					if (is_session_on == 0  && saw_invite_already != 0)
+					{
 					// Get the receiver address from c=IN IP4...
 						unsigned int l,m;
 						if ((l = message.find("c=IN IP4 ")) != string::npos)
@@ -817,6 +826,7 @@ namespace sqrkal_discovery {
 							if (direction == 0) // INwards
 							{
 								rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
+								cout << "RTPRTP:" << rtp_dest << "\n";
 							}
 							else
 							{
@@ -829,10 +839,11 @@ namespace sqrkal_discovery {
 
 						add_all_rtp_rules(1,1);
 
-						if (is_session_on == 0 )
-						{
+
 							if (start_SRPP() >= 0)
 							{
+
+								cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
 								apply_srpp = 1;
 							}
 						}
@@ -841,6 +852,7 @@ namespace sqrkal_discovery {
 				}
 			   }
 
+		    //rtp_dest = inet_addr("213.192.59.91");
 			saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
 			cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
@@ -851,12 +863,6 @@ namespace sqrkal_discovery {
 		{    /** check for invite and SDP message **/
 
 			cout << " THIS IS AN INVITE MESSAGE WITH SDP \n";
-
-			for(int i = 0; i < message.length(); i++)
-			{
-				printf("%c",message[i]);
-			}
-
 			//cout << message << endl;
 			// CHECK for m=audio %d RTP/AVP
 
@@ -938,6 +944,7 @@ namespace sqrkal_discovery {
 				if (direction == 0) // INwards
 				{
 					rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
+					cout << "RTPRTP:" << rtp_dest << "\n";
 				}
 				else
 				{
