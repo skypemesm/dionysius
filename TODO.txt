@@ -1,19 +1,15 @@
 
-- Threading
 - GUI
 - Encryption Profiles and algorithms
-- Key Exchange
 
 - Doxygen intro.txt
-- Authentication
-- Discovery
 
 
 ------------
 * Remove fake encryption + member in SRPPEncrypted
 * Remove constraints on CSRC and padding.
-* Remove constraint on Endian-ness
 * Remove strings etc, and use enums
 * Use /dev/random instead of rand()
 * matching of signalling options  (parameter negotiation)
-* Finalize the payload type of the message;
+
+* Remove SIGALARM for CTRL+C in stop_session

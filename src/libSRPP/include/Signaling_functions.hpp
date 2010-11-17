@@ -179,6 +179,8 @@ public:
 
 
 		int wait_count = 100; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
+		SRPPMessage srpp_dummy;
+		srpp::receive_message();
 
 		while (signaling_complete == 0)
 		{
@@ -227,7 +229,7 @@ public:
 		helloacksent = 1;
 
 		if (signaling_complete == 0)
-			srpp::receive_message();
+			SRPPMessage srpp_dummy = srpp::receive_message();
 
 		// If we do not get a message within a timeout, then signaling failed.
 

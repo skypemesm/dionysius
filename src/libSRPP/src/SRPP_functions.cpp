@@ -305,28 +305,28 @@ int send_external = 0, receive_external = 0;
 	// Only create a SRPP Message and return it.
 	SRPPMessage create_srpp_message(string data){
 
-		SRPPMessage* srpp_msg = new SRPPMessage();
+		SRPPMessage srpp_msg;
 
 		//put data, if any, in the payload
 		if(!data.empty())
-		{		srpp_msg->encrypted_part.original_payload = vector<char>(data.begin(),data.end());	}
+		{		srpp_msg.encrypted_part.original_payload = vector<char>(data.begin(),data.end());	}
 
-		return *srpp_msg;
+		return srpp_msg;
 
 	}
 
 	// Only create a RTP Message and return it.
 		RTPMessage create_rtp_message(string data){
 
-			RTPMessage* rtp_msg = new RTPMessage();
+			RTPMessage rtp_msg;
 
 			//put data, if any, in the payload
 			if(!data.empty())
-				data.copy((rtp_msg->payload),data.length(),0);
+				data.copy((rtp_msg.payload),data.length(),0);
 
-			rtp_msg->payload[data.length()] = '\0';
+			rtp_msg.payload[data.length()] = '\0';
 
-			return *rtp_msg;
+			return rtp_msg;
 
 		}
 
