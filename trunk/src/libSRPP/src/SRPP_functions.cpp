@@ -568,7 +568,7 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
 	  SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
 	  	SRPPHeader srpp_header = *srpp_header1;
 
-	  	cout << "PAYLOAD TYPE :" << srpp_header.pt << "SIGNALING:" << srpp_header.srpp_signalling << "\n";
+	  	cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
 
 	  if (srpp_header.srpp_signalling == 0 and srpp_header.pt != 124) //NOT A SIGNALING MESSAGE
  		 return -1;

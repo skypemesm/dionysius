@@ -209,9 +209,9 @@ namespace sqrkal_discovery {
 
 	    // All rules added/deleted successfully - set flags
 	   if (is_adding)
-		   { rtp_added =1; cout << "FIREWALL rules added\n";}
+		   { rtp_added =1; cout << "FIREWALL rules added for RTP traffic \n";}
 	   else
-		    { rtp_added =0; cout << "FIREWALL rules removed\n";}
+		    { rtp_added =0; cout << "FIREWALL rules removed for RTP traffic \n";}
 
 	    return 0;
 	}
@@ -451,7 +451,7 @@ namespace sqrkal_discovery {
 		 printf("%c",buff[i]);
 	}
 
-	cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+	//cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
 
 	/*
 	in_addr abc;
@@ -552,7 +552,7 @@ namespace sqrkal_discovery {
 			 printf("%c",buff[i]);
 		}
 
-		cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		//cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
 
 		return byytes;
    	  }
@@ -567,7 +567,7 @@ namespace sqrkal_discovery {
 			unsigned char* buf = new unsigned char[BUFSIZE];
 
 			// Read a packet from the queue
-			int timeout = 120000000; // 2 minute
+			int timeout = 300000000; // 5 minute
 			int status = ipq_read(sqrkal_discovery_ipqh, buf, BUFSIZE, timeout);
 			if (status < 0)
 			{
@@ -603,9 +603,9 @@ namespace sqrkal_discovery {
 
 				// process the received packet
 				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
-					{cout <<"Signaling"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
+					{cout <<"Signaling\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
 				else
-					{cout <<"Not Signaling";process_packet(m->payload, m->data_len);cout << "NOT Sig\n";break;}
+					{cout <<"Not Signaling\n";process_packet(m->payload, m->data_len);break;}
 
 
 			}
@@ -657,8 +657,19 @@ namespace sqrkal_discovery {
  	//create SRPP session
  	int start_SRPP()
  	{
+ 		time_t start_time;
+ 		//get present date time
+		struct tm * timeinfo;
+		time ( &start_time );
+		timeinfo = localtime ( &start_time );
+		cout << "Signaling Started at " << asctime(timeinfo) << endl;
+
  		int status = srpp::start_session();
  		cout << "SIGNALING STATUS " << status << endl;
+
+		time ( &start_time );
+		timeinfo = localtime ( &start_time );
+		cout << "Signaling Ended at " << asctime(timeinfo) << endl;
 
         if(srpp::isSignalingComplete() == 0)
         {
@@ -694,17 +705,12 @@ namespace sqrkal_discovery {
  	}
 
 
-
-
-
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~**/
 
 
 
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL PROCESSING FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
-
-
 
 
     /**
@@ -716,9 +722,6 @@ namespace sqrkal_discovery {
 		 * In order to reduce the overhead due to this processing, I am performing greedy parsing inside of applying the whole header.
 		 * and applying SIP state machine. Instead I am searching for string relevant to the requirements - a] RTP port
 		 */
-		//cout << "Parse the received SIP MESSAGE" << endl;
-
-		//cout << "MESSAGE \n" << message << "\n";
 
 		/******************************************************************************************/
 		//    CHECK FOR TYPE OF SIP MESSAGE (worry only about INVITE, (200 OK OR ACK) and BYE)
@@ -727,8 +730,7 @@ namespace sqrkal_discovery {
 		if (message.find("BYE ") !=string::npos)
 		{
 			//stop our session
-			cout << "GOT A BYE.. stop our session\n";
-			//srpp::stop_session();
+			cout << "\nGOT A BYE.. stop our session\n";
 			add_all_rtp_rules(0,1); //remove rtp rules
 			is_session_on = 0;
 
@@ -755,9 +757,10 @@ namespace sqrkal_discovery {
 
 			if (saw_invite_already == 0)
 			{
-				cout << "Invite not seen for us to get 200 OK or ack\n";	//return -1;
+				//cout << "Invite not seen for us to get 200 OK or ack\n";	//return -1;
 			}
-			cout << " GOT A 200 OK OR ACK\n";
+
+			cout << "\n GOT A 200 OK OR ACK\n";
 			//cout << message << endl;
 
 			//check for any SDP content and parse it
@@ -808,17 +811,17 @@ namespace sqrkal_discovery {
 
 
 			}
-			cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
+			//cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
 
 			//start rtp session
 		    // if (is_session_on == 0  && saw_invite_already != 0)
 		     {
 				if ((!inport || !outport) )
 				{
-					cout << "Donot have both ports info.. IN:" << inport << " OUT :" << outport << "\n";
-					if (saw_invite_already != 0)
+					cout << "Do not have both ports info.. IN:" << inport << " OUT :" << outport << "\n";
+					/*if (saw_invite_already != 0)
 						return -100;
-					else
+					else*/
 						return 0;
 				}
 				else
@@ -838,7 +841,6 @@ namespace sqrkal_discovery {
 							if (direction == 0) // INwards
 							{
 								rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
-								//cout << "RTPRTP:" << rtp_dest << "\n";
 							}
 							else
 							{
@@ -851,7 +853,6 @@ namespace sqrkal_discovery {
 
 						add_all_rtp_rules(1,1);
 
-						cout << message << endl << endl;
 						must_start_srpp = true;
 
 					}
@@ -862,19 +863,19 @@ namespace sqrkal_discovery {
 
 		    saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
-			cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
+			//cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
 
 
 		}
 		else if (message.find("INVITE sip:") != string::npos && message.find("Content-Type: application/sdp") != string::npos)
 		{    /** check for invite and SDP message **/
 
-			cout << " THIS IS AN INVITE MESSAGE WITH SDP \n";
+			cout << "\n THIS IS AN INVITE MESSAGE WITH SDP \n";
 			//cout << message << endl;
-			// CHECK for m=audio %d RTP/AVP
 
 			saw_invite_already = 1;
 
+			// CHECK for m=audio %d RTP/AVP
 			unsigned int l,m;
 			if ((l = message.find("m=audio ")) != string::npos)
 			{
@@ -895,7 +896,7 @@ namespace sqrkal_discovery {
 			//check for srtp i.e RTP/SAVP
 			if (l = message.find("RTP/SAVP ",m) != string::npos)
 			{
-				cout << "SRTP"; printf(" %d %d\n",l,m);
+				cout << "SRTP";
 				is_srtp = 1;
 			}
 			else if (l = message.find("RTP/AVP ",m) != string::npos)
@@ -927,7 +928,7 @@ namespace sqrkal_discovery {
 			m = message.find("@",l+11);
 			l = message.find(" ",m);
 			string hostname = "sip."+message.substr(m+1,l-m-1);
-			cout << "SETTING DESTINATION ADDRESS TO SERVER:" << hostname << endl;
+			//cout << "SETTING DESTINATION ADDRESS TO SERVER:" << hostname << endl;
 
 
 			/* resolve hostname to an IP  */
@@ -951,7 +952,6 @@ namespace sqrkal_discovery {
 				if (direction == 0) // INwards
 				{
 					rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
-					//cout << "RTPRTP:" << rtp_dest << "\n";
 				}
 				else
 				{
@@ -1242,13 +1242,13 @@ namespace sqrkal_discovery {
 		  abc1.s_addr = ipHdr->daddr;
 
   		  cout << "\n---------------------------------------------------------------\n";
-		  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
-				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
+		  //cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
+			//	 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
 
-			/* if (direction == 1){}
-					//cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
+			 if (direction == 1)
+					cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
 			 else
-					cout << "INWARDS     <<<<<<<<<<<<-------------\n";*/
+					cout << "INWARDS     <<<<<<<<<<<<-------------\n";
 
 			if (direction == 0) // COMING IN
 			{

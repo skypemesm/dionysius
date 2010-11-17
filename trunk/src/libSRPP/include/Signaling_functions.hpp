@@ -178,13 +178,16 @@ public:
 			return -10;
 
 
-		int wait_count = 100; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
+		int wait_count = 2*60000; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
+								// Avg. 2 mins
 		SRPPMessage srpp_dummy;
 		srpp::receive_message();
 
 		while (signaling_complete == 0)
 		{
 			srpp::receive_message();
+			//cout << "Wait count:" << wait_count << endl;
+
 			if (wait_count-- == 0)
 				return -1;
 
