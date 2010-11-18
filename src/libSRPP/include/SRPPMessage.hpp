@@ -17,7 +17,7 @@
 #include <netinet/in.h>
 
 #ifndef MAXPAYLOADSIZE
-	#define MAXPAYLOADSIZE     16384           // 16384 bytes
+	#define MAXPAYLOADSIZE     1464 //16384           // 16384 bytes
 #endif
 
 using namespace std;
@@ -90,7 +90,7 @@ public:
     		  srpp_header.version = 2;
     		  srpp_header.p = 0;
     		  srpp_header.x = 1;
-    		  srpp_header.cc = 15;
+    		  srpp_header.cc = htons(15);
     		  srpp_header.m = 0;
     		  srpp_header.pt = 121;
     		  srpp_header.seq = ++lastSequenceNo;
@@ -121,12 +121,26 @@ public:
 
 	    *srpp_header1 = srpp_header;
 
+	    cout << "---------------------------------------------------------------------------------\n";
+	   		 cout << "SRPP Header:" << endl;
+	   		 cout << "Version: " << srpp_header.version << endl ;
+	   		 cout << "Padding bit: " <<  srpp_header.p << endl;
+	   		 cout << "Extension bit: " <<  srpp_header.x << endl;
+	   		 cout << "CC bit: " <<  srpp_header.cc << endl;
+	   		 cout << "Marking bit: " <<  srpp_header.m << endl;
+	   		 cout << "Sequence Number: " <<  srpp_header.seq << endl;
+	   		 cout << "TimeStamp: " <<  srpp_header.ts << endl;
+	   		 cout << "SSRC: " <<  srpp_header.ssrc << endl;
+	   	cout << "--- Before\n\n";
+
 	    //----------FORMAT NETWORK BYTE ORDER TO INTS-------------
 	    srpp_header1->seq = htons(srpp_header.seq);
 	    srpp_header1->ts = htonl(srpp_header.ts);
 	    srpp_header1->ssrc = htonl(srpp_header.ssrc);
 
-	    for (int i = 0; i< srpp_header.cc; i++)
+	    cout << "CC:" << ntohs(srpp_header.cc) <<":" << srpp_header.cc << endl;
+
+	    for (int i = 0; i< ntohs(srpp_header.cc); i++)
 	    	srpp_header1->csrc[i] = htonl(srpp_header.csrc[i]);
 
 	    srpp_header1->defined_by_profile = htons(srpp_header.defined_by_profile);
@@ -317,9 +331,13 @@ public:
 		 cout << "Original Payload: " <<  str << endl;
 
 		  // Print the padding bits
-		 /*string str_pad (encrypted_part.srpp_padding.begin(), encrypted_part.srpp_padding.end());
+		 string str_pad (encrypted_part.srpp_padding.begin(), encrypted_part.srpp_padding.end());
 		 cout << "SRPP Padding bits: " <<  str_pad << endl;
-		 */
+
+		 cout << "Defined by Profile: " <<  srpp_header.defined_by_profile << endl;
+		 cout << "Extension: " <<  srpp_header.extension_header << endl;
+		 cout << "Signaling:" << srpp_header.srpp_signalling << endl;
+
 		  //Print the flags
 
 		 cout << "Pad count: " <<  encrypted_part.pad_count << endl;
@@ -328,8 +346,7 @@ public:
 		 cout << "Dummy Flag: " <<  encrypted_part.dummy_flag << endl;
 
 		  //Print the authentication tag
-
-		   cout << "Authenticaion Tag: " <<  authentication_tag << endl;
+		   cout << "Authentication Tag: " <<  authentication_tag << endl;
 			 cout << "---------------------------------------------------------------------------------\n\n";
 
 			 return 0;
