@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int lastSequenceNo = 0;
+int lastSequenceNo = 10000;
 int maxpacketsize = MAXPAYLOADSIZE;
 uint32_t srppssrc = srpp::srpp_rand(2^17,2^32);
 int rtpSequenceNo = 0, srtpSequenceNo = 0;
@@ -164,8 +164,8 @@ int send_external = 0, receive_external = 0;
 
 		srpp_msg.srpp_header.version = rtp_msg->rtp_header.version;
 		srpp_msg.encrypted_part.original_padding_bit = rtp_msg->rtp_header.p;
-		//srpp_msg.srpp_header.cc = rtp_msg->rtp_header.cc;
-		//srpp_msg.srpp_header.x = rtp_msg->rtp_header.x;
+		srpp_msg.srpp_header.cc = rtp_msg->rtp_header.cc;
+		srpp_msg.srpp_header.x = rtp_msg->rtp_header.x;
 		srpp_msg.srpp_header.m = rtp_msg->rtp_header.m;
 		srpp_msg.encrypted_part.original_seq_number = rtp_msg->rtp_header.seq;
 		srpp_msg.srpp_header.pt = rtp_msg->rtp_header.pt;

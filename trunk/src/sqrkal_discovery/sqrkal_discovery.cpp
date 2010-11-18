@@ -537,9 +537,23 @@ namespace sqrkal_discovery {
 		char * point = new char[BUFSIZE];
 
 		//Add headers
+		if (rtp_hdset == 0)
+			{cout << "NO RTP HEADER AVAILABLE?? THAT's BIZZARRE. BIG BUG.\n"; exit(-1);}
+
 		memcpy(point,rtp_header,28);
-		point += 28;
-		memcpy(point,buff,length);
+
+		IP_Header* ipHdr  = (IP_Header*) point;
+		struct UDP_Header* udpHdr = (struct UDP_Header*)(point + 20);
+		udpHdr->destination = htons(inport);
+		udpHdr->destination = htons(outport);
+		ipHdr->daddr = rtp_dest;
+		ipHdr->saddr = rtp_src;
+		udpHdr->length = htons(length+8);
+		ipHdr->tot_len = htons(length+28);
+
+		rtp_hdset = 2;
+
+		memcpy(point+28,buff,length);
 
 		// RECALCULATE THE CHECKSUM
 		form_checksums((char * )point);
@@ -559,7 +573,9 @@ namespace sqrkal_discovery {
 			 printf("%c",buff[i]);
 		}
 
-		//cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		for (int i = 0; i<length;i++)
+			 printf("%c",buff[i]);
 
 		return byytes;
    	  }
@@ -764,7 +780,7 @@ namespace sqrkal_discovery {
 		else if (message.find("200 OK") != string::npos || message.find("ACK ") != string::npos )
 		{     		/** check if I received a 200 OK or a ACK message **/
 
-			cout << "\n GOT A 200 OK OR ACK\n";
+			cout << "\nGOT A 200 OK OR ACK\n";
 			//cout << message << endl;
 
 			//check for any SDP content and parse it
@@ -812,64 +828,49 @@ namespace sqrkal_discovery {
 					is_srpp = 1;
 				}
 
+			} // end of has-sdp check
 
-
-
-			//cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
 
 			//start rtp session
-		    // if (is_session_on == 0  && saw_invite_already != 0)
-		     {
-				if ((!inport || !outport) )
-				{
-					cout << "Do not have both ports info.. IN:" << inport << " OUT :" << outport << "\n";
-					/*if (saw_invite_already != 0)
-						return -100;
-					else*/
-						return 0;
-				}
-				else
-				{
-					cout << "BOTH ports info.. IN:" << inport << " OUT :" << outport << "\n";
+			if ((!inport || !outport) )
+			{
+				cout << "Do not have both ports info.. IN:" << inport << " OUT :" << outport << "\n";
+				return 0;
+			}
 
-					if (is_session_on == 0  && saw_invite_already != 0)
+			cout << "BOTH ports info present.. IN:" << inport << " OUT :" << outport << "\n";
+
+			if (is_session_on == 0  && saw_invite_already != 0)
+			{
+				cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
+
+				// Get the receiver address from c=IN IP4...
+				unsigned int l,m;
+				if ((l = message.find("c=IN IP4 ")) != string::npos)
+				{
+					m = message.find_first_of(" \n",l+9);
+
+					if (direction == 0) // INwards
 					{
-						cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
-
-						// Get the receiver address from c=IN IP4...
-						unsigned int l,m;
-						if ((l = message.find("c=IN IP4 ")) != string::npos)
-						{
-							m = message.find_first_of(" \n",l+9);
-
-							if (direction == 0) // INwards
-							{
-								rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
-							}
-							else
-							{
-								rtp_src = inet_addr((message.substr(l+9,m-l-9)).c_str());
-							}
-						}
-
-						rtp_ports.push_back(inport);
-						rtp_ports.push_back(outport);
-
-						add_all_rtp_rules(1,1);
-
-						must_start_srpp = true;
-
+						rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
 					}
-						is_session_on = 1;
-
+					else
+					{
+						rtp_src = inet_addr((message.substr(l+9,m-l-9)).c_str());
+					}
 				}
-			   }
+
+				rtp_ports.push_back(inport);
+				rtp_ports.push_back(outport);
+
+				add_all_rtp_rules(1,1);
+
+				must_start_srpp = true;
+				is_session_on = 1;
+			}
 
 		     saw_invite_already = 0;
 		     out_addr.sin_addr.s_addr = last_out_dest;
-
-
-			} // end of has-sdp check
 
 			return 0;
 
@@ -1238,6 +1239,11 @@ namespace sqrkal_discovery {
 
 			}
 
+
+			//set rtp_header
+			if (rtp_hdset == 0)
+			{memcpy(rtp_header,buff,28);rtp_hdset=1;}
+
 		}
 
 		 // HANDLE RTP
@@ -1392,8 +1398,8 @@ namespace sqrkal_discovery {
 				ipHdr->ttl = 65;
 
 				//set rtp_header
-				if (rtp_hdset == 0)
-				{memcpy(rtp_header,buff,28);rtp_hdset=1;}
+				if (rtp_hdset == 0 || rtp_hdset == 1)
+				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 				//set out_addr.
 				out_addr.sin_addr.s_addr = rtp_dest;
