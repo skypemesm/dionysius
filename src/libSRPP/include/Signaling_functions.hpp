@@ -167,6 +167,7 @@ public:
 			{
 				hellosent = 1;
 				srpp::send_message(&srpp_msg);
+				srpp_msg.print();
 			}
 			else
 				return 0;
