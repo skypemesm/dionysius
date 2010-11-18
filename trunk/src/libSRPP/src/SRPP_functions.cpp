@@ -164,15 +164,15 @@ int send_external = 0, receive_external = 0;
 
 		srpp_msg.srpp_header.version = rtp_msg->rtp_header.version;
 		srpp_msg.encrypted_part.original_padding_bit = rtp_msg->rtp_header.p;
-		srpp_msg.srpp_header.cc = rtp_msg->rtp_header.cc;
-		srpp_msg.srpp_header.x = rtp_msg->rtp_header.x;
+		//srpp_msg.srpp_header.cc = rtp_msg->rtp_header.cc;
+		//srpp_msg.srpp_header.x = rtp_msg->rtp_header.x;
 		srpp_msg.srpp_header.m = rtp_msg->rtp_header.m;
 		srpp_msg.encrypted_part.original_seq_number = rtp_msg->rtp_header.seq;
 		srpp_msg.srpp_header.pt = rtp_msg->rtp_header.pt;
 		srpp_msg.srpp_header.ts = rtp_msg->rtp_header.ts;
 		srpp_msg.srpp_header.ssrc = rtp_msg->rtp_header.ssrc;
 
-		for (int i = 0; i<rtp_msg->rtp_header.cc; i++)
+		for (int i = 0; i< ntohs(rtp_msg->rtp_header.cc); i++)
 			srpp_msg.srpp_header.csrc[i] = rtp_msg->rtp_header.csrc[i];
 
 		srpp_msg.srpp_header.srpp_signalling = 0;
@@ -184,7 +184,7 @@ int send_external = 0, receive_external = 0;
 		srpp_msg.encrypted_part.pad_count = srpp_msg.encrypted_part.srpp_padding.size();
 
 		//Encrypt the message
-		encrypt_srpp(&srpp_msg);
+		//encrypt_srpp(&srpp_msg);
 
 		//Return
 		return srpp_msg;
@@ -222,7 +222,7 @@ int send_external = 0, receive_external = 0;
 		rtp_msg.rtp_header.ts = srpp_msg->srpp_header.ts ;
 		rtp_msg.rtp_header.ssrc= srpp_msg->srpp_header.ssrc;
 
-		for (int i = 0; i<srpp_msg->srpp_header.cc; i++)
+		for (int i = 0; i< ntohs(srpp_msg->srpp_header.cc); i++)
 			rtp_msg.rtp_header.csrc[i]= srpp_msg->srpp_header.csrc[i];
 
 
@@ -247,7 +247,7 @@ int send_external = 0, receive_external = 0;
 		srpp_msg.srpp_header.ts = srtp_msg->srtp_header.ts;
 		srpp_msg.srpp_header.ssrc = srtp_msg->srtp_header.ssrc;
 
-		for (int i = 0; i<srtp_msg->srtp_header.cc; i++)
+		for (int i = 0; i< ntohs(srtp_msg->srtp_header.cc); i++)
 			srpp_msg.srpp_header.csrc[i] = srtp_msg->srtp_header.csrc[i];
 
 		srpp_msg.srpp_header.srpp_signalling = 0;
@@ -334,6 +334,7 @@ int send_external = 0, receive_external = 0;
 	SRPPMessage encrypt_srpp(SRPPMessage * original_pkt)
 	{
 		//TODO::: USE CRYPTO
+		cout << "KEY:" << srpp_session->encryption_key << endl;
 		original_pkt->encrypt(srpp_session->encryption_key);
 		return *original_pkt;
 

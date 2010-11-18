@@ -74,6 +74,13 @@ namespace sqrkal_discovery {
 	int rtp_hdset = 0;
 	int frag_id = 0; // offset for fragmented packet id
 
+	RTPMessage* rtp_msg_p;
+	SRPPMessage* srpp_msg_p;
+	SRTPMessage* srtp_msg_p;
+	RTPMessage rtp_msg;
+	SRPPMessage srpp_msg;
+	SRTPMessage srtp_msg;
+
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
 
@@ -739,6 +746,7 @@ namespace sqrkal_discovery {
 
 			saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
+			return 0;
 
 		}
 		else if ( message.find("SIP/2.0 4") !=string::npos)   ///////TODO:handle 400 level errors correctly
@@ -750,15 +758,11 @@ namespace sqrkal_discovery {
 			//is_session_on = 0;
 			//saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
+			return 0;
 
 		}
 		else if (message.find("200 OK") != string::npos || message.find("ACK ") != string::npos )
 		{     		/** check if I received a 200 OK or a ACK message **/
-
-			if (saw_invite_already == 0)
-			{
-				//cout << "Invite not seen for us to get 200 OK or ack\n";	//return -1;
-			}
 
 			cout << "\n GOT A 200 OK OR ACK\n";
 			//cout << message << endl;
@@ -788,7 +792,7 @@ namespace sqrkal_discovery {
 				//check for srtp i.e RTP/SAVP
 				if ((l = message.find("RTP/SAVP ",m) != string::npos) || (l = message.find("zrtp",m) != string::npos))
 				{
-					cout << "SRTP"; printf(" %d %d\n",l,m);
+					cout << "SRTP";
 					is_srtp = 1;
 				}
 				else if (l = message.find("RTP/AVP ",m) != string::npos)
@@ -810,7 +814,7 @@ namespace sqrkal_discovery {
 
 
 
-			}
+
 			//cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
 
 			//start rtp session
@@ -861,10 +865,13 @@ namespace sqrkal_discovery {
 				}
 			   }
 
-		    saw_invite_already = 0;
-			out_addr.sin_addr.s_addr = last_out_dest;
-			//cout << "OUT SET TO:" << inet_ntoa(out_addr.sin_addr) << endl;
+		     saw_invite_already = 0;
+		     out_addr.sin_addr.s_addr = last_out_dest;
 
+
+			} // end of has-sdp check
+
+			return 0;
 
 		}
 		else if (message.find("INVITE sip:") != string::npos && message.find("Content-Type: application/sdp") != string::npos)
@@ -965,7 +972,7 @@ namespace sqrkal_discovery {
 		else if (message.find("REGISTER sip:") != string::npos)
 		{    /** check for REGISTER message **/
 
-			//cout << " THIS IS A REGISTER MESSAGE \n";
+			cout << " THIS IS A REGISTER MESSAGE \n";
 
 			unsigned int l,m;
 			l = message.find("REGISTER sip:");
@@ -1241,7 +1248,7 @@ namespace sqrkal_discovery {
 		  abc.s_addr = ipHdr->saddr;
 		  abc1.s_addr = ipHdr->daddr;
 
-  		  cout << "\n---------------------------------------------------------------\n";
+ // 		  cout << "\n---------------------------------------------------------------\n";
 		  //cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
 			//	 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
 
@@ -1256,7 +1263,7 @@ namespace sqrkal_discovery {
 				// RECEIVING A SRPP PACKET PROCESS ACCORDINGLY
 				if (is_srtp == 0)
 				{
-					cout << " WE RECEIVED A RTP PACKET\n";
+//					cout << " WE RECEIVED A RTP PACKET\n";
 					if (apply_srpp == 1)
 					{
 						//run srpp_to_rtp,
@@ -1264,7 +1271,7 @@ namespace sqrkal_discovery {
 				}
 				else
 				{
-					cout << " WE RECEIVED A SRTP PACKET\n";
+//					cout << " WE RECEIVED A SRTP PACKET\n";
 					if (apply_srpp == 1)
 					{
 						//run srpp to srtp
@@ -1275,15 +1282,22 @@ namespace sqrkal_discovery {
 				//SET the IP and UDP header appropriately
 				struct UDP_Header* udpHdr = (struct UDP_Header*) (buff + offset);
 				udpHdr->destination = htons(inport);
+				//udpHdr->length = htons(bytes_read+8);
+				//ipHdr->tot_len = htons(bytes_read+28);
+
 				ipHdr->daddr = rtp_src;
+
 
 				if (!rtp_src)
 				{	cout << " RTP SOURCE not set yet " << rtp_src << endl; ipHdr->daddr = inet_addr("127.0.0.1");}
 
 				abc.s_addr = ipHdr->saddr;
-				cout << "SRC: " << inet_ntoa(abc) << endl;
+//				cout << "SRC: " << inet_ntoa(abc) << endl;
 				abc1.s_addr = ipHdr->daddr;
-				cout << "DST: " << inet_ntoa(abc1) << endl;
+//				cout << "DST: " << inet_ntoa(abc1) << endl;
+
+				udpHdr->length = htons(bytes_read-20);
+				ipHdr->tot_len = htons(bytes_read);
 
 				// MANGLE THE PACKET
 				ipHdr->ttl = 65;
@@ -1312,15 +1326,50 @@ namespace sqrkal_discovery {
 				// PAD IT AND SEND SRPP PACKET ACCORDINGLY
 				if (is_srtp == 0)
 				{
-					cout << " WE SENT A RTP PACKET\n";
-					if (apply_srpp == 1)
+					/*cout << " WE SENT A RTP PACKET\n";
+					rtp_msg_p = (RTPMessage*)(buff+28);
+					rtp_msg_p->print();
+
+					srpp_msg = srpp::rtp_to_srpp(rtp_msg_p);
+					srpp_msg.print();
+
+					int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
+							srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
+
+					cout << "bytes read:" << bytes_read << " SRPP Size:" << sizeof(srpp_msg) << " Size::" << new_size << endl;
+
+					char srpp_buff[new_size];
+					srpp_msg.srpp_to_network(srpp_buff,new_size);
+
+					memcpy(buff+28,srpp_buff,new_size);
+					bytes_read = new_size;
+
+					for (int i = 28; i < BUFSIZE; i++)
+						printf("%x ", rtp_msg_p->payload[i] );
+
+					printf("\n--------\n");
+
+
+					for (int i = 0; i < srpp_msg.encrypted_part.original_payload.size(); i++)
+						printf("%x ", srpp_msg.encrypted_part.original_payload[i] );
+
+					printf("\n--------\n");
+
+					for (int i = 0; i < new_size; i++)
+						printf("%x ", srpp_buff[i] );
+
+					printf("\n--------\n");
+
+*/
+					//if (apply_srpp++ == 4)
 					{
 						//run rtp to srpp
+						//exit(0);
 					}
 				}
 				else
 				{
-					cout << " WE SENT A SRTP PACKET\n";
+//					cout << " WE SENT A SRTP PACKET\n";
 					if (apply_srpp == 1)
 					{
 						//run srtp to srpp
@@ -1333,9 +1382,11 @@ namespace sqrkal_discovery {
 				udpHdr->destination = htons(outport);
 
 				 abc.s_addr = ipHdr->saddr;
-				cout << "SRC: " << inet_ntoa(abc) << endl;
+//				cout << "SRC: " << inet_ntoa(abc) << endl;
 				ipHdr->saddr = ipHdr->saddr;
 				ipHdr->daddr = rtp_dest;
+				udpHdr->length = htons(bytes_read-20);
+				ipHdr->tot_len = htons(bytes_read);
 
 				// MANGLE THE PACKET
 				ipHdr->ttl = 65;
