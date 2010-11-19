@@ -554,7 +554,7 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
 
 	 if (message->srpp_header.srpp_signalling == 0 and message->srpp_header.pt != 124) //NOT A SIGNALING MESSAGE
 		 return -1;
-	 else if(message->srpp_header.srpp_signalling !=0 and message->srpp_header.pt == 124)
+	 else if(message->srpp_header.srpp_signalling != 0 and message->srpp_header.pt == 124)
 		 return 1;
 
 	 return 0;
@@ -567,9 +567,9 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
 	  memcpy(buff,buff1,sizeof(SRPPHeader));
 
 	  SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
-	  	SRPPHeader srpp_header = *srpp_header1;
+      SRPPHeader srpp_header = *srpp_header1;
 
-	  	cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
+	  cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
 
 	  if (srpp_header.srpp_signalling == 0 and srpp_header.pt != 124) //NOT A SIGNALING MESSAGE
  		 return -1;

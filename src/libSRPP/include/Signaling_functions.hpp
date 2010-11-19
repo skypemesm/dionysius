@@ -161,11 +161,17 @@ public:
 		srpp_msg.srpp_header.srpp_signalling = 12;
 		srpp_msg.srpp_header.x = 1;
 
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			if (helloackrecvd != 1)
 			{
 				hellosent = 1;
+
+				SRPPMessage srpp_msg = srpp::create_srpp_message(options);
+				srpp_msg.srpp_header.pt = 124;
+				srpp_msg.srpp_header.srpp_signalling = 12;
+				srpp_msg.srpp_header.x = 1;
+
 				srpp::send_message(&srpp_msg);
 				srpp_msg.print();
 			}
