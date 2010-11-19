@@ -544,7 +544,7 @@ namespace sqrkal_discovery {
 
 		IP_Header* ipHdr  = (IP_Header*) point;
 		struct UDP_Header* udpHdr = (struct UDP_Header*)(point + 20);
-		udpHdr->destination = htons(inport);
+		udpHdr->source = htons(inport);
 		udpHdr->destination = htons(outport);
 		ipHdr->daddr = rtp_dest;
 		ipHdr->saddr = rtp_src;
@@ -574,8 +574,8 @@ namespace sqrkal_discovery {
 		}
 
 		cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
-		for (int i = 0; i<length;i++)
-			 printf("%c",buff[i]);
+		/*for (int i = 0; i<length;i++)
+			 printf("%c",buff[i]);*/
 
 		return byytes;
    	  }
@@ -624,11 +624,14 @@ namespace sqrkal_discovery {
 					break;
 				}
 
+				for (int i = 0; i < m->data_len; i++)
+				{printf("%c",m->payload[i]);}
+
 				// process the received packet
 				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
 					{cout <<"Signaling\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
 				else
-					{cout <<"Not Signaling\n";process_packet(m->payload, m->data_len);break;}
+					{/*cout <<"Not Signaling\n";*/process_packet(m->payload, m->data_len);break;}
 
 
 			}
@@ -865,7 +868,7 @@ namespace sqrkal_discovery {
 
 				add_all_rtp_rules(1,1);
 
-				must_start_srpp = true;
+				//must_start_srpp = true;
 				is_session_on = 1;
 			}
 
@@ -1199,6 +1202,32 @@ namespace sqrkal_discovery {
 				udpHdr->source = htons(5060);
 				udpHdr->destination = out_addr.sin_port;
 				ipHdr->daddr = out_addr.sin_addr.s_addr;
+
+				//// Hack to get working in case zrtp present
+				if (str.find("zrtp-hash") != string::npos)
+				{
+					unsigned int l = 0,m =0;
+					m=str.find("zrtp-hash");
+
+					while(m != -1)
+					{
+						l=m;
+						cout <<" POsition:" << l << "\n";
+						printf ("%c%c\n", buff[l+28], buff[l+28+1]);
+
+						buff[l+28]='m';
+						m=str.find("zrtp-hash",l+1);
+					}
+
+					for (int i = 0; i < bytes_read; i++)
+					{
+						printf("%c",buff[i]);
+					}
+					printf("\n");
+
+
+				}
+
 
 				// MANGLE THE PACKET
 				//ipHdr->tos= 32;
