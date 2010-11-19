@@ -1212,20 +1212,9 @@ namespace sqrkal_discovery {
 					while(m != -1)
 					{
 						l=m;
-						cout <<" POsition:" << l << "\n";
-						printf ("%c%c\n", buff[l+28], buff[l+28+1]);
-
 						buff[l+28]='m';
 						m=str.find("zrtp-hash",l+1);
 					}
-
-					for (int i = 0; i < bytes_read; i++)
-					{
-						printf("%c",buff[i]);
-					}
-					printf("\n");
-
-
 				}
 
 
@@ -1529,22 +1518,12 @@ namespace sqrkal_discovery {
 				 //cout << "\nDROPPED QUEUED PACKET with id " << m->packet_id << endl;
 				}
 
-				if (m->data_len > 1500)
-				{
-					for(int i = 0; i < m->data_len;i++)
-					{
-						printf("%c",m->payload[i]);
-					}
-
-				}
-
 				// process the received packet
 				process_packet(m->payload, m->data_len);
 
-
 				break;
 
-			      }
+			}
 
 
 			default:
