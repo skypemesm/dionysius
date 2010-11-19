@@ -15,12 +15,14 @@
 #include "CryptoProfile.hpp"
 #include "sqrkal_discovery.h"
 
+/*
 //Using JRTPLIB
 #include "rtppacketbuilder.h"
 #include "rtppacket.h"
 #include "rtprawpacket.h"
 #include "rtpaddress.h"
 #include "rtpipv4address.h"
+*/
 
 
 #include <iostream>

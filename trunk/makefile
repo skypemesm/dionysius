@@ -22,7 +22,6 @@ include ./Makefile.srpp_defaults
 SRPP_INC = -I src/libSRPP/include \
 		   -I include \
 		   -I include/sqrkal_discovery \
-		   -I /usr/local/include/jrtplib3/ \
 		   -I /usr/include/qt4/Qt \
 
 DEFS +=  
