@@ -184,6 +184,14 @@ namespace sqrkal_discovery {
 
 
 	    string proto = is_udp ? "udp" : "tcp";
+	    ///////// REMOVE THIS WHEN SIP PROCESSING RE-USED
+	    if (is_adding)
+	    {
+	   		if (add_firewall_rule(" -F") < 0)
+	   			cerr << " ERROR IN ADDING RULE" <<endl ;
+
+	   	}
+
 	    if (is_adding)
 			rule = "-A INPUT -p "+proto;
 	    else
@@ -498,6 +506,7 @@ namespace sqrkal_discovery {
 
 				form_checksums(buff1);
 				send_raw_message(buff1,bytes_left+20);
+
 
 				//-----------------------------------------------------
 	/*			for(int i = 0;i< 20;i++)
@@ -1463,7 +1472,8 @@ namespace sqrkal_discovery {
 		/**
 		 * AS A HACK, I AM DOING AWAY WITH THE SIP detection part.
 		 */
-		inport = 5000;
+		inport = 5000; outport = 5000;
+		rtp_dest = inet_addr("128.194.133.33");
 
 		//start socket to listen on our inward sip port 56789 and outward sip port 56790
 		int addr_len, bytes_read;
