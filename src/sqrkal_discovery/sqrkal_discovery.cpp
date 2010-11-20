@@ -395,14 +395,6 @@ namespace sqrkal_discovery {
 		buf->udp_len = htons(len);
 
 		memcpy(&(buf->data), addr, len); //copy data
-
-		cout << "BFF " << len << endl;
-		for (int i = 0; i<len; i++)
-		{
-			printf("%x ",*((char *)buf+i));
-		}
-		cout << endl;
-
 		unsigned short res = in_cksum((unsigned short *)buf, len+12);
 		delete buf;
 		return res;
@@ -458,7 +450,7 @@ namespace sqrkal_discovery {
 		 printf("%c",buff[i]);
 	}
 
-	//cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+	cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
 
 	/*
 	in_addr abc;
@@ -573,7 +565,7 @@ namespace sqrkal_discovery {
 			 printf("%c",buff[i]);
 		}
 
-		cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		cout << "\nWriting RTP " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
 		/*for (int i = 0; i<length;i++)
 			 printf("%c",buff[i]);*/
 
@@ -1204,7 +1196,7 @@ namespace sqrkal_discovery {
 				ipHdr->daddr = out_addr.sin_addr.s_addr;
 
 				//// Hack to get working in case zrtp present
-				if (str.find("zrtp-hash") != string::npos)
+				if (str.find("zrtp-hash") != string::npos && direction == 0)
 				{
 					unsigned int l = 0,m =0;
 					m=str.find("zrtp-hash");
@@ -1212,7 +1204,7 @@ namespace sqrkal_discovery {
 					while(m != -1)
 					{
 						l=m;
-						buff[l+28]='m';
+						buff[l+28]='m';buff[l+32]='o';
 						m=str.find("zrtp-hash",l+1);
 					}
 				}
