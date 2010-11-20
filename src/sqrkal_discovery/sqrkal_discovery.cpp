@@ -73,6 +73,8 @@ namespace sqrkal_discovery {
 	char rtp_header[28];
 	int rtp_hdset = 0;
 	int frag_id = 0; // offset for fragmented packet id
+	int srpp_ttl=65;
+	char srpp_ttl_s[2];
 
 	RTPMessage* rtp_msg_p;
 	SRPPMessage* srpp_msg_p;
@@ -108,7 +110,7 @@ namespace sqrkal_discovery {
 	    string proto = is_udp ? "udp" : "tcp";
 	    if (is_adding) {
 		if (add_firewall_rule(" -F") < 0)
-			cerr << " ERROR IN ADDING RULE" <<endl ;
+			cerr << " ERROR IN ADDING RULE" << endl ;
 
 	     }
 
@@ -118,7 +120,7 @@ namespace sqrkal_discovery {
 	    else
 	    	rule = "-D INPUT -p "+proto;
 
-	    rule += " --destination-port 5060 -m ttl ! --ttl-eq 65 -j QUEUE";
+	    rule = rule + " --destination-port 5060 -m ttl ! --ttl-eq " + srpp_ttl_s + " -j QUEUE";
 
 	    if ( (0 !=  add_firewall_rule(rule)) && is_adding )
 	    {
@@ -132,12 +134,12 @@ namespace sqrkal_discovery {
 	    else
 	    	rule = "-D OUTPUT -p "+proto;
 
-	    rule += " --destination-port 5060 -m ttl ! --ttl-eq 65 -j QUEUE";
+	    rule  = rule + " --destination-port 5060 -m ttl ! --ttl-eq " + srpp_ttl_s + " -j QUEUE";
 
 	    if ( (0 !=  add_firewall_rule(rule)) && is_adding )
 	    {
 			// Try to remove previous one
-	    	rule = "-D INPUT -p "+ proto + " --destination-port 5060 -m ttl ! --ttl-eq 65 -j QUEUE";
+	    	rule = "-D INPUT -p "+ proto + " --destination-port 5060 -m ttl ! --ttl-eq " + srpp_ttl_s + " -j QUEUE";
 			add_firewall_rule(rule);
 	    	return -1;
 	    }
@@ -197,7 +199,7 @@ namespace sqrkal_discovery {
 	    else
 	    	rule = "-D INPUT -p "+proto;
 
-	    rule += " --destination-port "+string(rtpport)+" -m ttl ! --ttl-eq 65 -j QUEUE";
+	    rule += " --destination-port "+string(rtpport)+" -m ttl ! --ttl-eq " + srpp_ttl_s + " -j QUEUE";
 
 	    if ( (0 !=  add_firewall_rule(rule)) && is_adding )
 	    {
@@ -211,12 +213,12 @@ namespace sqrkal_discovery {
 	    else
 	    	rule = "-D OUTPUT -p "+proto;
 
-	    rule += " --source-port "+string(rtpport)+" -m ttl ! --ttl-eq 65 -j QUEUE";
+	    rule += " --source-port "+string(rtpport)+" -m ttl ! --ttl-eq " + srpp_ttl_s + " -j QUEUE";
 
 	    if ( (0 !=  add_firewall_rule(rule)) && is_adding )
 	    {
 			// Try to remove previous one
-	    	rule = "-D INPUT -p "+ proto + " --destination-port "+string(rtpport)+" -m ttl ! --ttl-eq 65 -j QUEUE";
+	    	rule = "-D INPUT -p "+ proto + " --destination-port "+string(rtpport)+" -m ttl ! --ttl-eq " + srpp_ttl_s + " -j QUEUE";
 			add_firewall_rule(rule);
 	    	return -1;
 	    }
@@ -1221,7 +1223,7 @@ namespace sqrkal_discovery {
 
 				// MANGLE THE PACKET
 				//ipHdr->tos= 32;
-				ipHdr->ttl = 65;
+				ipHdr->ttl = srpp_ttl;
 
 				// Handle fragmentation if its greater than the MTU
 				if (bytes_read > IP_MTU)
@@ -1334,7 +1336,7 @@ namespace sqrkal_discovery {
 				ipHdr->tot_len = htons(bytes_read);
 
 				// MANGLE THE PACKET
-				ipHdr->ttl = 65;
+				ipHdr->ttl = srpp_ttl;
 
 				//set out_addr.
 				out_addr.sin_addr.s_addr = ipHdr->daddr;
@@ -1432,7 +1434,7 @@ namespace sqrkal_discovery {
 				ipHdr->tot_len = htons(bytes_read);
 
 				// MANGLE THE PACKET
-				ipHdr->ttl = 65;
+				ipHdr->ttl = srpp_ttl;
 
 				//set rtp_header
 				if (rtp_hdset == 0 || rtp_hdset == 1)
@@ -1474,6 +1476,9 @@ namespace sqrkal_discovery {
 		 */
 		inport = 5000; outport = 5000;
 		rtp_dest = inet_addr("128.194.133.33");
+
+		srpp_ttl = 65 + rand()%5;
+		sprintf(srpp_ttl_s,"%d",srpp_ttl);
 
 		//start socket to listen on our inward sip port 56789 and outward sip port 56790
 		int addr_len, bytes_read;
