@@ -65,7 +65,7 @@ namespace sqrkal_discovery {
 	int sip_port = 56789;
 
 	vector<int> sip_ports (1,5060);
-	vector<int> rtp_ports;
+	vector<int> rtp_ports (1,5000);
 
 	struct sockaddr_in out_addr, back_out_addr;
 	unsigned int last_out_dest;
@@ -1260,13 +1260,15 @@ namespace sqrkal_discovery {
 		 if (is_rtp == 1)
 		 {
 
+
+
 		  /** PRINT DETAILS ABOUT THE PACKET NOW **/
 		  abc.s_addr = ipHdr->saddr;
 		  abc1.s_addr = ipHdr->daddr;
 
- // 		  cout << "\n---------------------------------------------------------------\n";
-		  //cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
-			//	 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
+  		  cout << "\n---------------------------------------------------------------\n";
+		  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
+				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
 
 			 if (direction == 1)
 					cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
@@ -1276,10 +1278,19 @@ namespace sqrkal_discovery {
 			if (direction == 0) // COMING IN
 			{
 
+				rtp_dest = ipHdr->saddr;
+
 				// RECEIVING A SRPP PACKET PROCESS ACCORDINGLY
 				if (is_srtp == 0)
 				{
-//					cout << " WE RECEIVED A RTP PACKET\n";
+					cout << " WE RECEIVED A RTP PACKET\n";
+
+					//if we see a different port, then we start a new session
+					if(outport != saddr)
+					{
+						cout << " MUST START SRPP NOW \n";
+					}
+
 					if (apply_srpp == 1)
 					{
 						//run srpp_to_rtp,
@@ -1287,30 +1298,28 @@ namespace sqrkal_discovery {
 				}
 				else
 				{
-//					cout << " WE RECEIVED A SRTP PACKET\n";
+					cout << " WE RECEIVED A SRTP PACKET\n";
 					if (apply_srpp == 1)
 					{
 						//run srpp to srtp
 					}
 				}
 
+
 				//send it forward
 				//SET the IP and UDP header appropriately
 				struct UDP_Header* udpHdr = (struct UDP_Header*) (buff + offset);
 				udpHdr->destination = htons(inport);
-				//udpHdr->length = htons(bytes_read+8);
-				//ipHdr->tot_len = htons(bytes_read+28);
 
 				ipHdr->daddr = rtp_src;
-
 
 				if (!rtp_src)
 				{	cout << " RTP SOURCE not set yet " << rtp_src << endl; ipHdr->daddr = inet_addr("127.0.0.1");}
 
 				abc.s_addr = ipHdr->saddr;
-//				cout << "SRC: " << inet_ntoa(abc) << endl;
+				cout << "SRC: " << inet_ntoa(abc) << endl;
 				abc1.s_addr = ipHdr->daddr;
-//				cout << "DST: " << inet_ntoa(abc1) << endl;
+				cout << "DST: " << inet_ntoa(abc1) << endl;
 
 				udpHdr->length = htons(bytes_read-20);
 				ipHdr->tot_len = htons(bytes_read);
@@ -1321,6 +1330,10 @@ namespace sqrkal_discovery {
 				//set out_addr.
 				out_addr.sin_addr.s_addr = ipHdr->daddr;
 				out_addr.sin_port = htons(inport);
+
+				//set rtp_header
+				if (rtp_hdset == 0 || rtp_hdset == 1)
+				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 				// Handle fragmentation if its greater than the MTU
 				if (bytes_read > IP_MTU)
@@ -1339,11 +1352,16 @@ namespace sqrkal_discovery {
 			else
 			{
 
+				 rtp_src = ipHdr->saddr;
+
+				 if (!outport || !rtp_dest)
+						 return 0;
+
 				// PAD IT AND SEND SRPP PACKET ACCORDINGLY
 				if (is_srtp == 0)
 				{
-					/*cout << " WE SENT A RTP PACKET\n";
-					rtp_msg_p = (RTPMessage*)(buff+28);
+					cout << " WE SENT A RTP PACKET\n";
+					/*rtp_msg_p = (RTPMessage*)(buff+28);
 					rtp_msg_p->print();
 
 					srpp_msg = srpp::rtp_to_srpp(rtp_msg_p);
@@ -1385,7 +1403,7 @@ namespace sqrkal_discovery {
 				}
 				else
 				{
-//					cout << " WE SENT A SRTP PACKET\n";
+					cout << " WE SENT A SRTP PACKET\n";
 					if (apply_srpp == 1)
 					{
 						//run srtp to srpp
@@ -1398,7 +1416,7 @@ namespace sqrkal_discovery {
 				udpHdr->destination = htons(outport);
 
 				 abc.s_addr = ipHdr->saddr;
-//				cout << "SRC: " << inet_ntoa(abc) << endl;
+				cout << "SRC: " << inet_ntoa(abc) << endl;
 				ipHdr->saddr = ipHdr->saddr;
 				ipHdr->daddr = rtp_dest;
 				udpHdr->length = htons(bytes_read-20);
@@ -1441,6 +1459,12 @@ namespace sqrkal_discovery {
 	int discover_sessions()
 	{
 
+
+		/**
+		 * AS A HACK, I AM DOING AWAY WITH THE SIP detection part.
+		 */
+		inport = 5000;
+
 		//start socket to listen on our inward sip port 56789 and outward sip port 56790
 		int addr_len, bytes_read;
 		struct sockaddr_in receiver_addr , sender_addr;
@@ -1451,7 +1475,8 @@ namespace sqrkal_discovery {
 		create_sockets();
 
 		//Add the firewall rules
-		add_all_rules(1,1);
+		//add_all_rules(1,1);
+		add_all_rtp_rules(1,1);
 
 		//Initialize SRPP
 		initialize_srpp();
@@ -1462,7 +1487,7 @@ namespace sqrkal_discovery {
 		unsigned long long int start_time = 0;
 		unsigned long long int curr_time = 0;
 
-		 in_addr abc,abc1;
+		in_addr abc,abc1;
 
 		/*-------------------------------------------- DISCOVER PART ------------------------------------- */
 
@@ -1513,6 +1538,7 @@ namespace sqrkal_discovery {
 				// process the received packet
 				process_packet(m->payload, m->data_len);
 
+
 				break;
 
 			}
@@ -1533,7 +1559,8 @@ namespace sqrkal_discovery {
 		stop_discovering();
 
 		 // Remove the rules
-		 add_all_rules(0,1);
+		 //add_all_rules(0,1);
+		add_all_rtp_rules(0,1);
 
 		 close(sip_socket);
 		 ipq_destroy_handle(sqrkal_discovery_ipqh);
