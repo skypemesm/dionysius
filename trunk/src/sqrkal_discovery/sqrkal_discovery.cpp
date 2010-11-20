@@ -1302,6 +1302,41 @@ namespace sqrkal_discovery {
 						cout << " MUST START SRPP NOW \n";
 					}
 
+
+					srpp_msg_p = (SRPPMessage*)(buff+28);
+					srpp_msg_p->print();
+
+					rtp_msg = srpp::srpp_to_rtp(srpp_msg_p);
+					rtp_msg.print();
+
+					int new_size = sizeof(rtp_msg);
+
+					cout << "bytes read:" << bytes_read << " RTP Size:" << sizeof(rtp_msg) << " Size::" << new_size << endl;
+
+					char rtp_buff[new_size];
+					srpp_msg_p->network_to_srpp(rtp_buff,new_size,srpp::getKey());
+
+					//memcpy(buff+28,rtp_buff,new_size);
+					//bytes_read = new_size;
+
+					for (int i = 28; i < BUFSIZE; i++)
+						printf("%x ", rtp_msg.payload[i] );
+
+					printf("\n--------\n");
+
+
+					for (int i = 0; i < srpp_msg_p->encrypted_part.original_payload.size(); i++)
+						printf("%x ", srpp_msg_p->encrypted_part.original_payload[i] );
+
+					printf("\n--------\n");
+
+					for (int i = 0; i < new_size; i++)
+						printf("%x ", rtp_buff[i] );
+
+					printf("\n--------\n");
+
+
+
 					if (apply_srpp == 1)
 					{
 						//run srpp_to_rtp,
@@ -1372,7 +1407,7 @@ namespace sqrkal_discovery {
 				if (is_srtp == 0)
 				{
 					cout << " WE SENT A RTP PACKET\n";
-					/*rtp_msg_p = (RTPMessage*)(buff+28);
+					rtp_msg_p = (RTPMessage*)(buff+28);
 					rtp_msg_p->print();
 
 					srpp_msg = srpp::rtp_to_srpp(rtp_msg_p);
@@ -1405,7 +1440,6 @@ namespace sqrkal_discovery {
 
 					printf("\n--------\n");
 
-*/
 					//if (apply_srpp++ == 4)
 					{
 						//run rtp to srpp
