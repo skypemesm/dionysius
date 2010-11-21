@@ -25,7 +25,6 @@
 #include "sqrkal_proto_formats.hpp"
 #include "sqrkal_discovery.h"
 #include "SRPPSession.hpp"
-#include "SRPP_functions.h"
 
 
 
@@ -36,7 +35,7 @@ extern "C" {
 
 using namespace std;
 
-namespace sqrkal_discovery {
+//namespace sqrkal_discovery {
 
 
  /**
@@ -84,18 +83,20 @@ namespace sqrkal_discovery {
 	SRTPMessage srtp_msg;
 
 
+	static sqrkal_discovery* thisinstance;
+
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
 
 
 	/*************** ADD FIREWALL RULES ********************************/
-	int add_firewall_rule(string rule)
+	int sqrkal_discovery::add_firewall_rule(string rule)
 	{
 		 rule = "iptables " + rule;
 
 		 return system(rule.c_str());
 	}
 
-	int add_all_rules(int is_adding, int is_udp)
+	int sqrkal_discovery::add_all_rules(int is_adding, int is_udp)
 	{
 
 	 // cout << "PID: " << getpid() << endl;
@@ -173,7 +174,7 @@ namespace sqrkal_discovery {
 
 
 	/** THis function adds all the firewall rules for incoming and outgoing RTP/SRTP traffic **/
-	int add_all_rtp_rules(int is_adding, int is_udp)
+	int sqrkal_discovery::add_all_rtp_rules(int is_adding, int is_udp)
 	{
 	    if (is_adding && rtp_added )
 	    {
@@ -239,7 +240,7 @@ namespace sqrkal_discovery {
 	/**
 	 * Create sockets for our discovery process to forward/send/receive SIP/SDP messages
 	 */
-	int create_sockets()
+	int sqrkal_discovery::create_sockets()
 	{
 		// We need to create RAW sockets since we want to operate in a MITM mode,
 		// and we will need to form the source and destination addresses of the packets
@@ -269,7 +270,7 @@ namespace sqrkal_discovery {
 
 
 	/** STOP DISCOVERY **/
-	int stop_discovering()
+	int sqrkal_discovery::stop_discovering()
 	{
 		is_discovering = 0;
 		close(sip_socket);
@@ -278,7 +279,7 @@ namespace sqrkal_discovery {
 
 
     /** RETURNS 1 if this IP is one of the localhosts. 0 otherwise **/
-     int isLocalIP(string IP)
+     int sqrkal_discovery::isLocalIP(string IP)
      {
 
     	//uint32_t thisip = ((struct sockaddr_in )(inet_addr(IP.c_str())) )->sin_addr.s_addr;
@@ -323,7 +324,7 @@ namespace sqrkal_discovery {
       *         ONE IF PACKETS GOING OUT
       *         -1 OTHERWISE
       */
-     int get_direction(IP_Header& ipHeader)
+     int sqrkal_discovery::get_direction(IP_Header& ipHeader)
      {
 
   	 /** GET MY ADDRESS **/
@@ -369,7 +370,7 @@ namespace sqrkal_discovery {
 		unsigned char data[BUFSIZE];
 	};
 
-	unsigned short in_cksum(unsigned short *addr, int len)
+	unsigned short sqrkal_discovery::in_cksum(unsigned short *addr, int len)
 	{
 		int nleft = len;
 		int sum = 0;
@@ -394,7 +395,7 @@ namespace sqrkal_discovery {
 		return (answer);
 	}
 
-	unsigned short in_cksum_udp(int src, int dst, unsigned short *addr, int len)
+	unsigned short sqrkal_discovery::in_cksum_udp(int src, int dst, unsigned short *addr, int len)
 	{
 		struct psd_udp* buf = new struct psd_udp;
 
@@ -412,7 +413,7 @@ namespace sqrkal_discovery {
 
 
 
-	int form_checksums(char * buff)
+	int sqrkal_discovery::form_checksums(char * buff)
 	{
  	  // Get IP and UDP headers
 	  IP_Header* ipHdr  = (IP_Header*)(buff);
@@ -437,7 +438,7 @@ namespace sqrkal_discovery {
 	/**
 	 * SEND SIP/SDP Message
 	 */
-     int send_raw_message(char *buff, int length )
+     int sqrkal_discovery::send_raw_message(char *buff, int length )
      {
 
 	if (out_addr.sin_port == 0 )
@@ -477,7 +478,7 @@ namespace sqrkal_discovery {
 
 
      /** Fragments the IP message and sends it accordingly **/
-     int send_fragmented_message(char* buff,int bytes_read)
+     int sqrkal_discovery::send_fragmented_message(char* buff,int bytes_read)
      {
 /*			printf("###---------------------------------------\n");
 				for(int i = 0;i< 20;i++)
@@ -528,10 +529,11 @@ namespace sqrkal_discovery {
 				printf("\n-------------------------###\n");*/
      }
 
+
  	/**
  	 * SEND RTP Message (for dummy messages)
  	 */
-      int send_rtp_message(char *buff, int length )
+      int sqrkal_discovery::send_rtp_message(char *buff, int length )
       {
 
 		if (length <= 0)
@@ -559,7 +561,7 @@ namespace sqrkal_discovery {
 		memcpy(point+28,buff,length);
 
 		// RECALCULATE THE CHECKSUM
-		form_checksums((char * )point);
+		thisinstance->form_checksums((char * )point);
 
 
 		//set out_addr.
@@ -583,10 +585,12 @@ namespace sqrkal_discovery {
 		return byytes;
    	  }
 
+
+
       /**
        * RECEIVE RTP Message (for dummy messages)
        */
-      SRPPMessage receive_rtp_message()
+      SRPPMessage sqrkal_discovery::receive_rtp_message()
 		{
 
      	    SRPPMessage dummy;
@@ -634,7 +638,7 @@ namespace sqrkal_discovery {
 				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
 					{cout <<"Signaling\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
 				else
-					{/*cout <<"Not Signaling\n";*/process_packet(m->payload, m->data_len);break;}
+					{/*cout <<"Not Signaling\n";*/ thisinstance->process_packet(m->payload, m->data_len);break;}
 
 
 			}
@@ -644,7 +648,7 @@ namespace sqrkal_discovery {
 
 
 	/** Verify if this string is an IP ADDRESS */
-	bool isValidIpAddress(const char *ipAddress)
+	bool sqrkal_discovery::isValidIpAddress(const char *ipAddress)
 	{
 	    struct sockaddr_in sa;
 	    int result = inet_pton(AF_INET, ipAddress, &(sa.sin_addr));
@@ -653,7 +657,7 @@ namespace sqrkal_discovery {
 
 
 
-	bool resolve_and_set(string hostname)
+	bool sqrkal_discovery::resolve_and_set(string hostname)
 	{
 		 struct hostent     *he;
 		   if ((he = gethostbyname(hostname.c_str())) == NULL) {
@@ -668,7 +672,7 @@ namespace sqrkal_discovery {
 
      /*****************             SRPP RELATED METHODS             ***************************/
 
-	int initialize_srpp()
+	int sqrkal_discovery::initialize_srpp()
 	{
 		//initialize SRPP
  		srpp::init_SRPP();
@@ -678,13 +682,16 @@ namespace sqrkal_discovery {
 	    SRPPSession * newsession = srpp::create_session("127.0.0.1", inport,*crypto);//this is a dummy
  		cout << "SRPP started at " << newsession->startTime << endl;
 
+ 		//send_functor= &(this->send_rtp_message);
+ 		//receive_functor = &(this->receive_rtp_message);
+
 		srpp::setSendFunctor(send_rtp_message);
  		srpp::setReceiveFunctor(receive_rtp_message);
 
 	}
 
  	//create SRPP session
- 	int start_SRPP()
+ 	int sqrkal_discovery::start_SRPP()
  	{
  		time_t start_time;
  		//get present date time
@@ -745,7 +752,7 @@ namespace sqrkal_discovery {
     /**
      * Parse the received/sent SIP message and its SDP payload
      */
-	int parse_sip(string message, int direction){
+	int sqrkal_discovery::parse_sip(string message, int direction){
 
 		/**
 		 * In order to reduce the overhead due to this processing, I am performing greedy parsing inside of applying the whole header.
@@ -1060,7 +1067,7 @@ namespace sqrkal_discovery {
 
 
 	/** --------------- PROCESS A RECEIVED PACKET ------------------------**/
-	int process_packet( unsigned char *buff, int bytes_read)
+	int sqrkal_discovery::process_packet( unsigned char *buff, int bytes_read)
 	{
 
 		int offset;
@@ -1501,13 +1508,15 @@ namespace sqrkal_discovery {
 
 
 	/** MAIN LOOP **/
-	int discover_sessions()
+	int sqrkal_discovery::discover_sessions()
 	{
 
 
 		/**
 		 * AS A HACK, I AM DOING AWAY WITH THE SIP detection part.
+		 *
 		 */
+		//thisinstance = this;
 		inport = 5000; outport = 5000;
 		rtp_dest = inet_addr("128.194.133.33");
 
@@ -1604,15 +1613,7 @@ namespace sqrkal_discovery {
 		}
 
 
-		/****************** CLEANUP STUFF ********************************/
-		stop_discovering();
 
-		 // Remove the rules
-		 //add_all_rules(0,1);
-		add_all_rtp_rules(0,1);
-
-		 close(sip_socket);
-		 ipq_destroy_handle(sqrkal_discovery_ipqh);
 
 
 
@@ -1621,8 +1622,30 @@ namespace sqrkal_discovery {
 	}
 
 
+	//CONSTRUCTOR and DESTRUCTOR
+	sqrkal_discovery::sqrkal_discovery()
+	{
+		thisinstance = this;
+		discover_sessions();
+
+	}
+
+	sqrkal_discovery::~sqrkal_discovery()
+	{
+		/****************** CLEANUP STUFF ********************************/
+				stop_discovering();
+
+				 // Remove the rules
+				 //add_all_rules(0,1);
+				add_all_rtp_rules(0,1);
+
+				 close(sip_socket);
+				 ipq_destroy_handle(sqrkal_discovery_ipqh);
+	}
+
+
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF PROCESSING FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~**/
 
 
-} // End of namespace
+//} // End of namespace
 

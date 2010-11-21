@@ -24,7 +24,7 @@ using namespace std;
 // Main entry point
 int main(int argc, char * argv[])
 {
-	sqrkal_discovery::discover_sessions();
+	sqrkal_discovery sqrkald;
 	return 0;
 
 	if (argc < 6 )
