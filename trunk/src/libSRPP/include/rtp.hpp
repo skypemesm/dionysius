@@ -62,10 +62,10 @@ public:
 	  }
 
 	  // Convert a extract rtp packet to network format
-	  int rtp_to_network(char * buff, int length)
+	  int rtp_to_network(char * rtp_buff, int length)
 	  {
 
-		    RTP_Header* rtp_header1 = (RTP_Header *) buff;
+		    RTP_Header* rtp_header1 = (RTP_Header *) rtp_buff;
 
 		    *rtp_header1 = rtp_header;
 		    //uint16_t* thisone = (uint16_t *)rtp_header1;
@@ -83,7 +83,7 @@ public:
 
 		    // -------------------------------------------------------
 
-			char* data = (char *) &buff[sizeof(RTP_Header)-4*(15-ntohs(rtp_header.cc))];
+			char* data = (char *) (rtp_buff + sizeof(RTP_Header) - 4*(15-ntohs(rtp_header.cc)));
 
 			//copy the payload
 			memcpy(data, payload, length);
