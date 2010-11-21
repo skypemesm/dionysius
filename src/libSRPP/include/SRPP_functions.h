@@ -49,6 +49,7 @@ namespace srpp {
 
 	// convert a RTP packet to SRPP packet
 	SRPPMessage rtp_to_srpp(RTPMessage* rtp_msg);
+	SRPPMessage rtp_to_srpp(RTP_Header rtp_hdr, char* buf, int length);
 
 	//convert a SRPP packet back to RTP packet
 	RTPMessage srpp_to_rtp(SRPPMessage* srpp_msg);

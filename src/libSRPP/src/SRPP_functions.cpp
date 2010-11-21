@@ -191,6 +191,43 @@ int send_external = 0, receive_external = 0;
 
 	}
 
+	// convert a RTP packet to SRPP packet
+	SRPPMessage rtp_to_srpp(RTP_Header rtp_header, char* buff, int length){
+
+
+		//Create a SRPPMessage with the data from RTP packet
+		string str(buff,length);
+		SRPPMessage srpp_msg = create_srpp_message(str);
+
+		srpp_msg.srpp_header.version = rtp_header.version;
+		srpp_msg.encrypted_part.original_padding_bit = rtp_header.p;
+		srpp_msg.srpp_header.cc = rtp_header.cc;
+		srpp_msg.srpp_header.x = rtp_header.x;
+		srpp_msg.srpp_header.m = rtp_header.m;
+		srpp_msg.encrypted_part.original_seq_number = rtp_header.seq;
+		srpp_msg.srpp_header.pt = rtp_header.pt;
+		srpp_msg.srpp_header.ts = rtp_header.ts;
+		srpp_msg.srpp_header.ssrc = rtp_header.ssrc;
+
+		for (int i = 0; i< ntohs(rtp_header.cc); i++)
+			srpp_msg.srpp_header.csrc[i] = rtp_header.csrc[i];
+
+		srpp_msg.srpp_header.srpp_signalling = 0;
+
+		srpp_msg.encrypted_part.dummy_flag = 0;
+
+		//Pad the SRPPMessage
+		padding_functions.pad(&srpp_msg);
+		srpp_msg.encrypted_part.pad_count = srpp_msg.encrypted_part.srpp_padding.size();
+
+		//Encrypt the message
+		encrypt_srpp(&srpp_msg);
+
+		//Return
+		return srpp_msg;
+
+	}
+
 	//convert a SRPP packet back to RTP packet
 	RTPMessage srpp_to_rtp(SRPPMessage * srpp_msg){
 
