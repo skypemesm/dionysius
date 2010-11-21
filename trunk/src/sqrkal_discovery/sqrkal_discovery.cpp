@@ -1324,8 +1324,14 @@ using namespace std;
 						new_size = sizeof(rtp_msg.rtp_header)-4*(15-ntohs(rtp_msg.rtp_header.cc)) + srpp_msg.encrypted_part.original_payload.size();
 						cout << "New Size:" << new_size << "\n";
 
-						char rtp_buff[new_size];
+						char rtp_buff[new_size+10];
 						rtp_msg.rtp_to_network(rtp_buff,new_size);
+
+						for (int i = 0; i < new_size; i++)
+							printf("%x ", rtp_buff[i] );
+
+						printf("\n***************************\n");
+
 
 						memcpy(buff+28,rtp_buff,new_size);
 						bytes_read = new_size+28;
@@ -1334,10 +1340,6 @@ using namespace std;
 							printf("%x ", rtp_msg.payload[i] );
 
 						printf("\n--------\n");*/
-						for (int i = 0; i < new_size; i++)
-							printf("%x ", rtp_buff[i] );
-
-						printf("\n***************************\n");
 
 						if (apply_srpp == 1)
 						{
@@ -1517,6 +1519,7 @@ using namespace std;
 		 *
 		 */
 		inport = 5000; outport = 5000;
+		rtp_dest = inet_addr("128.194.133.33");
 
 		srpp_ttl = 65 + rand()%25 + rand()%5;
 		sprintf(srpp_ttl_s,"%d",srpp_ttl);

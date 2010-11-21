@@ -194,8 +194,8 @@ public:
     */
    int network_to_srpp(char * buff, int bytes, int key)
 	  {
-/*
-	   for (int i = 0; i<bytes; i++)
+
+	   /*for (int i = 0; i<bytes; i++)
 		   printf("%x ",buff[i]);*/
 
 	   SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
@@ -231,13 +231,13 @@ public:
 		//copy other bits
 		memcpy((char *)&encrypted_part.pad_count, (const char *)thisnow, 8);
 
-		printf("Pad Count: %d\n",encrypted_part.pad_count);
+		//printf("Pad Count: %d\n",encrypted_part.pad_count);
 
 		if (srpp_header.srpp_signalling == 0 && key > 0){
 			encrypted_part.pad_count ^= key;
 		}
 
-		//printf("Pad Count: %d\n",encrypted_part.pad_count);
+		printf("Pad Count: %d\n",encrypted_part.pad_count);
 		if(encrypted_part.pad_count < 0 || encrypted_part.pad_count > 1500)
 			{cout << "NOT A SRPP Packet\n\n"; return -1;}
 
