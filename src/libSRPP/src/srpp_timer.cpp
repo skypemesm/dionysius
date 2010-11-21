@@ -67,7 +67,7 @@ using namespace std;
 	{
 		pauseTimer();
 		cout << "All SRPP Timers stopped..." << endl;
-		signal(SIGINT,SIG_DFL);
+		//signal(SIGINT,SIG_DFL);
 	}
 
 	//Constructor
@@ -114,7 +114,7 @@ using namespace std;
 			  cerr << " ERROR: Unable to set the Timer ... " << endl;
 
 		  signal(SIGALRM,timer_fired);
-		  signal(SIGINT,SRPPTimer::stopTimer);
+		  //signal(SIGINT,SRPPTimer::stopTimer);
 			return 0;
 }
 

@@ -43,6 +43,7 @@ namespace srpp {
 
 	//stops the srpp session
 	int stop_session();
+	void stop_abnormally(int i);
 
 	//Signaling start
 	int signaling();
