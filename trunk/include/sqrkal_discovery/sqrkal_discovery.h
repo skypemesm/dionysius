@@ -11,10 +11,10 @@
 #include <iostream>
 #include <string>
 #include "sqrkal_proto_formats.hpp"
+#include "SRPP_functions.h"
 
 using namespace std;
 
-namespace sqrkal_discovery {
 
 #define BUFSIZE 2048
 #define IP_MTU 1500
@@ -23,8 +23,17 @@ namespace sqrkal_discovery {
 #define SIP_PROTOCOL 20
 #define RTP_PROTOCOL 31
 
+class sqrkal_discovery {
+
+public:
+
+	sqrkal_discovery();
+	~sqrkal_discovery();
+
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
+
+
 
 
 	/*************** ADD FIREWALL RULES ********************************/
@@ -80,14 +89,27 @@ namespace sqrkal_discovery {
 	 */
      int send_raw_message(char *buff, int length );
 
+     /** Fragments the IP message and sends it accordingly **/
+     int send_fragmented_message(char* buff,int bytes_read);
+
+ 	/*** SEND RTP Message (for dummy messages)*/
+    static int send_rtp_message(char *buff, int length );
+
+      /*** RECEIVE RTP Message (for dummy messages) */
+     static SRPPMessage receive_rtp_message();
+
 	/** Verify if this string is an IP ADDRESS */
 	bool isValidIpAddress(const char *ipAddress);
 	bool resolve_and_set(string hostname);
 
-     /*****************             SRPP RELATED METHODS             ***************************/
+
+    /*****************             SRPP RELATED METHODS             ***************************/
+
+	int initialize_srpp();
 
 	//create SRPP session
-	 	int start_SRPP();
+	int start_SRPP();
+
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~**/
 
@@ -105,6 +127,9 @@ namespace sqrkal_discovery {
 
 	/** MAIN LOOP **/
 	int discover_sessions();
-}
 
+
+	/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF PROCESSING FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~**/
+
+};
 #endif
