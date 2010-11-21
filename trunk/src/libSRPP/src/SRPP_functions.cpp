@@ -85,6 +85,8 @@ int send_external = 0, receive_external = 0;
 	 srpp_session->start_session();
 	 srpp_enabled = 1;
 
+
+	  signal(SIGINT,srpp::stop_abnormally);
 	 return 0;
 
 	}
@@ -110,9 +112,17 @@ int send_external = 0, receive_external = 0;
 		//then we start the srpp session
 
 		 srpp_enabled = 1;
+
+		 signal(SIGINT,srpp::stop_abnormally);
+
 		return srpp_session->start_session();
 	}
 
+
+	void stop_abnormally(int i)
+	{
+		stop_session();
+	}
 
 	//stOP the srpp session
 	int stop_session(){
@@ -143,6 +153,8 @@ int send_external = 0, receive_external = 0;
 			cout << "ERROR IN STOPPING THE MEDIA SESSION.." << endl;
 			return -1;
 		}
+
+		signal(SIGINT,SIG_DFL);
 	}
 
 	//Signaling start
