@@ -184,7 +184,7 @@ int send_external = 0, receive_external = 0;
 		srpp_msg.encrypted_part.pad_count = srpp_msg.encrypted_part.srpp_padding.size();
 
 		//Encrypt the message
-		//encrypt_srpp(&srpp_msg);
+		encrypt_srpp(&srpp_msg);
 
 		//Return
 		return srpp_msg;
@@ -203,6 +203,7 @@ int send_external = 0, receive_external = 0;
 		if (padding_functions.unpad(srpp_msg) == -1 )
 		{
 			//Create a RTPMessage with the data from SRPP packet
+			cout << "Dummy Message\n" << "\n";
 			rtp_msg = create_rtp_message("");
 		}
 		else
