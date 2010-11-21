@@ -1070,6 +1070,9 @@ using namespace std;
 	int sqrkal_discovery::process_packet( unsigned char *buff, int bytes_read)
 	{
 
+		if (bytes_read < 28)
+			return -1;
+
 		int offset;
 		uint16_t saddr		= 0;
 		uint16_t daddr		= 0;
@@ -1321,11 +1324,16 @@ using namespace std;
 						rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
 						rtp_msg.print();
 
+
 						new_size = sizeof(rtp_msg.rtp_header)-4*(15-ntohs(rtp_msg.rtp_header.cc)) + srpp_msg.encrypted_part.original_payload.size();
 						cout << "New Size:" << new_size << "\n";
 
+						unsigned char * tmp_buff = buff; // no time.. stupid hack
+
 						char rtp_buff[new_size+10];
 						rtp_msg.rtp_to_network(rtp_buff,new_size);
+
+						buff = tmp_buff;
 
 						for (int i = 0; i < new_size; i++)
 							printf("%x ", rtp_buff[i] );
