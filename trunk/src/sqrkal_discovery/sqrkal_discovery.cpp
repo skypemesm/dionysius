@@ -1410,37 +1410,38 @@ using namespace std;
 				// PAD IT AND SEND SRPP PACKET ACCORDINGLY
 				if (is_srtp == 0)
 				{
-					cout << " WE SENT A RTP PACKET\n";
-					rtp_msg_p = (RTPMessage*)(buff+28);
-					rtp_msg_p->print();
 
-					srpp_msg = srpp::rtp_to_srpp(rtp_msg_p);
+
+					for (int i = 28; i < bytes_read; i++)
+						printf("%x ", buff[i] );
+
+					printf("\n******************************\n");
+
+					cout << " WE SENT A RTP PACKET\n";
+					RTP_Header* rtp_hdr = (RTP_Header *)(buff+28);
+					//rtp_msg_p->print();
+
+					srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
 					srpp_msg.print();
 
 					int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
 							srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
 
-					cout << "bytes read:" << bytes_read << " SRPP Size:" << sizeof(srpp_msg) << " Size::" << new_size << endl;
+					cout << "bytes read:" << bytes_read << " Size::" << new_size << endl;
 
-					char srpp_buff[new_size];
-					srpp_msg.srpp_to_network(srpp_buff,new_size);
+					char srpp_buff[new_size+10];
+					srpp_msg.srpp_to_network(srpp_buff, srpp::getKey());
 
 					memcpy(buff+28,srpp_buff,new_size);
-					bytes_read = new_size;
+					bytes_read = new_size+28;
 
-					for (int i = 28; i < BUFSIZE; i++)
-						printf("%x ", rtp_msg_p->payload[i] );
-
-					printf("\n--------\n");
-
-
-					for (int i = 0; i < srpp_msg.encrypted_part.original_payload.size(); i++)
-						printf("%x ", srpp_msg.encrypted_part.original_payload[i] );
+					/*for (int i = 0; i < srpp_msg.encrypted_part.original_payload.size(); i++)
+							printf("%x ", srpp_msg.encrypted_part.original_payload[i] );
 
 					printf("\n--------\n");
 
 					for (int i = 0; i < new_size; i++)
-						printf("%x ", srpp_buff[i] );
+						printf("%x ", srpp_buff[i] );*/
 
 					printf("\n--------\n");
 
@@ -1495,6 +1496,8 @@ using namespace std;
 					// send raw message
 					send_raw_message((char *)buff,bytes_read);
 				}
+
+
 			}
 
 
