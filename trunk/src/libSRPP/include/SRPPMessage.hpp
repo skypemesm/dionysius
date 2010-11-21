@@ -195,8 +195,11 @@ public:
     */
    int network_to_srpp(char * buff, int bytes, int key)
 	  {
+/*
+	   for (int i = 0; i<bytes; i++)
+		   printf("%x ",buff[i]);*/
 
-	    SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
+	   SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
 	    srpp_header = *srpp_header1;
 
 	    //----------FORMAT FROM NETWORK BYTE ORDER TO INTS-------------
@@ -214,6 +217,7 @@ public:
 	    // -------------------------------------------------------
 
 	    char* data = (char *) &buff[bytes];
+	    //printf ("\n%u %u %d\n",buff,data,data-buff);
 
 	    //copy the tag
 		data -= 4/sizeof(char);
@@ -221,13 +225,23 @@ public:
 
 		authentication_tag = ntohl(*thisnow);
 
+		printf("Authentication Tag: %d\n",authentication_tag);
+
 		thisnow -= 2;
 
 		//copy other bits
 		memcpy((char *)&encrypted_part.pad_count, (const char *)thisnow, 8);
 
-		if (srpp_header.srpp_signalling == 0 && key > 0)
+		printf("Pad Count: %d\n",encrypted_part.pad_count);
+
+		if (srpp_header.srpp_signalling == 0 && key > 0){
 			encrypted_part.pad_count ^= key;
+		}
+
+		//printf("Pad Count: %d\n",encrypted_part.pad_count);
+		if(encrypted_part.pad_count < 0 || encrypted_part.pad_count > 1500)
+			{cout << "NOT A SRPP Packet\n\n"; return -1;}
+
 
      if (encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0)
      {

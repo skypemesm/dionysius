@@ -61,6 +61,38 @@ public:
 
 	  }
 
+	  // Convert a extract rtp packet to network format
+	  int rtp_to_network(char * buff, int length)
+	  {
+
+		    RTP_Header* rtp_header1 = (RTP_Header *) buff;
+
+		    *rtp_header1 = rtp_header;
+		    //uint16_t* thisone = (uint16_t *)rtp_header1;
+		    //*thisone = htons(*thisone);
+
+		    //----------FORMAT NETWORK BYTE ORDER TO INTS-------------
+		    //rtp_header1->seq = htons(rtp_header.seq);
+		    //rtp_header1->ts = htonl(rtp_header.ts);
+		    //rtp_header1->ssrc = htonl(rtp_header.ssrc);
+
+		    cout << "CC:" << ntohs(rtp_header.cc)  << endl;
+
+		    //for (int i = 0; i< ntohs(rtp_header.cc); i++)
+		    	//rtp_header1->csrc[i] = htonl(rtp_header.csrc[i]);
+
+		    // -------------------------------------------------------
+
+			char* data = (char *) &buff[sizeof(RTP_Header)-4*(15-ntohs(rtp_header.cc))];
+
+			//copy the payload
+			memcpy(data, payload, length);
+
+
+			return 0;
+
+	  }
+
 	  int print()
 	  {
 

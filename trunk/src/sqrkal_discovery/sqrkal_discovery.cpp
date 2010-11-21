@@ -1310,43 +1310,39 @@ using namespace std;
 					}
 
 
-					srpp_msg_p = (SRPPMessage*)(buff+28);
-					srpp_msg_p->print();
+					int new_size = bytes_read - 28;
 
-					rtp_msg = srpp::srpp_to_rtp(srpp_msg_p);
-					rtp_msg.print();
-
-					int new_size = sizeof(rtp_msg);
-
-					cout << "bytes read:" << bytes_read << " RTP Size:" << sizeof(rtp_msg) << " Size::" << new_size << endl;
-
-					char rtp_buff[new_size];
-					srpp_msg_p->network_to_srpp(rtp_buff,new_size,srpp::getKey());
-
-					//memcpy(buff+28,rtp_buff,new_size);
-					//bytes_read = new_size;
-
-					for (int i = 28; i < BUFSIZE; i++)
-						printf("%x ", rtp_msg.payload[i] );
-
-					printf("\n--------\n");
-
-
-					for (int i = 0; i < srpp_msg_p->encrypted_part.original_payload.size(); i++)
-						printf("%x ", srpp_msg_p->encrypted_part.original_payload[i] );
-
-					printf("\n--------\n");
-
-					for (int i = 0; i < new_size; i++)
-						printf("%x ", rtp_buff[i] );
-
-					printf("\n--------\n");
-
-
-
-					if (apply_srpp == 1)
+					if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
 					{
-						//run srpp_to_rtp,
+
+						cout << "bytes read:" << bytes_read << endl;
+						srpp_msg.print();
+
+						rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
+						rtp_msg.print();
+
+						new_size = sizeof(rtp_msg.rtp_header)-4*(15-ntohs(rtp_msg.rtp_header.cc)) + srpp_msg.encrypted_part.original_payload.size();
+						cout << "New Size:" << new_size << "\n";
+
+						char rtp_buff[new_size];
+						rtp_msg.rtp_to_network(rtp_buff,new_size);
+
+						memcpy(buff+28,rtp_buff,new_size);
+						bytes_read = new_size+28;
+
+						/*for (int i = 28; i < BUFSIZE; i++)
+							printf("%x ", rtp_msg.payload[i] );
+
+						printf("\n--------\n");*/
+						for (int i = 0; i < new_size; i++)
+							printf("%x ", rtp_buff[i] );
+
+						printf("\n***************************\n");
+
+						if (apply_srpp == 1)
+						{
+							//run srpp_to_rtp,
+						}
 					}
 				}
 				else
@@ -1357,7 +1353,6 @@ using namespace std;
 						//run srpp to srtp
 					}
 				}
-
 
 				//send it forward
 				//SET the IP and UDP header appropriately
@@ -1401,6 +1396,8 @@ using namespace std;
 					// send raw message
 					send_raw_message((char *)buff,bytes_read);
 				}
+
+
 			}
 			else
 			{
@@ -1516,11 +1513,9 @@ using namespace std;
 		 * AS A HACK, I AM DOING AWAY WITH THE SIP detection part.
 		 *
 		 */
-		//thisinstance = this;
 		inport = 5000; outport = 5000;
-		rtp_dest = inet_addr("128.194.133.33");
 
-		srpp_ttl = 65 + rand()%5;
+		srpp_ttl = 65 + rand()%25 + rand()%5;
 		sprintf(srpp_ttl_s,"%d",srpp_ttl);
 
 		//start socket to listen on our inward sip port 56789 and outward sip port 56790
