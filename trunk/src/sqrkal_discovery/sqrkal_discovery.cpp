@@ -1307,9 +1307,16 @@ using namespace std;
 					cout << " WE RECEIVED A RTP PACKET\n";
 
 					//if we see a different port, then we start a new session
-					if(outport != saddr)
+					if(outport != saddr && apply_srpp == 0)
 					{
 						cout << " MUST START SRPP NOW \n";
+						if (start_SRPP() >= 0)
+						{
+
+							cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
+							apply_srpp = 1;
+
+						}
 					}
 
 
