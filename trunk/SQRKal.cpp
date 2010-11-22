@@ -10,6 +10,7 @@
 
 #include "SQRKal_functions.h"
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include "md5.h"
 #include "sqrkal_discovery.h"
@@ -24,7 +25,11 @@ using namespace std;
 // Main entry point
 int main(int argc, char * argv[])
 {
+	freopen ("output_log.txt","w",stdout);
+
 	sqrkal_discovery sqrkald;
+	fclose(stdout);
+
 	return 0;
 
 	if (argc < 6 )

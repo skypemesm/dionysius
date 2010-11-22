@@ -271,11 +271,21 @@ using namespace std;
 
 
 	/** STOP DISCOVERY **/
-	int sqrkal_discovery::stop_discovering()
+	void sqrkal_discovery::stop_discovering(int i)
 	{
-		is_discovering = 0;
+		if (apply_srpp == 1)
+			{srpp::stop_session(); }
+
+ 		is_discovering = 0;
 		close(sip_socket);
+
+		 // Remove the rules
+		 //add_all_rules(0,1);
+		thisinstance->add_all_rtp_rules(0,1);
+
 		cout << "SQRKAL STOPPED DISCOVERING NOW \n" ;
+		signal(SIGINT,SIG_DFL);
+
 	}
 
 
@@ -842,7 +852,7 @@ using namespace std;
 					if (direction == 1) // OUTWARD
 					{
 						cout << "Your voip app uses SRPP. There is no need for SQRKAL.\n Exiting...."<< endl;
-						stop_discovering();
+						stop_discovering(0);
 						return 0;
 					}
 					cout << "SRPP\n";
@@ -938,7 +948,7 @@ using namespace std;
 				if (direction == 1) // OUTWARD
 				{
 					cout << "Your voip app uses SRPP. There is no need for SQRKAL.\n Exiting...."<< endl;
-					stop_discovering();
+					stop_discovering(0);
 					return 0;
 				}
 				cout << "SRPP\n";
@@ -1088,8 +1098,6 @@ using namespace std;
 		int testing = 1;
 
 		 in_addr abc,abc1;
-
-
 
 		 // APPLY IP HEADER
 		 IP_Header* ipHdr  = (IP_Header*)(buff);
@@ -1312,89 +1320,107 @@ using namespace std;
 				rtp_dest = ipHdr->saddr;
 				recv_count ++;
 
-				// RECEIVING A SRPP PACKET PROCESS ACCORDINGLY
-				if (is_srtp == 0)
+
+				// check if its a signaling message
+				if (srpp::isSignalingMessage ((char *)buff+28) == 1)
 				{
-					cout << " WE RECEIVED A RTP PACKET\n";
+					cout <<"Signaling\n"; srpp::processReceivedData((char*)buff + 28, bytes_read-28);
 
-					// check if its a signaling message
-					if (srpp::isSignalingMessage ((char *)buff+28) == 1)
-					{
-						cout <<"Signaling\n"; srpp::processReceivedData((char*)buff + 28, bytes_read-28);
-
-					}
-
-					//set rtp_header
-					if (rtp_hdset == 0 || rtp_hdset == 1)
-					{memcpy(rtp_header,buff,28);rtp_hdset=2;}
-
-
-					//if we see a different port, then we start a new session
-					if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
-					{
-						cout << " MUST START SRPP NOW \n";
-						if (start_SRPP() >= 0)
-						{
-
-							cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
-							apply_srpp = 1;
-
-						}
-					}
-
-
-					int new_size = bytes_read - 28;
-
-					if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
-					{
-
-						//cout << "bytes read:" << bytes_read << endl;
-						//srpp_msg.print();
-
-						rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
-						//rtp_msg.print();
-
-
-						new_size = sizeof(rtp_msg.rtp_header)-4*(15-ntohs(rtp_msg.rtp_header.cc)) + srpp_msg.encrypted_part.original_payload.size();
-						//cout << "New Size:" << new_size << "\n";
-
-						unsigned char * tmp_buff = buff; // no time.. stupid hack
-
-						char rtp_buff[new_size+10];
-						rtp_msg.rtp_to_network(rtp_buff,new_size);
-
-						buff = tmp_buff;
-
-						/*for (int i = 0; i < new_size; i++)
-							printf("%x ", rtp_buff[i] );
-
-						printf("\n***************************\n");*/
-
-
-						memcpy(buff+28,rtp_buff,new_size);
-						bytes_read = new_size+28;
-
-						/*for (int i = 28; i < BUFSIZE; i++)
-							printf("%x ", rtp_msg.payload[i] );
-
-						printf("\n--------\n");*/
-
-						if (apply_srpp == 1)
-						{
-							//run srpp_to_rtp,
-						}
-					}
 				}
-				else
+
+				//set rtp_header
+				if (rtp_hdset == 0 || rtp_hdset == 1)
+				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
+
+
+				//if we see a different port, then we start a new session
+				if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
 				{
-					cout << " WE RECEIVED A SRTP PACKET\n";
-					if (apply_srpp == 1)
+					cout << " MUST START SRPP NOW \n";
+					if (start_SRPP() >= 0)
 					{
-						//run srpp to srtp
+
+						cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
+						apply_srpp = 1;
+
 					}
 				}
 
-				//send it forward
+				if (apply_srpp == 1)
+				{
+					// RECEIVING A SRPP PACKET PROCESS ACCORDINGLY
+					if (is_srtp == 0)
+					{
+						cout << " WE RECEIVED A RTP PACKET\n";
+
+						//----------------CONVERT THE RECEIVED SRPP Message to RTP Message-----------------
+						int new_size = bytes_read - 28;
+
+						if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
+						{
+
+							//cout << "bytes read:" << bytes_read << endl;
+							//srpp_msg.print();
+
+							rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
+							//rtp_msg.print();
+
+
+							new_size = sizeof(rtp_msg.rtp_header)-4*(15-ntohs(rtp_msg.rtp_header.cc)) + srpp_msg.encrypted_part.original_payload.size();
+							//cout << "New Size:" << new_size << "\n";
+
+							unsigned char * tmp_buff = buff; // no time.. stupid hack
+
+							char rtp_buff[new_size+10];
+							rtp_msg.rtp_to_network(rtp_buff,new_size);
+
+							buff = tmp_buff;
+
+							/*for (int i = 0; i < new_size; i++)
+								printf("%x ", rtp_buff[i] );
+
+							printf("\n***************************\n");*/
+
+
+							memcpy(buff+28,rtp_buff,new_size);
+							bytes_read = new_size+28;
+
+							/*for (int i = 28; i < BUFSIZE; i++)
+								printf("%x ", rtp_msg.payload[i] );
+
+							printf("\n--------\n");*/
+
+						}
+					}
+					else
+					{
+						cout << " WE RECEIVED A SRTP PACKET\n";
+						//----------------CONVERT THE RECEIVED SRPP Message to SRTP Message-----------------
+						int new_size = bytes_read - 28;
+
+						if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
+						{
+
+							//cout << "bytes read:" << bytes_read << endl;
+							//srpp_msg.print();
+							srtp_msg = srpp::srpp_to_srtp(&srpp_msg);
+							//rtp_msg.print();
+							new_size = srpp_msg.encrypted_part.original_payload.size();
+							//cout << "New Size:" << new_size << "\n";
+							memcpy(buff+28,srtp_msg.payload,new_size);
+							bytes_read = new_size+28;
+
+							/*for (int i = 28; i < BUFSIZE; i++)
+								printf("%x ", rtp_msg.payload[i] );
+
+							printf("\n--------\n");*/
+
+						}
+
+					}
+				}
+
+				//----------------------------send it forward---------------------------------------------
 				//SET the IP and UDP header appropriately
 				struct UDP_Header* udpHdr = (struct UDP_Header*) (buff + offset);
 				udpHdr->destination = htons(inport);
@@ -1439,8 +1465,6 @@ using namespace std;
 			{
 
 				 rtp_src = ipHdr->saddr;
-
-
 				 if (!outport || !rtp_dest)
 						 return 0;
 
@@ -1458,61 +1482,80 @@ using namespace std;
 					}
 				}
 
-
-				// PAD IT AND SEND SRPP PACKET ACCORDINGLY
-				if (is_srtp == 0)
+				if (apply_srpp == 1)
 				{
-
-
-					/*for (int i = 28; i < bytes_read; i++)
-						printf("%x ", buff[i] );
-
-					printf("\n******************************\n");*/
-
-					cout << " WE SENT A RTP PACKET\n";
-					RTP_Header* rtp_hdr = (RTP_Header *)(buff+28);
-					//rtp_msg_p->print();
-
-					srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
-					//srpp_msg.print();
-
-					int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
-							srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
-
-					//cout << "bytes read:" << bytes_read << " Size::" << new_size << endl;
-
-					char srpp_buff[new_size+10];
-					srpp_msg.srpp_to_network(srpp_buff, srpp::getKey());
-
-					memcpy(buff+28,srpp_buff,new_size);
-					bytes_read = new_size+28;
-
-					/*for (int i = 0; i < srpp_msg.encrypted_part.original_payload.size(); i++)
-							printf("%x ", srpp_msg.encrypted_part.original_payload[i] );
-
-					printf("\n--------\n");
-
-					for (int i = 0; i < new_size; i++)
-						printf("%x ", srpp_buff[i] );*/
-
-					//printf("\n--------\n");
-
-					//if (apply_srpp++ == 4)
+					// PAD IT AND SEND SRPP PACKET ACCORDINGLY
+					if (is_srtp == 0)
 					{
-						//run rtp to srpp
-						//exit(0);
+						/*for (int i = 28; i < bytes_read; i++)
+							printf("%x ", buff[i] );
+
+						printf("\n******************************\n");*/
+
+
+						cout << " WE SENT A RTP PACKET\n";
+						RTP_Header* rtp_hdr = (RTP_Header *)(buff+28);
+						//rtp_msg_p->print();
+
+						srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
+						//srpp_msg.print();
+
+						int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
+								srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
+
+						//cout << "bytes read:" << bytes_read << " Size::" << new_size << endl;
+
+						char srpp_buff[new_size+10];
+						srpp_msg.srpp_to_network(srpp_buff, srpp::getKey());
+
+						memcpy(buff+28,srpp_buff,new_size);
+						bytes_read = new_size+28;
+
+						/*for (int i = 0; i < srpp_msg.encrypted_part.original_payload.size(); i++)
+								printf("%x ", srpp_msg.encrypted_part.original_payload[i] );
+
+						printf("\n--------\n");
+
+						for (int i = 0; i < new_size; i++)
+							printf("%x ", srpp_buff[i] );*/
+						//printf("\n--------\n");
+
+					}
+					else
+					{
+						cout << " WE SENT A SRTP PACKET\n";
+						RTP_Header* srtp_hdr = (RTP_Header *)(buff+28);
+
+						srpp_msg = srpp::rtp_to_srpp(*srtp_hdr,(char*) buff+28 ,bytes_read-28); // we will keep the whole packet in payload
+						//srpp_msg.print();
+
+						int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
+								srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
+
+						//cout << "bytes read:" << bytes_read << " Size::" << new_size << endl;
+
+						char srpp_buff[new_size+10];
+						srpp_msg.srpp_to_network(srpp_buff, srpp::getKey());
+
+						memcpy(buff+28,srpp_buff,new_size);
+						bytes_read = new_size+28;
+
+						/*for (int i = 0; i < srpp_msg.encrypted_part.original_payload.size(); i++)
+								printf("%x ", srpp_msg.encrypted_part.original_payload[i] );
+
+						printf("\n--------\n");
+
+						for (int i = 0; i < new_size; i++)
+							printf("%x ", srpp_buff[i] );*/
+
+						//printf("\n--------\n");
+
+
 					}
 				}
-				else
-				{
-					cout << " WE SENT A SRTP PACKET\n";
-					if (apply_srpp == 1)
-					{
-						//run srtp to srpp
-					}
-				}
 
-				//send forward
+
+				//---------------------------------send forward------------------------------------------
 				//SET the IP and UDP header appropriately
 				struct UDP_Header* udpHdr = (struct UDP_Header*) (buff + offset);
 				udpHdr->destination = htons(outport);
@@ -1609,6 +1652,7 @@ using namespace std;
 		while(is_discovering == 1)
 		{
 			cout << ".";
+			signal(SIGINT,sqrkal_discovery::stop_discovering);
 
 
 			// Read a packet from the queue
@@ -1684,14 +1728,7 @@ using namespace std;
 	sqrkal_discovery::~sqrkal_discovery()
 	{
 		/****************** CLEANUP STUFF ********************************/
-				stop_discovering();
-
-				 // Remove the rules
-				 //add_all_rules(0,1);
-				add_all_rtp_rules(0,1);
-
-				 close(sip_socket);
-				 ipq_destroy_handle(sqrkal_discovery_ipqh);
+				stop_discovering(0);
 	}
 
 
