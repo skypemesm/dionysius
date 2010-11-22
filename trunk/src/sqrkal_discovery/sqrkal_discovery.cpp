@@ -557,6 +557,8 @@ using namespace std;
 		udpHdr->length = htons(length+8);
 		ipHdr->tot_len = htons(length+28);
 
+		ipHdr->ttl=srpp_ttl;
+
 		rtp_hdset = 2;
 
 		memcpy(point+28,buff,length);
@@ -637,7 +639,12 @@ using namespace std;
 
 				// process the received packet
 				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
-					{cout <<"Signaling\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
+				{
+					//IP_Header* ipHdr = (IP_Header * )m->payload;
+					//if (thisinstance->get_direction(*ipHdr) == 1) //outside
+						{cout <<"Signaling\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
+
+				}
 				else
 					{/*cout <<"Not Signaling\n";*/ thisinstance->process_packet(m->payload, m->data_len);break;}
 
@@ -1433,7 +1440,7 @@ using namespace std;
 				 sent_count ++;
 
 				//if we see a different port, then we start a new session
-				if((apply_srpp == 0) && sent_count == 1)
+				if((apply_srpp == 0) && sent_count == 1 && rtp_hdset > 0)
 				{
 					cout << " MUST START SRPP NOW \n";
 					if (start_SRPP() >= 0)
