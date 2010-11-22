@@ -57,7 +57,7 @@ using namespace std;
 	int inport,outport;  //inport is my RTP port and output port is the other endpoint's RTP port
 
 	int saw_invite_already = 0;
-	int recv_count = 0;
+	int recv_count = 0, sent_count =0;
 
 	struct ipq_handle*	sqrkal_discovery_ipqh;
 	int 			sip_socket;
@@ -632,8 +632,8 @@ using namespace std;
 					break;
 				}
 
-				for (int i = 0; i < m->data_len; i++)
-				{printf("%c",m->payload[i]);}
+				/*for (int i = 0; i < m->data_len; i++)
+				{printf("%c",m->payload[i]);}*/
 
 				// process the received packet
 				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
@@ -1426,8 +1426,24 @@ using namespace std;
 
 				 rtp_src = ipHdr->saddr;
 
+
 				 if (!outport || !rtp_dest)
 						 return 0;
+
+				 sent_count ++;
+
+				//if we see a different port, then we start a new session
+				if((apply_srpp == 0) && sent_count == 1)
+				{
+					cout << " MUST START SRPP NOW \n";
+					if (start_SRPP() >= 0)
+					{
+						cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
+						apply_srpp = 1;
+
+					}
+				}
+
 
 				// PAD IT AND SEND SRPP PACKET ACCORDINGLY
 				if (is_srtp == 0)
