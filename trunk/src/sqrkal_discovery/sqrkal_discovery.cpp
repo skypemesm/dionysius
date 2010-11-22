@@ -1310,6 +1310,11 @@ using namespace std;
 				{
 					cout << " WE RECEIVED A RTP PACKET\n";
 
+					//set rtp_header
+					if (rtp_hdset == 0 || rtp_hdset == 1)
+					{memcpy(rtp_header,buff,28);rtp_hdset=2;}
+
+
 					//if we see a different port, then we start a new session
 					if((outport != saddr && apply_srpp == 0) || recv_count == 1)
 					{
@@ -1399,10 +1404,6 @@ using namespace std;
 				//set out_addr.
 				out_addr.sin_addr.s_addr = ipHdr->daddr;
 				out_addr.sin_port = htons(inport);
-
-				//set rtp_header
-				if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 				// Handle fragmentation if its greater than the MTU
 				if (bytes_read > IP_MTU)
@@ -1538,7 +1539,6 @@ using namespace std;
 		 *
 		 */
 		inport = 5000; outport = 5000;
-		rtp_dest = inet_addr("128.194.133.33");
 
 		srpp_ttl = 65 + rand()%25 + rand()%5;
 		sprintf(srpp_ttl_s,"%d",srpp_ttl);
