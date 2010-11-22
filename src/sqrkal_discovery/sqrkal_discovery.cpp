@@ -191,8 +191,8 @@ using namespace std;
 	    ///////// REMOVE THIS WHEN SIP PROCESSING RE-USED
 	    if (is_adding)
 	    {
-	   		if (add_firewall_rule(" -F") < 0)
-	   			cerr << " ERROR IN ADDING RULE" <<endl ;
+	   		//if (add_firewall_rule(" -F") < 0)
+	   		//	cerr << " ERROR IN ADDING RULE" <<endl ;
 
 	   	}
 
@@ -269,24 +269,6 @@ using namespace std;
 
 	}
 
-
-	/** STOP DISCOVERY **/
-	void sqrkal_discovery::stop_discovering(int i)
-	{
-		if (apply_srpp == 1)
-			{srpp::stop_session(); }
-
- 		is_discovering = 0;
-		close(sip_socket);
-
-		 // Remove the rules
-		 //add_all_rules(0,1);
-		thisinstance->add_all_rtp_rules(0,1);
-
-		cout << "SQRKAL STOPPED DISCOVERING NOW \n" ;
-		signal(SIGINT,SIG_DFL);
-
-	}
 
 
     /** RETURNS 1 if this IP is one of the localhosts. 0 otherwise **/
@@ -791,6 +773,8 @@ using namespace std;
 			if(apply_srpp == 1)
 				srpp::stop_session();
 
+			sent_count = 0;
+			recv_count = 0;
 			saw_invite_already = 0;
 			out_addr.sin_addr.s_addr = last_out_dest;
 			return 0;
@@ -1241,7 +1225,7 @@ using namespace std;
 					while(m != -1)
 					{
 						l=m;
-						buff[l+28]='m';buff[l+32]='o';
+						//buff[l+28]='m';buff[l+32]='o';
 						m=str.find("zrtp-hash",l+1);
 					}
 				}
@@ -1274,11 +1258,10 @@ using namespace std;
 				if (must_start_srpp)
 				{
 					must_start_srpp = false;
-					if (start_SRPP() >= 0)
+					//if (start_SRPP() >= 0)
 					{
-
-						cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
-						apply_srpp = 1;
+						//cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
+						//apply_srpp = 1;
 
 					}
 				}
@@ -1336,11 +1319,11 @@ using namespace std;
 				//if we see a different port, then we start a new session
 				if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
 				{
-					cout << " MUST START SRPP NOW \n";
+					cout << " MUST START SRPP NOW for received packet\n" << sent_count << "::" << recv_count << "\n";
 					if (start_SRPP() >= 0)
 					{
 
-						cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
+						cout << "GOING TO APPLY SRPP SESSION NOW for received >>>>\n\n" << sent_count << "::" << recv_count << "\n";
 						apply_srpp = 1;
 
 					}
@@ -1473,10 +1456,10 @@ using namespace std;
 				//if we see a different port, then we start a new session
 				if((apply_srpp == 0) && sent_count == 1 && rtp_hdset > 0)
 				{
-					cout << " MUST START SRPP NOW \n";
+					cout << " MUST START SRPP NOW for sent \n" << sent_count << "::" << recv_count << "\n";
 					if (start_SRPP() >= 0)
 					{
-						cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
+						cout << "GOING TO APPLY SRPP SESSION NOW for sent packet >>>>\n\n" << sent_count << "::" << recv_count << "\n";
 						apply_srpp = 1;
 
 					}
@@ -1605,15 +1588,6 @@ using namespace std;
 	/** MAIN LOOP **/
 	int sqrkal_discovery::discover_sessions()
 	{
-
-
-		/**
-		 * AS A HACK, I AM DOING AWAY WITH THE SIP detection part.
-		 *
-		 */
-		inport = 5000; outport = 5000;
-		rtp_dest = inet_addr("128.194.133.33");
-
 		srpp_ttl = 65 + rand()%25 + rand()%5;
 		sprintf(srpp_ttl_s,"%d",srpp_ttl);
 
@@ -1627,8 +1601,7 @@ using namespace std;
 		create_sockets();
 
 		//Add the firewall rules
-		//add_all_rules(1,1);
-		add_all_rtp_rules(1,1);
+		add_all_rules(1,1);
 
 		//Initialize SRPP
 		initialize_srpp();
@@ -1653,7 +1626,6 @@ using namespace std;
 		{
 			cout << ".";
 			signal(SIGINT,sqrkal_discovery::stop_discovering);
-
 
 			// Read a packet from the queue
 			status = ipq_read(sqrkal_discovery_ipqh, buf, BUFSIZE, 0);
@@ -1717,6 +1689,23 @@ using namespace std;
 	}
 
 
+	/** STOP DISCOVERY **/
+	void sqrkal_discovery::stop_discovering(int i)
+	{
+		if (apply_srpp == 1)
+			{srpp::stop_session(); }
+
+ 		is_discovering = 0;
+		close(sip_socket);
+
+		 // Remove the rules
+		thisinstance->add_all_rules(0,1);
+		//thisinstance->add_all_rtp_rules(0,1);
+
+		cout << "SQRKAL STOPPED DISCOVERING NOW \n" ;
+		signal(SIGINT,SIG_DFL);
+
+	}
 	//CONSTRUCTOR and DESTRUCTOR
 	sqrkal_discovery::sqrkal_discovery()
 	{
