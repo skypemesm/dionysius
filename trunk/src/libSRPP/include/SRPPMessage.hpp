@@ -159,7 +159,7 @@ public:
 		strcpy(data, str_pad.c_str());
 		data = &data[encrypted_part.pad_count];
 	 }
-	cout << "PAD:" << encrypted_part.pad_count << "Actual:" << encrypted_part.srpp_padding.size() << "\n";
+	//cout << "PAD:" << encrypted_part.pad_count << "Actual:" << encrypted_part.srpp_padding.size() << "\n";
 	//printf("\n3:%u %u %d\n",buff,data,data-buff);
 
 		//copy other bits
@@ -174,7 +174,7 @@ public:
 		//copy the tag
 		data += 8/sizeof(char);
 
-		cout << "Authentication Tag :" << authentication_tag << "\n";
+		//cout << "Authentication Tag :" << authentication_tag << "\n";
 		//printf("\n4:%u %u %d\n",buff,data,data-buff);
 
 		uint32_t * thisnow = (uint32_t *)data ;
@@ -182,7 +182,7 @@ public:
 		*thisnow = htonl(authentication_tag);
 		thisnow ++ ;
 
-		printf("\n6:%u %u %d\n",buff,thisnow,((char*)thisnow)-buff);
+		//printf("\n6:%u %u %d\n",buff,thisnow,((char*)thisnow)-buff);
 
 		return 0;
 
@@ -224,7 +224,7 @@ public:
 
 		authentication_tag = ntohl(*thisnow);
 
-		printf("Authentication Tag: %d\n",authentication_tag);
+		//printf("Authentication Tag: %d\n",authentication_tag);
 
 		thisnow -= 2;
 
@@ -237,7 +237,7 @@ public:
 			encrypted_part.pad_count ^= key;
 		}
 
-		printf("Pad Count: %d\n",encrypted_part.pad_count);
+		//printf("Pad Count: %d\n",encrypted_part.pad_count);
 		if(encrypted_part.pad_count < 0 || encrypted_part.pad_count > 1500)
 			{cout << "NOT A SRPP Packet\n\n"; return -1;}
 

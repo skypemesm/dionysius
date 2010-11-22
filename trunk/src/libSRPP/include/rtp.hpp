@@ -76,7 +76,7 @@ public:
 		    //rtp_header1->ts = htonl(rtp_header.ts);
 		    //rtp_header1->ssrc = htonl(rtp_header.ssrc);
 
-		    cout << "CC:" << ntohs(rtp_header.cc)  << endl;
+		    //cout << "CC:" << ntohs(rtp_header.cc)  << endl;
 
 		    //for (int i = 0; i< ntohs(rtp_header.cc); i++)
 		    	//rtp_header1->csrc[i] = htonl(rtp_header.csrc[i]);
