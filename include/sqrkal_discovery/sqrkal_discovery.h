@@ -53,7 +53,7 @@ public:
 	int create_sockets();
 
 	/** STOP DISCOVERY **/
-	int stop_discovering();
+	static void stop_discovering(int i);
 
     /** RETURNS 1 if this IP is one of the localhosts. 0 otherwise **/
      int isLocalIP(string IP);
