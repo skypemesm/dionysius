@@ -1334,15 +1334,15 @@ using namespace std;
 					if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
 					{
 
-						cout << "bytes read:" << bytes_read << endl;
-						srpp_msg.print();
+						//cout << "bytes read:" << bytes_read << endl;
+						//srpp_msg.print();
 
 						rtp_msg = srpp::srpp_to_rtp(&srpp_msg);
-						rtp_msg.print();
+						//rtp_msg.print();
 
 
 						new_size = sizeof(rtp_msg.rtp_header)-4*(15-ntohs(rtp_msg.rtp_header.cc)) + srpp_msg.encrypted_part.original_payload.size();
-						cout << "New Size:" << new_size << "\n";
+						//cout << "New Size:" << new_size << "\n";
 
 						unsigned char * tmp_buff = buff; // no time.. stupid hack
 
@@ -1351,10 +1351,10 @@ using namespace std;
 
 						buff = tmp_buff;
 
-						for (int i = 0; i < new_size; i++)
+						/*for (int i = 0; i < new_size; i++)
 							printf("%x ", rtp_buff[i] );
 
-						printf("\n***************************\n");
+						printf("\n***************************\n");*/
 
 
 						memcpy(buff+28,rtp_buff,new_size);
@@ -1391,9 +1391,9 @@ using namespace std;
 				{	cout << " RTP SOURCE not set yet " << rtp_src << endl; ipHdr->daddr = inet_addr("127.0.0.1");}
 
 				abc.s_addr = ipHdr->saddr;
-				cout << "SRC: " << inet_ntoa(abc) << endl;
+				//cout << "SRC: " << inet_ntoa(abc) << endl;
 				abc1.s_addr = ipHdr->daddr;
-				cout << "DST: " << inet_ntoa(abc1) << endl;
+				//cout << "DST: " << inet_ntoa(abc1) << endl;
 
 				udpHdr->length = htons(bytes_read-20);
 				ipHdr->tot_len = htons(bytes_read);
@@ -1434,22 +1434,22 @@ using namespace std;
 				{
 
 
-					for (int i = 28; i < bytes_read; i++)
+					/*for (int i = 28; i < bytes_read; i++)
 						printf("%x ", buff[i] );
 
-					printf("\n******************************\n");
+					printf("\n******************************\n");*/
 
 					cout << " WE SENT A RTP PACKET\n";
 					RTP_Header* rtp_hdr = (RTP_Header *)(buff+28);
 					//rtp_msg_p->print();
 
 					srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
-					srpp_msg.print();
+					//srpp_msg.print();
 
 					int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
 							srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
 
-					cout << "bytes read:" << bytes_read << " Size::" << new_size << endl;
+					//cout << "bytes read:" << bytes_read << " Size::" << new_size << endl;
 
 					char srpp_buff[new_size+10];
 					srpp_msg.srpp_to_network(srpp_buff, srpp::getKey());
@@ -1465,7 +1465,7 @@ using namespace std;
 					for (int i = 0; i < new_size; i++)
 						printf("%x ", srpp_buff[i] );*/
 
-					printf("\n--------\n");
+					//printf("\n--------\n");
 
 					//if (apply_srpp++ == 4)
 					{
@@ -1488,7 +1488,7 @@ using namespace std;
 				udpHdr->destination = htons(outport);
 
 				 abc.s_addr = ipHdr->saddr;
-				cout << "SRC: " << inet_ntoa(abc) << endl;
+				//cout << "SRC: " << inet_ntoa(abc) << endl;
 				ipHdr->saddr = ipHdr->saddr;
 				ipHdr->daddr = rtp_dest;
 				udpHdr->length = htons(bytes_read-20);
@@ -1539,6 +1539,7 @@ using namespace std;
 		 *
 		 */
 		inport = 5000; outport = 5000;
+		rtp_dest = inet_addr("128.194.133.33");
 
 		srpp_ttl = 65 + rand()%25 + rand()%5;
 		sprintf(srpp_ttl_s,"%d",srpp_ttl);

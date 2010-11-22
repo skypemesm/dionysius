@@ -121,6 +121,7 @@ int send_external = 0, receive_external = 0;
 
 	void stop_abnormally(int i)
 	{
+		cout << "SOMehting onaosdun\n";
 		stop_session();
 	}
 
