@@ -1317,13 +1317,20 @@ using namespace std;
 				{
 					cout << " WE RECEIVED A RTP PACKET\n";
 
+					// check if its a signaling message
+					if (srpp::isSignalingMessage ((char *)buff+28) == 1)
+					{
+						cout <<"Signaling\n"; srpp::processReceivedData((char*)buff + 28, bytes_read-28);
+
+					}
+
 					//set rtp_header
 					if (rtp_hdset == 0 || rtp_hdset == 1)
 					{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 
 					//if we see a different port, then we start a new session
-					if((outport != saddr && apply_srpp == 0) || recv_count == 1)
+					if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
 					{
 						cout << " MUST START SRPP NOW \n";
 						if (start_SRPP() >= 0)
