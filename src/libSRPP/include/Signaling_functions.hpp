@@ -173,7 +173,7 @@ public:
 				srpp_msg.srpp_header.x = 1;
 
 				srpp::send_message(&srpp_msg);
-				srpp_msg.print();
+				//srpp_msg.print();
 			}
 			else
 				return 0;
@@ -257,6 +257,20 @@ public:
 			srpp::send_message(&srpp_msg);
 
 			byesent = 1;
+
+			int wait_count = 30000; //wait for this many loops TIMEOUT Added such because sleep etc. works inconsistently with SIGALRM
+										// Avg. 30secs
+			SRPPMessage srpp_dummy;
+			srpp::receive_message();
+
+			while (session_complete == 0)
+			{
+				srpp::receive_message();
+				if (wait_count-- == 0)
+					return -1;
+
+			}
+
 
 			return 0;
 		}

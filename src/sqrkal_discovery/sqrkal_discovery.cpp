@@ -633,10 +633,7 @@ using namespace std;
 				// process the received packet
 				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
 				{
-					//IP_Header* ipHdr = (IP_Header * )m->payload;
-					//if (thisinstance->get_direction(*ipHdr) == 1) //outside
-						{cout <<"Signaling\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);}
-
+					cout << "Signaling Message:\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);
 				}
 				else
 					{/*cout <<"Not Signaling\n";*/ thisinstance->process_packet(m->payload, m->data_len);break;}
@@ -770,12 +767,14 @@ using namespace std;
 		{
 			//stop our session
 			cout << "\nGOT A BYE.. stop our session\n";
-			add_all_rtp_rules(0,1); //remove rtp rules
+
 			is_session_on = 0;
 
 			if(apply_srpp == 1)
 				srpp::stop_session();
 
+
+			add_all_rtp_rules(0,1); //remove rtp rules
 			sent_count = 0;
 			recv_count = 0;
 			saw_invite_already = 0;
@@ -1345,11 +1344,9 @@ using namespace std;
 				//if we see a different port, then we start a new session
 				if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
 				{
-					cout << " MUST START SRPP NOW for received packet\n" << sent_count << "::" << recv_count << "\n";
 					if (start_SRPP() >= 0)
 					{
-
-						cout << "GOING TO APPLY SRPP SESSION NOW for received >>>>\n\n" << sent_count << "::" << recv_count << "\n";
+						cout << "Will APPLY SRPP FROM NOW ON...\n\n";
 						apply_srpp = 1;
 
 					}
@@ -1482,10 +1479,9 @@ using namespace std;
 				//if we see a different port, then we start a new session
 				if((apply_srpp == 0) && sent_count == 1 && rtp_hdset > 0)
 				{
-					cout << " MUST START SRPP NOW for sent \n" << sent_count << "::" << recv_count << "\n";
 					if (start_SRPP() >= 0)
 					{
-						cout << "GOING TO APPLY SRPP SESSION NOW for sent packet >>>>\n\n" << sent_count << "::" << recv_count << "\n";
+						cout << "Will APPLY SRPP FROM NOW ON...\n\n";
 						apply_srpp = 1;
 
 					}

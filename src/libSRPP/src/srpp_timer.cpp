@@ -128,11 +128,13 @@ using namespace std;
 	int SRPPTimer::start_packet()
 	{
 		packet_ON = true;
+		cout << "Started CBP.\n";
 		return 0;
 	}
 	int SRPPTimer::start_silence()
 	{
 		silence_ON = true;
+		cout << "Started EBP.\n";
 		return 0;
 	}
 	int SRPPTimer::pause_packet()

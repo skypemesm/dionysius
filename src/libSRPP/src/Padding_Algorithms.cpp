@@ -90,7 +90,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 
 		// I will get a random extra size and add the extra bytes to the packet
-		int extra_size = 1375 - (srpp_msg->encrypted_part.original_payload.size());
+		int extra_size = 1366 - (srpp_msg->encrypted_part.original_payload.size());
 
 		if (is_full_bandwidth == 0)
 			extra_size = srpp::srpp_rand(1,extra_size);
