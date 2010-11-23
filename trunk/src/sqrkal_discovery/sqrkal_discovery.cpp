@@ -913,9 +913,10 @@ using namespace std;
 					saw_200ok = 0;
 
 				     saw_invite_already = 0;
+
+						is_session_on = 1;
 				}
 
-				is_session_on = 1;
 			}
 
 		     out_addr.sin_addr.s_addr = last_out_dest;
