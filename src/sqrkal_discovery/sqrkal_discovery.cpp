@@ -186,7 +186,7 @@ using namespace std;
 	    string rule;
 	    char rtpport[7];
 	    sprintf(rtpport,"%d",inport);
-
+	    sprintf(srpp_ttl_s,"%d",srpp_ttl);
 
 	    string proto = is_udp ? "udp" : "tcp";
 	    ///////// REMOVE THIS WHEN SIP PROCESSING RE-USED
@@ -554,7 +554,11 @@ using namespace std;
 		rtp_hdset = 2;
 
 		memcpy(point+28,buff,length);
-		memcpy(point,rtp_header,40);
+
+		char ptt = buff[2];
+		printf("%x\n",ptt);
+
+		memcpy(point,rtp_header,28);
 
 		// RECALCULATE THE CHECKSUM
 		thisinstance->form_checksums((char * )point);
