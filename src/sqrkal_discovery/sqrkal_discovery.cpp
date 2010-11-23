@@ -809,10 +809,8 @@ using namespace std;
 			else
 			{
 				cout << "GOT AN ACK\n";
-				if ( sent_invite == 0 && direction == 0 )
-				{
-					saw_ack =1;
-				}
+				saw_ack =1;
+
 			}
 
 			//cout << message << endl;
@@ -897,7 +895,13 @@ using namespace std;
 				rtp_ports.push_back(inport);
 				rtp_ports.push_back(outport);
 
-				if ((sent_invite == 0 && saw_ack == 1) || (sent_invite == 1 && saw_200ok == 1 ))
+				/* I should start the media session only if
+				        a] I sent invite, received 200 OK and sent ack
+				     or b] I received an invite, sent 200 OK and received ack
+
+				*/
+				if ((sent_invite == 0 && saw_ack == 1)
+						|| (sent_invite == 1 && saw_200ok == 1 && saw_ack == 1))
 				{
 					add_all_rtp_rules(1,1);
 					sent_invite = 0;
