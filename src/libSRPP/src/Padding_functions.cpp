@@ -161,17 +161,30 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt(int size)
 string	PaddingFunctions::generate_dummy_data (int size)
 {
 	int dummy_index = srpp::srpp_rand(0,MAXDUMMYCACHESIZE);
+	int size_recvd = 0, packet_size = 0;
+	string return_str;
 
-	//SRPPMessage thisdummy = dummy_cache[dummy_index];
+	while (size_recvd < size)
+	{
+		SRPPMessage thisdummy = dummy_cache[dummy_index];
+		packet_size = thisdummy.encrypted_part.original_payload.size();
+		if (packet_size < (size-size_recvd))
+			packet_size = (size-size_recvd);
+
+		const char * str = (const char *)&(thisdummy.encrypted_part.original_payload);
 
 
-	const char * str = (const char *)&(dummy_cache[dummy_index]);
-	string thisone;
+		for(int i = 0; i< packet_size; i++)
+			return_str += str[i];
 
-	for(int i =0; i< size; i++)
-		thisone += str[i];
 
-	return thisone;
+		size_recvd += packet_size;
+
+	}
+
+	cout << "Size reqd:" << size << " SIZE GOT:" << return_str.length() << endl;
+
+	return return_str;
 
 }
 
@@ -204,6 +217,11 @@ int PaddingFunctions::add_to_dummy_cache(SRPPMessage srpp_msg)
 
 	return 0;
 
+}
+
+int PaddingFunctions::set_full_bandwidth()
+{
+	algos.set_full_bandwidth();
 }
 
 

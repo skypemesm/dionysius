@@ -19,6 +19,14 @@ using namespace std;
 extern int packet_to_send;
 
 int cbp_packet_count = 0;
+int is_full_bandwidth = 0;
+
+	/** Sets the behavior to pad all packets to maximum packet size or full bandwidth **/
+	int PaddingAlgos::set_full_bandwidth()
+	{
+		is_full_bandwidth = 1;
+		cout << "Padding options set to FULL BANDWIDTH padding.\n";
+	}
 
 	/** Redirects to the specified Packet Size Padding algo **/
 	int PaddingAlgos::psp_pad_algo(psp_algo_type atype,SRPPMessage * srpp_msg)
@@ -82,7 +90,12 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 
 		// I will get a random extra size and add the extra bytes to the packet
-		int extra_size = srpp::srpp_rand(1,50);
+		int extra_size;
+		if (is_full_bandwidth == 0)
+			extra_size = 1000-srpp_msg->encrypted_part.original_payload.size();
+		else
+			extra_size = srpp::srpp_rand(1,50);
+
 		string status = PaddingFunctions::generate_dummy_data(extra_size);
 
 		if (status.length() < 0)
@@ -100,7 +113,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 	int PaddingAlgos::default_cbp_pad_algo()
 	{
-		int calculated_burst_dummies = 1; // THIS IS WHAT WE WILL CALCULATE BASED ON CURRENT BURST SIZE
+		int calculated_burst_dummies = srpp::srpp_rand(0,10); // THIS IS WHAT WE WILL CALCULATE BASED ON CURRENT BURST SIZE
 
 		if ((++cbp_packet_count) <= calculated_burst_dummies)
 		{

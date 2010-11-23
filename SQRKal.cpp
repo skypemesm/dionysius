@@ -27,6 +27,19 @@ int main(int argc, char * argv[])
 {
 	freopen ("output_log.txt","w",stdout);
 
+	if (argc == 2 )
+	{
+		string arg1 = argv[1];
+		cout << arg1 << endl;
+
+		if (arg1 == "--full-bandwidth" || arg1 == "-fb")
+			srpp::set_full_bandwidth();
+
+		if (arg1 == "--usage" )
+		{	cout << "./sqrkal [--full-bandwidth|-fb]" << endl; return 1;}
+
+	}
+
 	sqrkal_discovery sqrkald;
 	fclose(stdout);
 
