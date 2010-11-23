@@ -680,13 +680,15 @@ using namespace std;
  		//Create a SRPP Session with a particular CryptoProfile
  		CryptoProfile * crypto = new CryptoProfile("Simple XOR");
 	    SRPPSession * newsession = srpp::create_session("127.0.0.1", inport,*crypto);//this is a dummy
- 		cout << "SRPP started at " << newsession->startTime << endl;
+ 		cout << "SRPP started at time " << newsession->startTime << ".\n";
 
- 		//send_functor= &(this->send_rtp_message);
- 		//receive_functor = &(this->receive_rtp_message);
+ 		cerr << "Press Enter to Start." << endl;
+ 		getchar();
+ 		cerr << "Started now.\n";
 
 		srpp::setSendFunctor(send_rtp_message);
  		srpp::setReceiveFunctor(receive_rtp_message);
+ 		cout << "SET the required functors in SRPP.\n\n";
 
 	}
 
