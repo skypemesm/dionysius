@@ -555,8 +555,9 @@ using namespace std;
 		rtp_hdset = 2;
 
 		memcpy(point+28,buff,length);
+		RTP_Header * rtpp = (RTP_Header *)(rtp_header+28);
 
-		if(rtp_hdset == 2)
+		if(rtp_hdset == 2 && rtpp->version != 0)
 		{
 			memcpy(point+28,rtp_header+28,12);
 
@@ -1337,13 +1338,13 @@ using namespace std;
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		 if (is_rtp == 1)
 		 {
-			 RTP_Header * rtpp = (RTP_Header*) buff;
+			 /*RTP_Header * rtpp = (RTP_Header*) buff;
 
 			 if(rtpp->version == 0)
 			 {
 				 cout << "Unknown version 0" << endl;
 				 return 0;
-			 }
+			 }*/
 
 
 		  /** PRINT DETAILS ABOUT THE PACKET NOW **/
@@ -1374,7 +1375,7 @@ using namespace std;
 				}
 
 				//set rtp_header
-				if (rtp_hdset == 0 || rtp_hdset == 1)
+				//if (rtp_hdset == 0 || rtp_hdset == 1)
 				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
 
 
@@ -1613,7 +1614,7 @@ using namespace std;
 				ipHdr->ttl = srpp_ttl;
 
 				//set rtp_header
-				if (rtp_hdset == 0 || rtp_hdset == 1)
+				//if (rtp_hdset == 0 || rtp_hdset == 1)
 				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 				//set out_addr.
