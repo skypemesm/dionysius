@@ -539,6 +539,7 @@ using namespace std;
 		if (rtp_hdset == 0)
 			{cout << "NO RTP HEADER AVAILABLE?? THAT's BIZZARRE. BIG BUG.\n"; exit(-1);}
 
+		memcpy(point,rtp_header,28);
 
 		IP_Header* ipHdr  = (IP_Header*) point;
 		struct UDP_Header* udpHdr = (struct UDP_Header*)(point + 20);
@@ -557,8 +558,6 @@ using namespace std;
 
 		char ptt = buff[2];
 		printf("%x\n",ptt);
-
-		memcpy(point,rtp_header,28);
 
 		// RECALCULATE THE CHECKSUM
 		thisinstance->form_checksums((char * )point);
@@ -787,6 +786,8 @@ using namespace std;
 			sent_count = 0;
 			recv_count = 0;
 			saw_invite_already = 0;
+			saw_bye_already = 0;
+			
 			out_addr.sin_addr.s_addr = last_out_dest;
 			return 0;
 
@@ -1306,7 +1307,7 @@ using namespace std;
 
 			//set rtp_header
 			if (rtp_hdset == 0)
-			{memcpy(rtp_header,buff,40);rtp_hdset=1;}
+			{memcpy(rtp_header,buff,28);rtp_hdset=1;}
 
 		}
 
@@ -1347,7 +1348,7 @@ using namespace std;
 
 				//set rtp_header
 				if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
+				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 
 				//if we see a different port, then we start a new session
@@ -1586,7 +1587,7 @@ using namespace std;
 
 				//set rtp_header
 				if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
+				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
 
 				//set out_addr.
 				out_addr.sin_addr.s_addr = rtp_dest;
