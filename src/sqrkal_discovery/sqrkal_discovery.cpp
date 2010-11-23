@@ -55,7 +55,7 @@ using namespace std;
 	int is_session_on = 0;
 	int inport,outport;  //inport is my RTP port and output port is the other endpoint's RTP port
 
-	int saw_invite_already = 0;
+	int saw_invite_already = 0, saw_bye_already = 0;
 	int sent_invite = 0,saw_ack = 0,saw_200ok = 0;
 
 	int recv_count = 0, sent_count =0;
@@ -539,7 +539,6 @@ using namespace std;
 		if (rtp_hdset == 0)
 			{cout << "NO RTP HEADER AVAILABLE?? THAT's BIZZARRE. BIG BUG.\n"; exit(-1);}
 
-		memcpy(point,rtp_header,28);
 
 		IP_Header* ipHdr  = (IP_Header*) point;
 		struct UDP_Header* udpHdr = (struct UDP_Header*)(point + 20);
@@ -555,6 +554,7 @@ using namespace std;
 		rtp_hdset = 2;
 
 		memcpy(point+28,buff,length);
+		memcpy(point,rtp_header,40);
 
 		// RECALCULATE THE CHECKSUM
 		thisinstance->form_checksums((char * )point);
@@ -574,7 +574,7 @@ using namespace std;
 			 printf("%c",buff[i]);
 		}
 
-		cout << "\nWriting RTP " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		cout << "\nWriting SRPP " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
 		/*for (int i = 0; i<length;i++)
 			 printf("%c",buff[i]);*/
 
@@ -768,9 +768,14 @@ using namespace std;
 			//stop our session
 			cout << "\nGOT A BYE.. stop our session\n";
 
+			if (saw_bye_already == 1)
+				return -1;
+			else
+				saw_bye_already = 1;
+
 			is_session_on = 0;
 
-			if(apply_srpp == 1)
+			if(apply_srpp == 1 )
 				srpp::stop_session();
 
 
@@ -1297,7 +1302,7 @@ using namespace std;
 
 			//set rtp_header
 			if (rtp_hdset == 0)
-			{memcpy(rtp_header,buff,28);rtp_hdset=1;}
+			{memcpy(rtp_header,buff,40);rtp_hdset=1;}
 
 		}
 
@@ -1338,7 +1343,7 @@ using namespace std;
 
 				//set rtp_header
 				if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
+				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
 
 
 				//if we see a different port, then we start a new session
@@ -1577,7 +1582,7 @@ using namespace std;
 
 				//set rtp_header
 				if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
+				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
 
 				//set out_addr.
 				out_addr.sin_addr.s_addr = rtp_dest;

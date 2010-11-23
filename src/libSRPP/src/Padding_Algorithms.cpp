@@ -115,7 +115,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 		int calculated_burst_dummies = srpp::srpp_rand(0,10); // THIS IS WHAT WE WILL CALCULATE BASED ON CURRENT BURST SIZE
 
 		cout << "Sending " << calculated_burst_dummies << "packets\n";
-
+		cbp_packet_count=0;
 		if ((++cbp_packet_count) <= calculated_burst_dummies)
 		{
 			SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
