@@ -117,6 +117,7 @@ namespace srpp {
 
 	  //Set Full Bandwidth option
 	  int set_full_bandwidth();
+	  int set_starting_sequenceno(int seq_no);
 
 
 	  //reset timers
