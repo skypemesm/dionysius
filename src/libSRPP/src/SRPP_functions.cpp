@@ -403,7 +403,7 @@ int send_external = 0, receive_external = 0;
 		encrypted_pkt->decrypt(srpp_session->encryption_key);
 		encrypted_pkt->encrypted_part.dummy_flag &= 1;
 
-		cout << " REMOVED extra: dummy=" << encrypted_pkt->encrypted_part.dummy_flag << endl;
+		//cout << " REMOVED extra: dummy=" << encrypted_pkt->encrypted_part.dummy_flag << endl;
 		return *encrypted_pkt;
 	}
 
@@ -628,7 +628,7 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
 	  SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
       SRPPHeader srpp_header = *srpp_header1;
 
-	  cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
+	  //cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
 
 	  if (srpp_header.srpp_signalling == 0 and srpp_header.pt != 124) //NOT A SIGNALING MESSAGE
  		 return -1;

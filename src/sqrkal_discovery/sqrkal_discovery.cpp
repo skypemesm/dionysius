@@ -1315,8 +1315,8 @@ using namespace std;
 		  abc1.s_addr = ipHdr->daddr;
 
   		  cout << "\n---------------------------------------------------------------\n";
-		  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
-				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
+		/*  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
+				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;*/
 
 			 if (direction == 1)
 					cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
