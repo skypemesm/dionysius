@@ -809,7 +809,11 @@ using namespace std;
 			else
 			{
 				cout << "GOT AN ACK\n";
-				saw_ack =1;
+				if(saw_invite_already == 1 && message.find("Proxy-Authorization") != string::npos)
+				{
+					saw_ack =1;
+					cout << "Setting saw ack \n";
+				}
 
 			}
 
@@ -907,12 +911,13 @@ using namespace std;
 					sent_invite = 0;
 					saw_ack = 0;
 					saw_200ok = 0;
+
+				     saw_invite_already = 0;
 				}
 
 				is_session_on = 1;
 			}
 
-		     saw_invite_already = 0;
 		     out_addr.sin_addr.s_addr = last_out_dest;
 
 			return 0;
