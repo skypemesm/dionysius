@@ -556,8 +556,10 @@ using namespace std;
 
 		memcpy(point+28,buff,length);
 
-		char ptt = buff[2];
-		printf("%x\n",ptt);
+		if (buff[1] == 0x7c)
+			printf("SIGNALING mere bhai\n");
+		else
+			printf("%x\n",buff[1]);
 
 		// RECALCULATE THE CHECKSUM
 		thisinstance->form_checksums((char * )point);
@@ -723,6 +725,9 @@ using namespace std;
         else
         {
         	srpp::enable_srpp();
+        	RTP_Header *rtpp = (RTP_Header *)rtp_header; //+28
+        	cout << "SETTING SEQUENCE NUMBER TO:" << rtpp->seq << endl;
+        	srpp::set_starting_sequenceno(rtpp->seq);
         }
 
  		/*char data[40];
@@ -1369,7 +1374,7 @@ using namespace std;
 					{
 						cout << " WE RECEIVED A RTP PACKET\n";
 
-						//----------------CONVERT THE RECEIVED SRPP Message to RTP Message-----------------
+						//---------------- CONVERT THE RECEIVED SRPP Message to RTP Message -----------------
 						int new_size = bytes_read - 28;
 
 						if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)

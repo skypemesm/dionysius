@@ -767,4 +767,10 @@ int verifySignalling(char * buff)
 	  {
 		  return padding_functions.set_full_bandwidth();
 	  }
+
+	  int set_starting_sequenceno(int seq_no)
+	  {
+		  lastSequenceNo = seq_no;
+	  }
+
 } // end of namespace
