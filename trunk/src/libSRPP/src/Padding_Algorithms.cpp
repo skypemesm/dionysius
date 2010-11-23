@@ -123,7 +123,8 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 			//check if we already have a packet to send
 			//send if NO
-			if (packet_to_send == 1){
+			if (packet_to_send > 0){
+				cout << "Waiting for.." << packet_to_send << endl;
 				srpp::send_message(&dummy_msg);
 			} else
 				packet_to_send = 0;
