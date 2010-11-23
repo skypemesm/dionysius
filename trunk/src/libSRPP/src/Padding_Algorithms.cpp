@@ -114,20 +114,24 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 		int calculated_burst_dummies = srpp::srpp_rand(0,10); // THIS IS WHAT WE WILL CALCULATE BASED ON CURRENT BURST SIZE
 
+		cout << "Sending " << calculated_burst_dummies << "packets\n";
+
 		if ((++cbp_packet_count) <= calculated_burst_dummies)
 		{
-			cout << "I will send one packet" << endl;
 			SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
 			//cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 			srpp::encrypt_srpp(&dummy_msg);
 
 			//check if we already have a packet to send
 			//send if NO
-			if (packet_to_send > 0){
-				cout << "Waiting for.." << packet_to_send << endl;
+			if (packet_to_send == 0){
 				srpp::send_message(&dummy_msg);
 			} else
+			{
 				packet_to_send = 0;
+				cout << "Waiting for.." << packet_to_send << endl;
+
+			}
 
 			//reset both packet and silence timers
 			srpp::resetPacketTimer();
