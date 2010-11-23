@@ -555,18 +555,22 @@ using namespace std;
 		rtp_hdset = 2;
 
 		memcpy(point+28,buff,length);
-		memcpy(point+28,rtp_header+28,12);
 
-		printf("%x\n",rtp_header+29);
-		if (buff[1] == 0x7c)
+		if(rtp_hdset == 2)
 		{
-			printf("SIGNALING mere bhai\n");
-			*(point+29) = buff[1];
-		}
-		else
-		{
-			printf("%x\n",buff[1]);
-			printf("mahalo");
+			memcpy(point+28,rtp_header+28,12);
+
+			printf("%x\n",rtp_header+29);
+			if (buff[1] == 0x7c)
+			{
+				printf("SIGNALING mere bhai\n");
+				*(point+29) = buff[1];
+			}
+			else
+			{
+				printf("%x\n",buff[1]);
+				printf("mahalo");
+			}
 		}
 
 		// RECALCULATE THE CHECKSUM
@@ -715,7 +719,8 @@ using namespace std;
 
 		RTP_Header *rtpp = (RTP_Header *)rtp_header; //+28
 		cout << "SETTING SEQUENCE NUMBER TO:" << rtpp->seq << endl;
-		srpp::set_starting_sequenceno(rtpp->seq);
+		//srpp::set_starting_sequenceno(rtpp->seq);
+
  		int status = srpp::start_session();
  		cout << "SIGNALING STATUS " << status << endl;
 
@@ -736,6 +741,9 @@ using namespace std;
         else
         {
         	srpp::enable_srpp();
+        	RTP_Header *rtpp = (RTP_Header *)(rtp_header+28);
+			cout << "SETTING SEQUENCE NUMBER TO:" << rtpp->seq << endl;
+			srpp::set_starting_sequenceno(rtpp->seq);
         }
 
  		/*char data[40];
@@ -1320,7 +1328,7 @@ using namespace std;
 
 			//set rtp_header
 			if (rtp_hdset == 0)
-			{memcpy(rtp_header,buff,40);rtp_hdset=1;}
+			{memcpy(rtp_header,buff,28);rtp_hdset=1;}
 
 		}
 
@@ -1329,7 +1337,13 @@ using namespace std;
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		 if (is_rtp == 1)
 		 {
+			 RTP_Header * rtpp = (RTP_Header*) buff;
 
+			 if(rtpp->version == 0)
+			 {
+				 cout << "Unknown version 0" << endl;
+				 return 0;
+			 }
 
 
 		  /** PRINT DETAILS ABOUT THE PACKET NOW **/
