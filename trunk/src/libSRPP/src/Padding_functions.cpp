@@ -182,7 +182,7 @@ string	PaddingFunctions::generate_dummy_data (int size)
 
 	}
 
-	cout << "Size reqd:" << size << " SIZE GOT:" << return_str.length() << endl;
+	//cout << "Size reqd:" << size << " SIZE GOT:" << return_str.length() << endl;
 
 	return return_str;
 
@@ -198,7 +198,7 @@ int PaddingFunctions::add_to_dummy_cache(SRPPMessage srpp_msg)
 	int thisdummysize, j=0;
 
 	//cout << "MAXPACKETSIZE HEREIN: " << maxpacketsize << endl;
-	thisdummysize = srpp::srpp_rand(1, maxpacketsize);
+	thisdummysize = srpp::srpp_rand(1, 500); // NOTE:: 1000 is given as the maximum packet size of the dummy now.
 
 	for (; j < (int)srpp_msg.encrypted_part.original_payload.size(); j++)
 			srpp_msg.encrypted_part.original_payload.at(j) ^= srpp::srpp_rand(0,65536); // original data xored with some random number
