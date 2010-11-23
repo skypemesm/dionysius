@@ -123,9 +123,8 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 			//check if we already have a packet to send
 			//send if NO
-			if (packet_to_send == 0){
+			if (packet_to_send == 1){
 				srpp::send_message(&dummy_msg);
-
 			} else
 				packet_to_send = 0;
 
@@ -149,7 +148,8 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	{
 		cout << "I will send one packet" << endl;
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
-		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
+		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number()
+				<< " SIZE:" << dummy_msg.encrypted_part.original_payload.size() << endl;
 		srpp::encrypt_srpp(&dummy_msg);
 
 		//check if we already have a packet to send

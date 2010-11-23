@@ -424,7 +424,6 @@ int send_external = 0, receive_external = 0;
 
 	int send_message(SRPPMessage * message)
 	{
-		packet_to_send = 1;
 
 		if (message->encrypted_part.original_payload.size() == 0)
 			return 0;
@@ -450,11 +449,18 @@ int send_external = 0, receive_external = 0;
 
 		if (send_external == 1) // We have a sender functor to process the sending action.
 		{
-			return send_processor(buff,size); //message,length
+			packet_to_send = 1;
+			int status = send_processor(buff,size); //message,length
+			packet_to_send = 0;
+			return status;
+
 		}
 
+		packet_to_send = 1;
 		int byytes = sendto(srpp_session->sendersocket, buff, size, 0,
 							              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
+
+		packet_to_send = 0;
 		if (byytes < 0)
 			cout << "ERROR IN SENDING DATA: " << strerror(errno)<< endl;
 
