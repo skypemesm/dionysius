@@ -456,7 +456,7 @@ int send_external = 0, receive_external = 0;
 
 		}
 
-		packet_to_send = 1;
+		packet_to_send = message->srpp_header.seq;
 		int byytes = sendto(srpp_session->sendersocket, buff, size, 0,
 							              (struct sockaddr *)&(srpp_session->sender_addr), sizeof(struct sockaddr));
 
