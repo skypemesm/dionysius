@@ -127,7 +127,7 @@ int send_external = 0, receive_external = 0;
 
 	//stOP the srpp session
 	int stop_session(){
-		cout << "------------------------------------------------------------------------------------\n\n";
+		cout << "------------------------ STOPPING SRPP SESSION ----------------------------------\n\n";
 
 		//we stop the srpp session object
 		srpp_session->stop_session();
@@ -142,7 +142,7 @@ int send_external = 0, receive_external = 0;
 		{
 			//We send BYE message
 			signaling_functions.sendByeMessage();
-			receive_message();
+			//receive_message();
 		}
 
 		if(isMediaSessionComplete() == 1)
