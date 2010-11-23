@@ -46,7 +46,7 @@ PaddingFunctions::PaddingFunctions()
 //Destructor,ofcourse
 PaddingFunctions::~PaddingFunctions()
 {
-	delete dummy_cache;
+	//delete dummy_cache;
 }
 
 /** THe MAIN PAD FUNCTION WHICH CALLS THE OTHER PADDING FUNCTIONS **/
