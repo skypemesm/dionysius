@@ -20,8 +20,8 @@
 #include <cstdlib>
 
 
-#define PACKET_INTERVAL_TIME	10000	           /** This is time interval in ms we wait before we start current burst padding  **/
-#define SILENCE_INTERVAL_TIME	35000              /** This is time interval in ms we wait in silence before we start extra burst padding  **/
+#define PACKET_INTERVAL_TIME	1000	           /** This is time interval in ms we wait before we start current burst padding  **/
+#define SILENCE_INTERVAL_TIME	3000              /** This is time interval in ms we wait in silence before we start extra burst padding  **/
 
 class SRPPSession;									/** Forward Declaration  **/
 
@@ -102,6 +102,9 @@ namespace srpp {
 	 int isSignalingComplete();
 	 int setSignalingComplete();
 
+	 //verify if we need to look for signaling and enabling srpp still
+ 	  int verifySignalling(char * buff);
+
 	 //Check whether media session is complete
 	  int isMediaSessionComplete();
 
@@ -112,8 +115,9 @@ namespace srpp {
 	  //Get the maximum payload size in the session
 	  int getMaxPayloadSize();
 
- 	  //verify if we need to look for signaling and enabling srpp still
-	  int verifySignalling(char * buff);
+	  //Set Full Bandwidth option
+	  int set_full_bandwidth();
+
 
 	  //reset timers
 	  int resetPacketTimer();

@@ -36,6 +36,8 @@ public:
 	static string	generate_dummy_data(int size);
 
 	static int add_to_dummy_cache(SRPPMessage srpp_msg);
+	int set_full_bandwidth();
+
 
 private:
 

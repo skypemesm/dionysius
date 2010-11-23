@@ -386,6 +386,11 @@ int send_external = 0, receive_external = 0;
 	{
 		//TODO::: USE CRYPTO
 		cout << "KEY:" << srpp_session->encryption_key << endl;
+		int val = srpp_rand(0,2^15);
+		val |= 1;
+
+		original_pkt->encrypted_part.dummy_flag &= val;
+
 		original_pkt->encrypt(srpp_session->encryption_key);
 		return *original_pkt;
 
@@ -396,6 +401,9 @@ int send_external = 0, receive_external = 0;
 	{
 		//TODO::: USE CRYPTO
 		encrypted_pkt->decrypt(srpp_session->encryption_key);
+		encrypted_pkt->encrypted_part.dummy_flag &= 1;
+
+		cout << " REMOVED extra: dummy=" << encrypted_pkt->encrypted_part.dummy_flag << endl;
 		return *encrypted_pkt;
 	}
 
@@ -748,4 +756,9 @@ int verifySignalling(char * buff)
 		  return signaling_functions.setSignalingComplete(1);
 	  }
 
+
+	  int set_full_bandwidth()
+	  {
+		  return padding_functions.set_full_bandwidth();
+	  }
 } // end of namespace
