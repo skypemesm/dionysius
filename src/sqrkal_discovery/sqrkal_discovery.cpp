@@ -52,11 +52,12 @@ using namespace std;
 	int is_srtp = 0;
 	int is_srpp = 0;
 	int apply_srpp = 0;
-	bool must_start_srpp = false;
 	int is_session_on = 0;
 	int inport,outport;  //inport is my RTP port and output port is the other endpoint's RTP port
 
 	int saw_invite_already = 0;
+	int sent_invite = 0,saw_ack = 0,saw_200ok = 0;
+
 	int recv_count = 0, sent_count =0;
 
 	struct ipq_handle*	sqrkal_discovery_ipqh;
@@ -797,7 +798,23 @@ using namespace std;
 		else if (message.find("200 OK") != string::npos || message.find("ACK ") != string::npos )
 		{     		/** check if I received a 200 OK or a ACK message **/
 
-			cout << "\nGOT A 200 OK OR ACK\n";
+			if (message.find("200 OK") != string::npos)
+			{
+				cout << "\nGOT A 200 OK message\n";
+				if ( sent_invite == 1 && direction == 0 )
+				{
+					saw_200ok = 1;
+				}
+			}
+			else
+			{
+				cout << "GOT AN ACK\n";
+				if ( sent_invite == 0 && direction == 0 )
+				{
+					saw_ack =1;
+				}
+			}
+
 			//cout << message << endl;
 
 			//check for any SDP content and parse it
@@ -880,9 +897,14 @@ using namespace std;
 				rtp_ports.push_back(inport);
 				rtp_ports.push_back(outport);
 
-				add_all_rtp_rules(1,1);
+				if ((sent_invite == 0 && saw_ack == 1) || (sent_invite == 1 && saw_200ok == 1 ))
+				{
+					add_all_rtp_rules(1,1);
+					sent_invite = 0;
+					saw_ack = 0;
+					saw_200ok = 0;
+				}
 
-				//must_start_srpp = true;
 				is_session_on = 1;
 			}
 
@@ -947,6 +969,7 @@ using namespace std;
 			return 0;   // since we have already set the out_addr earlier
 		   }
 
+		   sent_invite = 1;
 
 			// SET the other endpoint address by performing a DNS lookup on a hostname
 			l = message.find("INVITE sip:");
@@ -1010,7 +1033,9 @@ using namespace std;
 			}
 			   out_addr.sin_family = AF_INET;
 			   out_addr.sin_port = htons(5060);
-			last_out_dest = out_addr.sin_addr.s_addr;
+
+			if (direction == 1) // Outgoing message
+				last_out_dest = out_addr.sin_addr.s_addr;
 
 
 		}
@@ -1050,7 +1075,8 @@ using namespace std;
 			   out_addr.sin_family = AF_INET;
 			   out_addr.sin_port = htons(5060);
 
-			last_out_dest = out_addr.sin_addr.s_addr;
+			if (direction == 1)
+				last_out_dest = out_addr.sin_addr.s_addr;
 
 		}
 		else
@@ -1255,17 +1281,6 @@ using namespace std;
 				if(direction == 0) //inside
 				{
 					out_addr.sin_addr.s_addr = ipHdr->saddr;
-				}
-
-				if (must_start_srpp)
-				{
-					must_start_srpp = false;
-					//if (start_SRPP() >= 0)
-					{
-						//cout << "GOING TO APPLY SRPP SESSION NOW >>>>\n\n";
-						//apply_srpp = 1;
-
-					}
 				}
 
 
