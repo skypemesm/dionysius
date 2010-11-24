@@ -1368,8 +1368,9 @@ using namespace std;
 				}
 
 				//set rtp_header
-				//if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
+				if (rtp_hdset == 0 || rtp_hdset == 1 || rtp_header[29] & 0x80 != 0x80 )
+				{memcpy(rtp_header,buff,40);rtp_hdset=2; cout << "SET\n";}
+
 				/*for (int i = 0; i < 40; i++)
 							printf("%x ",rtp_header[i]);*/
 
@@ -1610,8 +1611,8 @@ using namespace std;
 				ipHdr->ttl = srpp_ttl;
 
 				//set rtp_header
-				//if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
+				if (rtp_hdset == 0 || rtp_hdset == 1 || rtp_header[29] & 0x80 != 0x80 )
+				{memcpy(rtp_header,buff,40);rtp_hdset=2; cout << "SET\n";}
 				/*for (int i = 0; i < 40; i++)
 							printf("%x ",rtp_header[i]);*/
 
