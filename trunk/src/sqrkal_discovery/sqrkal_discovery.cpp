@@ -580,14 +580,6 @@ using namespace std;
 		out_addr.sin_addr.s_addr = rtp_dest;
 		out_addr.sin_port = htons(outport);
 
-		if (length+28 > IP_MTU)
-		{
-			int extra_size = IP_MTU - length - 30;
-			//vect.erase(vect.begin()+(vect.size() - 5 ),vect.end());
-			cout << "EXtra Size: " << extra_size << endl;
-
-		}
-
 		//send data
 		int byytes = sendto(sip_socket, point, length+28, 0,
 						 (struct sockaddr *)&(out_addr), sizeof(struct sockaddr));
