@@ -1279,7 +1279,7 @@ using namespace std;
 				ipHdr->daddr = out_addr.sin_addr.s_addr;
 
 				//// Hack to get working in case zrtp present
-				if (str.find("zrtp-hash") != string::npos && direction == 0)
+				/*if (str.find("zrtp-hash") != string::npos && direction == 0)
 				{
 					unsigned int l = 0,m =0;
 					m=str.find("zrtp-hash");
@@ -1290,7 +1290,7 @@ using namespace std;
 						//buff[l+28]='m';buff[l+32]='o';
 						m=str.find("zrtp-hash",l+1);
 					}
-				}
+				}*/
 
 
 				// MANGLE THE PACKET
@@ -1446,7 +1446,7 @@ using namespace std;
 						{
 
 							//cout << "bytes read:" << bytes_read << endl;
-							//srpp_msg.print();
+							srpp_msg.print();
 							srtp_msg = srpp::srpp_to_srtp(&srpp_msg);
 							//rtp_msg.print();
 							new_size = srpp_msg.encrypted_part.original_payload.size();
@@ -1579,7 +1579,7 @@ using namespace std;
 							ssrc_value = srtp_hdr->ssrc;
 
 						srpp_msg = srpp::rtp_to_srpp(*srtp_hdr,(char*) buff+28 ,bytes_read-28); // we will keep the whole packet in payload
-						//srpp_msg.print();
+						srpp_msg.print();
 
 						int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
 								srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
