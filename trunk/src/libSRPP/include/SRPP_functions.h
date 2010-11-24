@@ -21,7 +21,7 @@
 
 
 #define PACKET_INTERVAL_TIME	200	           /** This is time interval in ms we wait before we start current burst padding  **/
-#define SILENCE_INTERVAL_TIME	350            /** This is time interval in ms we wait in silence before we start extra burst padding  **/
+#define SILENCE_INTERVAL_TIME	300            /** This is time interval in ms we wait in silence before we start extra burst padding  **/
 
 class SRPPSession;									/** Forward Declaration  **/
 

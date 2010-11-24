@@ -140,13 +140,11 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 		while ((++cbp_packet_count) <= calculated_burst_dummies)
 		{
 			SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
-			//cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 			srpp::encrypt_srpp(&dummy_msg);
 
 			//check if we already have a packet to send
 			//send if NO
 			if (packet_to_send == 0){
-
 				cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 				srpp::send_message(&dummy_msg);
 			} else
@@ -173,7 +171,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 	int PaddingAlgos::default_ebp_pad_algo()
 	{
 		if (is_burst_padding == 0)
-					return 0;
+		return 0;
 
 		cout << "I will send one dummy packet" << endl;
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();

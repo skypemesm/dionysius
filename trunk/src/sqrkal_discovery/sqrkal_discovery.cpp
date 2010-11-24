@@ -76,6 +76,7 @@ using namespace std;
 	int frag_id = 0; // offset for fragmented packet id
 	int srpp_ttl=65;
 	char srpp_ttl_s[2];
+	uint32_t ssrc_value = 0;
 
 	RTPMessage* rtp_msg_p;
 	SRPPMessage* srpp_msg_p;
@@ -554,14 +555,18 @@ using namespace std;
 
 		memcpy(point+28,buff,length);
 		RTP_Header * rtpp = (RTP_Header *)(rtp_header+28);
+		rtpp->seq = htons(lastSequenceNo);
 
-		if(rtp_hdset == 2 && rtpp->version != 0)
+		if (ssrc_value != 0)
+			rtpp->ssrc = htonl(ssrc_value);
+
+		if(rtp_hdset == 2 && rtpp->version != 0)  // if we have rtp_header stored, and its not an invalid one.
 		{
 			memcpy(point+28,rtp_header+28,12);
 
 			if (buff[1] == 0x7c)
 			{
-				// Thisis a signaling message and has to have a payload type 124
+				// This is a signaling message and has to have a payload type 124
 				*(point+29) = buff[1];
 			}
 
@@ -574,6 +579,14 @@ using namespace std;
 		//set out_addr.
 		out_addr.sin_addr.s_addr = rtp_dest;
 		out_addr.sin_port = htons(outport);
+
+		if (length+28 > IP_MTU)
+		{
+			int extra_size = IP_MTU - length - 30;
+			//vect.erase(vect.begin()+(vect.size() - 5 ),vect.end());
+			cout << "EXtra Size: " << extra_size << endl;
+
+		}
 
 		//send data
 		int byytes = sendto(sip_socket, point, length+28, 0,
@@ -1533,6 +1546,10 @@ using namespace std;
 
 						cout << " WE SENT A RTP PACKET\n";
 						RTP_Header* rtp_hdr = (RTP_Header *)(buff+28);
+
+						if (ssrc_value == 0)
+							ssrc_value = rtp_hdr->ssrc;
+
 						//rtp_msg_p->print();
 
 						srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
@@ -1565,6 +1582,9 @@ using namespace std;
 					{
 						cout << " WE SENT A SRTP PACKET\n";
 						RTP_Header* srtp_hdr = (RTP_Header *)(buff+28);
+
+						if (ssrc_value == 0)
+							ssrc_value = srtp_hdr->ssrc;
 
 						srpp_msg = srpp::rtp_to_srpp(*srtp_hdr,(char*) buff+28 ,bytes_read-28); // we will keep the whole packet in payload
 						//srpp_msg.print();
