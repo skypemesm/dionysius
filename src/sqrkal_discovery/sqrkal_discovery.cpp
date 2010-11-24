@@ -1536,6 +1536,8 @@ using namespace std;
 
 						srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
 						//srpp_msg.print();
+						cout << "Sequence Number:  " << srpp_msg.srpp_header.seq << endl;
+
 
 						int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
 								srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);

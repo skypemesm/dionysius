@@ -117,6 +117,9 @@ namespace srpp {
 
 	  //Set Full Bandwidth option
 	  int set_full_bandwidth();
+	  int set_burst_padding();
+	  int set_gradual_ascent();
+
 	  int set_starting_sequenceno(int seq_no);
 
 

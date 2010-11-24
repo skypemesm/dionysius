@@ -767,9 +767,18 @@ int verifySignalling(char * buff)
 
 	  int set_full_bandwidth()
 	  {
-		  return padding_functions.set_full_bandwidth();
+		  return padding_functions.set_padding_options(1);
 	  }
 
+	  int set_burst_padding()
+	  {
+		  return padding_functions.set_padding_options(2);
+	  }
+
+	  int set_gradual_ascent()
+	  {
+		  return padding_functions.set_padding_options(3);
+	  }
 	  int set_starting_sequenceno(int seq_no)
 	  {
 		  lastSequenceNo = seq_no;
