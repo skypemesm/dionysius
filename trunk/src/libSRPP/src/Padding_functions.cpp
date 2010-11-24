@@ -219,9 +219,9 @@ int PaddingFunctions::add_to_dummy_cache(SRPPMessage srpp_msg)
 
 }
 
-int PaddingFunctions::set_full_bandwidth()
+int PaddingFunctions::set_padding_options(int i)
 {
-	algos.set_full_bandwidth();
+	algos.set_options(i);
 }
 
 

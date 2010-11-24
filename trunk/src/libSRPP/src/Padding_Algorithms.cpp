@@ -20,12 +20,29 @@ extern int packet_to_send;
 
 int cbp_packet_count = 0;
 int is_full_bandwidth = 0;
+int gradual_ascent_bandwidth = 0;
+int is_burst_padding = 0;
 
 	/** Sets the behavior to pad all packets to maximum packet size or full bandwidth **/
-	int PaddingAlgos::set_full_bandwidth()
+	int PaddingAlgos::set_options(int i)
 	{
-		is_full_bandwidth = 1;
-		cout << "Padding options set to FULL BANDWIDTH padding.\n";
+		switch(i){
+		case 1:
+			is_full_bandwidth = 1;
+			cout << "Padding options set to FULL BANDWIDTH padding.\n";
+			break;
+
+		case 2:
+			is_burst_padding = 1;
+			cout << "Current Burst Padding and Extra Burst Padding is enabled \n";
+			break;
+
+		case 3:
+			gradual_ascent_bandwidth = 1;
+			cout << "Applying Gradual Ascent Algorithm\n";
+			break;
+
+		}
 	}
 
 	/** Redirects to the specified Packet Size Padding algo **/
@@ -112,6 +129,9 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 	int PaddingAlgos::default_cbp_pad_algo()
 	{
+		if (is_burst_padding == 0)
+			return 0;
+
 		int calculated_burst_dummies = srpp::srpp_rand(0,3); // THIS IS WHAT WE WILL CALCULATE BASED ON CURRENT BURST SIZE
 
 		cout << "Sending " << calculated_burst_dummies << " dummy packets\n";
@@ -126,6 +146,8 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 			//check if we already have a packet to send
 			//send if NO
 			if (packet_to_send == 0){
+
+				cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 				srpp::send_message(&dummy_msg);
 			} else
 			{
@@ -150,10 +172,12 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 	int PaddingAlgos::default_ebp_pad_algo()
 	{
+		if (is_burst_padding == 0)
+					return 0;
+
 		cout << "I will send one dummy packet" << endl;
 		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
-		/*cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number()
-				<< " SIZE:" << dummy_msg.encrypted_part.original_payload.size() << endl;*/
+		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 		srpp::encrypt_srpp(&dummy_msg);
 
 		//check if we already have a packet to send

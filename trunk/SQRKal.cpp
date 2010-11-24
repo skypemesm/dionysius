@@ -34,8 +34,14 @@ int main(int argc, char * argv[])
 		if (arg1 == "--full-bandwidth" || arg1 == "-fb")
 			srpp::set_full_bandwidth();
 
+		if (arg1 == "--burst-padding" || arg1 == "-bp")
+					srpp::set_burst_padding();
+
+		if (arg1 == "--gradual-ascent" || arg1 == "-ga")
+					srpp::set_gradual_ascent();
+
 		if (arg1 == "--usage" )
-		{	cerr << "./sqrkal [--full-bandwidth|-fb]" << endl; return 1;}
+		{	cerr << "./sqrkal [--full-bandwidth|-fb]|[--burst-padding|-bp]|[--gradual-ascent|-ga]" << endl; return 1;}
 
 	}
 

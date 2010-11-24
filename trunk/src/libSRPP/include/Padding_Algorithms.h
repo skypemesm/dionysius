@@ -38,7 +38,7 @@ public:
 	int ebp_pad_algo(ebp_algo_type atype);
 	int vitp_pad_algo(vitp_algo_type atype);
 
-	int set_full_bandwidth();
+	int set_options(int i);
 
 private:
 	int cbp_packet_count;
