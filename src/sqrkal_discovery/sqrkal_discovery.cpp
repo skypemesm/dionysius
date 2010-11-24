@@ -71,7 +71,7 @@ using namespace std;
 	struct sockaddr_in out_addr, back_out_addr;
 	unsigned int last_out_dest;
 	unsigned int rtp_dest, rtp_src;
-	char rtp_header[28];
+	char rtp_header[40];
 	int rtp_hdset = 0;
 	int frag_id = 0; // offset for fragmented packet id
 	int srpp_ttl=65;
@@ -552,8 +552,6 @@ using namespace std;
 
 		ipHdr->ttl=srpp_ttl;
 
-		rtp_hdset = 2;
-
 		memcpy(point+28,buff,length);
 		RTP_Header * rtpp = (RTP_Header *)(rtp_header+28);
 
@@ -717,10 +715,6 @@ using namespace std;
 		time ( &start_time );
 		timeinfo = localtime ( &start_time );
 		cout << "Signaling Started at " << asctime(timeinfo) << endl;
-
-		RTP_Header *rtpp = (RTP_Header *)rtp_header; //+28
-		cout << "SETTING SEQUENCE NUMBER TO:" << rtpp->seq << endl;
-		//srpp::set_starting_sequenceno(rtpp->seq);
 
  		int status = srpp::start_session();
  		cout << "SIGNALING STATUS " << status << endl;
@@ -1329,7 +1323,11 @@ using namespace std;
 
 			//set rtp_header
 			if (rtp_hdset == 0)
-			{memcpy(rtp_header,buff,28);rtp_hdset=1;}
+			{
+				memcpy(rtp_header,buff,28);rtp_hdset=1;
+				/*for (int i = 0; i < 40; i++)
+							printf("%x ",rtp_header[i]);*/
+			}
 
 		}
 
@@ -1377,7 +1375,8 @@ using namespace std;
 				//set rtp_header
 				//if (rtp_hdset == 0 || rtp_hdset == 1)
 				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
-
+				/*for (int i = 0; i < 40; i++)
+							printf("%x ",rtp_header[i]);*/
 
 				//if we see a different port, then we start a new session
 				if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
@@ -1615,7 +1614,9 @@ using namespace std;
 
 				//set rtp_header
 				//if (rtp_hdset == 0 || rtp_hdset == 1)
-				{memcpy(rtp_header,buff,28);rtp_hdset=2;}
+				{memcpy(rtp_header,buff,40);rtp_hdset=2;}
+				/*for (int i = 0; i < 40; i++)
+							printf("%x ",rtp_header[i]);*/
 
 				//set out_addr.
 				out_addr.sin_addr.s_addr = rtp_dest;
