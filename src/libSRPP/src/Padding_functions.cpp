@@ -143,8 +143,25 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 	int dummy_index = srpp::srpp_rand(0,MAXDUMMYCACHESIZE);
 	dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo++;
 
-	cout << dummy_cache[dummy_index].encrypted_part.original_payload.size() << "::"
-			<< dummy_cache[dummy_index].encrypted_part.srpp_padding.size() << endl;
+	int pay_size = dummy_cache[dummy_index].encrypted_part.original_payload.size();
+	int pad_size = dummy_cache[dummy_index].encrypted_part.srpp_padding.size();
+
+	if (pay_size + pad_size > 1200	)
+	{
+		//vect.erase(vect.begin()+(vect.size() - 5 ),vect.end());
+		dummy_cache[dummy_index].encrypted_part.original_payload.erase(
+				dummy_cache[dummy_index].encrypted_part.original_payload.begin()+0.8*(pay_size),
+				dummy_cache[dummy_index].encrypted_part.original_payload.end());
+
+		dummy_cache[dummy_index].encrypted_part.srpp_padding.erase(
+						dummy_cache[dummy_index].encrypted_part.srpp_padding.begin()+0.8*(pad_size),
+						dummy_cache[dummy_index].encrypted_part.srpp_padding.end());
+
+		cout << dummy_cache[dummy_index].encrypted_part.original_payload.size() << "::"
+				<< dummy_cache[dummy_index].encrypted_part.srpp_padding.size() << endl;
+
+	}
+
 
 	return dummy_cache[dummy_index];
 }
