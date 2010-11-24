@@ -157,8 +157,8 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 						dummy_cache[dummy_index].encrypted_part.srpp_padding.begin()+0.8*(pad_size),
 						dummy_cache[dummy_index].encrypted_part.srpp_padding.end());
 
-		cout << dummy_cache[dummy_index].encrypted_part.original_payload.size() << "::"
-				<< dummy_cache[dummy_index].encrypted_part.srpp_padding.size() << endl;
+		/*cout << dummy_cache[dummy_index].encrypted_part.original_payload.size() << "::"
+				<< dummy_cache[dummy_index].encrypted_part.srpp_padding.size() << endl;*/
 
 	}
 

@@ -975,7 +975,7 @@ using namespace std;
 			}
 
 			//check for srtp i.e RTP/SAVP
-			if (l = message.find("RTP/SAVP ",m) != string::npos)
+			if (l = message.find("RTP/SAVP ",m) != string::npos || (l = message.find("zrtp",m) != string::npos))
 			{
 				cout << "SRTP";
 				is_srtp = 1;
