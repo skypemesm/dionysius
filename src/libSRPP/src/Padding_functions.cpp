@@ -141,7 +141,7 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 {
 
 	int dummy_index = srpp::srpp_rand(0,MAXDUMMYCACHESIZE);
-	dummy_cache[dummy_index].srpp_header.seq = ++lastSequenceNo;
+	dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo;
 	return dummy_cache[dummy_index];
 }
 
@@ -152,7 +152,7 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt(int size)
 {
 	int dummy_index = srpp::srpp_rand(1,MAXDUMMYCACHESIZE);
 
-	dummy_cache[dummy_index].srpp_header.seq = ++lastSequenceNo;
+	dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo;
 	return dummy_cache[dummy_index];
 
 }

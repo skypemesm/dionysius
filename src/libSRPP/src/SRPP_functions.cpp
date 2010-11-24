@@ -226,7 +226,7 @@ int send_external = 0, receive_external = 0;
 			srpp_msg.srpp_header.csrc[i] = rtp_header.csrc[i];
 
 		srpp_msg.srpp_header.srpp_signalling = 0;
-		srpp_msg.srpp_header.seq = ++lastSequenceNo;
+		srpp_msg.srpp_header.seq = lastSequenceNo;
 
 		srpp_msg.encrypted_part.dummy_flag = 0;
 
@@ -303,7 +303,7 @@ int send_external = 0, receive_external = 0;
 			srpp_msg.srpp_header.csrc[i] = srtp_msg->srtp_header.csrc[i];
 
 		srpp_msg.srpp_header.srpp_signalling = 0;
-		srpp_msg.srpp_header.seq = ++lastSequenceNo;
+		srpp_msg.srpp_header.seq = lastSequenceNo;
 
 		srpp_msg.encrypted_part.dummy_flag = 0;
 
