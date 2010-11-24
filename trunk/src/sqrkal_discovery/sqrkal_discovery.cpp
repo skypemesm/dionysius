@@ -559,17 +559,12 @@ using namespace std;
 		{
 			memcpy(point+28,rtp_header+28,12);
 
-			printf("%x\n",rtp_header+29);
 			if (buff[1] == 0x7c)
 			{
-				printf("SIGNALING mere bhai\n");
+				// Thisis a signaling message and has to have a payload type 124
 				*(point+29) = buff[1];
 			}
-			else
-			{
-				printf("%x\n",buff[1]);
-				printf("mahalo");
-			}
+
 		}
 
 		// RECALCULATE THE CHECKSUM
