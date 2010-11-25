@@ -28,8 +28,9 @@ DEFS +=
 INCL = -I. ${SRPP_INC}  
 LIBS = ${SRPP_LIB} 
 
-default_target: sqrkal
-
+default_target: sqrkald
+	
+	
 objs: ${SRPP_OBJS} 
 
 libs: ${SRPP_LIBFILE} 
@@ -37,8 +38,9 @@ libs: ${SRPP_LIBFILE}
 ${SRPP_LIBFILE}: ${SRPP_OBJS}
 	${AR} ${SRPP_LIBFILE} ${SRPP_OBJS}
 	
-sqrkal: SQRKal.cpp ${SRPP_LIBFILE} 
-	${CXX} ${CXXFLAGS} ${OPTS} ${DEFS} ${INCL} $< ${LIBS} -o sqrkal
+sqrkald: SQRKal.cpp ${SRPP_LIBFILE} 
+	${CXX} ${CXXFLAGS} ${OPTS} ${DEFS} ${INCL} $< ${LIBS} -o sqrkald
+	cp sqrkald /usr/bin
 
 %.o: %.cpp
 	${CXX} -c ${CXXFLAGS} ${OPTS} ${DEFS} ${INCL} ${DEPS} $< -o $@
@@ -46,7 +48,7 @@ sqrkal: SQRKal.cpp ${SRPP_LIBFILE}
 	rm -f $*.d
 
 # clean targets
-CLEAN = ${SRPP_LIBFILE} sqrkal 
+CLEAN = ${SRPP_LIBFILE} sqrkald 
 
 clean:
 	rm -f `find . -name '*.o'` 
@@ -54,6 +56,12 @@ clean:
 	rm -f Dependencies
 	touch Dependencies
 	rm ${CLEAN}
+
+#install targets
+install:
+	javac sqrkalgui/sqrkal.java
+	
+	
 
 # include automatically generated dependencies
 -include Dependencies
