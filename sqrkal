@@ -1,0 +1,6 @@
+#!/bin/bash
+cd sqrkalgui
+java sqrkal
+mv output_log.txt ../
+cd ..
+
