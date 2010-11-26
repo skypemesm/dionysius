@@ -834,7 +834,7 @@ using namespace std;
 			else
 			{
 				cout << "GOT AN ACK\n";
-				if(saw_invite_already == 1 && message.find("Proxy-Authorization") != string::npos)
+				if(saw_invite_already == 1 && message.find("Route:") != string::npos)
 				{
 					saw_ack =1;
 					cout << "Setting saw ack \n";
@@ -1675,7 +1675,6 @@ using namespace std;
 
 		//Add the firewall rules
 		add_all_rules(1,1);
-		add_all_rtp_rules(1,1);
 
 		//Initialize SRPP
 		initialize_srpp();
