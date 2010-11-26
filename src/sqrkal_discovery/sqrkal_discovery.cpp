@@ -903,8 +903,6 @@ using namespace std;
 
 			if (is_session_on == 0  && saw_invite_already != 0)
 			{
-				cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
-
 				// Get the receiver address from c=IN IP4...
 				unsigned int l,m;
 				if ((l = message.find("c=IN IP4 ")) != string::npos)
@@ -929,6 +927,8 @@ using namespace std;
 				     or b] I received an invite, sent 200 OK and received ack
 
 				*/
+				cout << "sent inv:" << sent_invite << ":" << saw_ack <<"|" << saw_200ok << endl;
+
 				if ((sent_invite == 0 && saw_ack == 1)
 						|| (sent_invite == 1 && saw_200ok == 1 && saw_ack == 1))
 				{
@@ -937,8 +937,10 @@ using namespace std;
 					saw_ack = 0;
 					saw_200ok = 0;
 
-				     saw_invite_already = 0;
-				     is_session_on = 1;
+				    saw_invite_already = 0;
+				    is_session_on = 1;
+
+				    cout << "GOING TO START SRPP SESSION NOW >>>>\n\n";
 				}
 
 			}
@@ -1350,8 +1352,8 @@ using namespace std;
 		  abc1.s_addr = ipHdr->daddr;
 
   		  cout << "\n---------------------------------------------------------------\n";
-		/*  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
-				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;*/
+		  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
+				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
 
 			 if (direction == 1)
 					cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
@@ -1673,6 +1675,7 @@ using namespace std;
 
 		//Add the firewall rules
 		add_all_rules(1,1);
+		add_all_rtp_rules(1,1);
 
 		//Initialize SRPP
 		initialize_srpp();
