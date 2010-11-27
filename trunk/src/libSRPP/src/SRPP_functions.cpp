@@ -311,6 +311,8 @@ int send_external = 0, receive_external = 0;
 		padding_functions.pad(&srpp_msg);
 		srpp_msg.encrypted_part.pad_count = srpp_msg.encrypted_part.srpp_padding.size();
 
+		srpp_msg.print();
+
 		//Encrypt the message
 		encrypt_srpp(&srpp_msg);
 
