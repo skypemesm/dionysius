@@ -134,7 +134,7 @@ class sqrkal extends JPanel implements ActionListener{
 /** ACTION LISTENER HANDLER **/
  public void actionPerformed(ActionEvent e) {
 
-  String cmd = "sudo skill -9 sqrkald;sudo iptables -F";	
+  String cmd = "sudo skill -9 sqrkald;sudo iptables -F;ls";	
 	if (e.getSource() == b1 )
 	{
 		cmd="sudo ./runme.sh ";

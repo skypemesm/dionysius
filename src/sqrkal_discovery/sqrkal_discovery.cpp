@@ -1457,7 +1457,7 @@ using namespace std;
 								bytes_read = new_size+28;
 
 									for (int i = 0; i < new_size+28; i++)
-										printf("%x ", srtp_buff );
+										printf("%x ", buff[i] );
 
 									printf("\n--------\n");
 							}
