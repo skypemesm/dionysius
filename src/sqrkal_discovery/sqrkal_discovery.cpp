@@ -1445,19 +1445,22 @@ using namespace std;
 						if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
 						{
 
-							//cout << "bytes read:" << bytes_read << endl;
 							srpp_msg.print();
-							srtp_msg = srpp::srpp_to_srtp(&srpp_msg);
-							srtp_msg.print();
 							new_size = srpp_msg.encrypted_part.original_payload.size();
-							//cout << "New Size:" << new_size << "\n";
-							memcpy(buff+28,srtp_msg.payload,new_size);
-							bytes_read = new_size+28;
+							cout << "New Size:" << new_size << "\n";
 
-							for (int i = 0; i < new_size; i++)
-								printf("%x ", srtp_msg.payload[i] );
+							char srtp_buff[newsize];
+							if (srpp::srpp_to_srtp(&srpp_msg,srtp_buff,size) >= 0)
+							{
 
-							printf("\n--------\n");
+								memcpy(buff+28,srtp_buff,new_size);
+								bytes_read = new_size+28;
+
+									for (int i = 0; i < new_size+28; i++)
+										printf("%x ", buff );
+
+									printf("\n--------\n");
+							}
 
 						}
 

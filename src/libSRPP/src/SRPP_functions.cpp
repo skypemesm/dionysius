@@ -324,18 +324,48 @@ int send_external = 0, receive_external = 0;
 
 		//Decrypt the SRPP Message
 		decrypt_srpp(srpp_msg);
-
+		srpp_msg->print();
 
 		//Unpad the SRPP Message
 		SRTPMessage *srtp_msg;
-		if (padding_functions.unpad(srpp_msg) > 0 )
+		if (padding_functions.unpad(srpp_msg) == -1 )
 		{
 			//Create a SRTPMessage with the data from SRPP packet
-			string data (srpp_msg->encrypted_part.original_payload.begin(),srpp_msg->encrypted_part.original_payload.end());
+			cout << "Dummy Message\n" << "\n";
+			rtp_msg = create_srtp_message("");
+		}
+		else
+		{
+			//Create a SRTPMessage with the data from SRPP packet
+		    string data (srpp_msg->encrypted_part.original_payload.begin(),srpp_msg->encrypted_part.original_payload.end());
 			srtp_msg = (SRTPMessage *)data.c_str();
 		}
 
 		return *srtp_msg;
+	}
+
+	//Convert a SRPP packet back to SRTP and returns it in a char buffer
+	int srpp_to_srtp(SRPPMessage * srpp_msg, char * buff,int length)
+	{
+
+		//Decrypt the SRPP Message
+		decrypt_srpp(srpp_msg);
+		srpp_msg->print();
+
+		//Unpad the SRPP Message
+		if (padding_functions.unpad(srpp_msg) == -1 )
+		{
+			//Create a SRTPMessage with the data from SRPP packet
+			cout << "Dummy Message\n" << "\n";
+			return -1;
+		}
+		else
+		{
+			//Create a SRTPMessage with the data from SRPP packet
+			memcpy(buff,srpp_msg->encrypted_part.original_payload, length);
+		}
+
+		return 0;
 	}
 
 	//Create a SRPP Message with the data and encrypt it and return it
