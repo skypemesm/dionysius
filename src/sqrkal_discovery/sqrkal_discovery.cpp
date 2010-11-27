@@ -647,7 +647,7 @@ using namespace std;
 				{printf("%c",m->payload[i]);}*/
 
 				// process the received packet
-				if (srpp::isSignalingMessage ((char*)m->payload+28,1) == 1)
+				if (srpp::isSignalingMessage ((char*)m->payload+28) == 1)
 				{
 					cout << "Signaling Message:\n"; return srpp::processReceivedData((char*)m->payload + 28, m->data_len-28);
 				}
@@ -659,6 +659,7 @@ using namespace std;
 			 return dummy;
 
 	}
+
 
 
 	/** Verify if this string is an IP ADDRESS */
@@ -1366,7 +1367,7 @@ using namespace std;
 
 
 				// check if its a signaling message
-				if (srpp::isSignalingMessage ((char *)buff+28,1) == 1)
+				if (srpp::isSignalingMessage ((char *)buff+28) == 1)
 				{
 					cout <<"Signaling\n"; srpp::processReceivedData((char*)buff + 28, bytes_read-28);
 
