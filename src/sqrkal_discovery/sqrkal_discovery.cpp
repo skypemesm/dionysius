@@ -1455,7 +1455,7 @@ using namespace std;
 							bytes_read = new_size+28;
 
 							for (int i = 0; i < new_size; i++)
-								printf("%x ", rtp_msg.payload[i] );
+								printf("%x ", srtp_msg.payload[i] );
 
 							printf("\n--------\n");
 
