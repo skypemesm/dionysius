@@ -131,11 +131,6 @@ public:
 	    for (int i = 0; i< ntohs(srpp_header.cc); i++)
 	    	srpp_header1->csrc[i] = htonl(srpp_header.csrc[i]);
 
-	    srpp_header1->defined_by_profile = htons(srpp_header.defined_by_profile);
-	    srpp_header1->extension_header = htons(srpp_header.extension_header);
-
-	    srpp_header1->srpp_signalling = htonl(srpp_header.srpp_signalling);
-
 		char* data = (char *) &buff[sizeof(SRPPHeader)-8 - 4*(15-ntohs(srpp_header.cc))];
 		printf("\n1:%u %u %d\n",buff,data,data-buff);
 

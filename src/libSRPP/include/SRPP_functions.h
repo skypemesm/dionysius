@@ -99,7 +99,7 @@ namespace srpp {
 
 	// parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
 	int isSignalingMessage (SRPPMessage * message);
-	int isSignalingMessage (char * buff);
+	int isSignalingMessage (char * buff, int is_network_format);
 
 	//Check whether the signaling is complete
 	 int isSignalingComplete();

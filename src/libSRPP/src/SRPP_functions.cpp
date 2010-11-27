@@ -569,9 +569,9 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
 		}
 
 		//verify if we need to look for signaling and enabling srpp still
-		if (isSignalingMessage(buff) == 1 || (verifySignalling(buff) == 0 && srpp_enabled == 0))
+		if (isSignalingMessage(buff,0) == 1 || (verifySignalling(buff) == 0 && srpp_enabled == 0))
 		{
-			if (isSignalingMessage(buff) == 1)
+			if (isSignalingMessage(buff,0) == 1)
 				srpp_msg.network_to_srpp(buff,bytes_read, 0);
 			else
 				srpp_msg.network_to_srpp(buff,bytes_read, srpp_session->encryption_key);
@@ -679,7 +679,7 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
  }
 
  // parse the received message ... returns -1 if its a media packet.. and 1 if its a signaling packet (whose corresponding handler is called)
-  int isSignalingMessage (char * buff1)
+  int isSignalingMessage (char * buff1, int is_network_format)
   {
 	  char buff[sizeof(SRPPHeader)+10];
 	  memcpy(buff,buff1,sizeof(SRPPHeader));
@@ -687,7 +687,14 @@ SRPPMessage processReceivedData(char * buff, int bytes_read)
 	  SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
       SRPPHeader srpp_header = *srpp_header1;
 
-	  //cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
+      if (is_network_format == 1)
+      {
+    	  char * signal = (char*)(srpp_header1 - 4 - 4*(15-ntohs(srpp_header.cc)));
+    	  srpp_header.srpp_signalling = ntohl(*signal);
+      }
+
+
+	  cout << "PAYLOAD TYPE :" << srpp_header.pt << " SIGNALING:" << srpp_header.srpp_signalling << "\n";
 
 	  if (srpp_header.srpp_signalling == 0 and srpp_header.pt != 124) //NOT A SIGNALING MESSAGE
  		 return -1;
