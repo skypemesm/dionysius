@@ -927,8 +927,6 @@ using namespace std;
 				     or b] I received an invite, sent 200 OK and received ack
 
 				*/
-				cout << "sent inv:" << sent_invite << ":" << saw_ack <<"|" << saw_200ok << endl;
-
 				if ((sent_invite == 0 && saw_ack == 1)
 						|| (sent_invite == 1 && saw_200ok == 1 && saw_ack == 1))
 				{
@@ -1450,16 +1448,16 @@ using namespace std;
 							//cout << "bytes read:" << bytes_read << endl;
 							srpp_msg.print();
 							srtp_msg = srpp::srpp_to_srtp(&srpp_msg);
-							//rtp_msg.print();
+							srtp_msg.print();
 							new_size = srpp_msg.encrypted_part.original_payload.size();
 							//cout << "New Size:" << new_size << "\n";
 							memcpy(buff+28,srtp_msg.payload,new_size);
 							bytes_read = new_size+28;
 
-							/*for (int i = 28; i < BUFSIZE; i++)
+							for (int i = 0; i < new_size; i++)
 								printf("%x ", rtp_msg.payload[i] );
 
-							printf("\n--------\n");*/
+							printf("\n--------\n");
 
 						}
 
@@ -1574,6 +1572,10 @@ using namespace std;
 					}
 					else
 					{
+						for (int i = 0; i < bytes_read; i++)
+								printf("%x ", buff[i] );
+						printf("\n--------\n");
+
 						cout << " WE SENT A SRTP PACKET\n";
 						RTP_Header* srtp_hdr = (RTP_Header *)(buff+28);
 
