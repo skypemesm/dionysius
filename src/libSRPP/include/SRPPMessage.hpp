@@ -137,7 +137,7 @@ public:
 	    srpp_header1->srpp_signalling = htonl(srpp_header.srpp_signalling);
 	    // -------------------------------------------------------
 
-		char* data = (char *) &buff[sizeof(SRPPHeader)];
+		char* data = (char *) &buff[sizeof(SRPPHeader)]- 4*(15-ntohs(srpp_header.cc));
 		//printf("\n1:%u %u %d\n",buff,data,data-buff);
 
 		//copy the payload
@@ -209,14 +209,23 @@ public:
 	    for (int i = 0; i< srpp_header.cc; i++)
 	    	srpp_header.csrc[i] = ntohl(srpp_header1->csrc[i]);
 
-	    srpp_header.defined_by_profile = ntohs(srpp_header1->defined_by_profile);
-	    srpp_header.extension_header = ntohs(srpp_header1->extension_header);
 
-	    srpp_header.srpp_signalling = ntohl(srpp_header1->srpp_signalling);
-	    // -------------------------------------------------------
 
-	    char* data = (char *) &buff[bytes];
+	    char* data = (char *) &buff[bytes] - 4*(15-ntohs(srpp_header.cc));
 	    //printf ("\n%u %u %d\n",buff,data,data-buff);
+	    uint16_t* thisone = (uint16_t*)data;
+
+	    srpp_header.defined_by_profile = ntohs(*thisone);
+	    thisone++;
+	  	srpp_header.extension_header = ntohs(*thisone);
+	  	thisone++;
+	  	uint32_t* thistwo = (uint32_t*)thisone;
+	  	srpp_header.srpp_signalling = ntohl(*thistwo);
+	  	thistwo++;
+
+	  	data=(char*)thistwo;
+
+	  	// -------------------------------------------------------
 
 	    //copy the tag
 		data -= 4/sizeof(char);
