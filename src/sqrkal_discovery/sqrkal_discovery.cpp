@@ -1384,7 +1384,7 @@ using namespace std;
 				{
 					if (start_SRPP() >= 0)
 					{
-						cout << "Will APPLY SRPP FROM NOW ON...\n\n";
+						cout << "Will APPLY SRPP FROM NOW ON...RECEIVE\n\n";
 						apply_srpp = 1;
 
 					}
@@ -1439,6 +1439,8 @@ using namespace std;
 					else
 					{
 						cout << " WE RECEIVED A SRTP PACKET\n";
+						cout << "KEY:" << srpp::getKey() << endl;
+
 						//----------------CONVERT THE RECEIVED SRPP Message to SRTP Message-----------------
 						int new_size = bytes_read - 28;
 
@@ -1456,7 +1458,7 @@ using namespace std;
 								memcpy(buff+28,srtp_buff,new_size);
 								bytes_read = new_size+28;
 
-									for (int i = 0; i < new_size+28; i++)
+									for (int i = 28; i < new_size+28; i++)
 										printf("%x ", buff[i] );
 
 									printf("\n--------\n");
@@ -1522,7 +1524,7 @@ using namespace std;
 				{
 					if (start_SRPP() >= 0)
 					{
-						cout << "Will APPLY SRPP FROM NOW ON...\n\n";
+						cout << "Will APPLY SRPP FROM NOW ON...SEND\n\n";
 						apply_srpp = 1;
 
 					}
@@ -1575,7 +1577,7 @@ using namespace std;
 					}
 					else
 					{
-						for (int i = 0; i < bytes_read; i++)
+						for (int i = 28; i < bytes_read; i++)
 								printf("%x ", buff[i] );
 						printf("\n--------\n");
 
