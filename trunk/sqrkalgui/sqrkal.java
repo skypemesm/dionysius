@@ -20,7 +20,7 @@ class sqrkal extends JPanel implements ActionListener{
  private JLabel jLabel1,jLabel2,jLabel3,jLabel4,jlO;
  private JButton b1,b2;
  private ImageIcon mainLabelIcon;
- public static String[] optionsStrings = { "Regular","Full Bandwidth", "With Burst Padding", "With Gradual Ascent Algorithm"};
+ public static String[] optionsStrings = { "Regular","Using Full Bandwidth", "With Burst Padding", "With Gradual Ascent Algorithm"};
  private JComboBox optionsList;
  public static final String COPYRIGHT  = "\u00a9";
 
@@ -134,7 +134,7 @@ class sqrkal extends JPanel implements ActionListener{
 /** ACTION LISTENER HANDLER **/
  public void actionPerformed(ActionEvent e) {
 
-  String cmd = "sudo skill -9 sqrkald";	
+  String cmd = "sudo skill -9 sqrkald;sudo iptables -F";	
 	if (e.getSource() == b1 )
 	{
 		cmd="sudo ./runme.sh ";

@@ -89,7 +89,7 @@ public:
 	  int print()
 	  {
 
-		  cout << "\n****************** RTP PACKET *******************************\n";
+		  cout << "\n****************** SRTP PACKET *******************************\n";
 		  cout << "Version:" << srtp_header.version << endl;
 		  cout << "Padding Bit:" << srtp_header.p << endl;
 		  cout << "Extension Bit:" << srtp_header.x << endl;
