@@ -1047,7 +1047,7 @@ using namespace std;
 		else if (message.find("REGISTER sip:") != string::npos)
 		{    /** check for REGISTER message **/
 
-			cout << " THIS IS A REGISTER MESSAGE \n";
+			//cout << " THIS IS A REGISTER MESSAGE \n";
 
 			unsigned int l,m;
 			l = message.find("REGISTER sip:");
@@ -1350,8 +1350,8 @@ using namespace std;
 		  abc1.s_addr = ipHdr->daddr;
 
   		  cout << "\n---------------------------------------------------------------\n";
-		  cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
-				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;
+		 /* cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
+				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;*/
 
 			 if (direction == 1)
 					cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
