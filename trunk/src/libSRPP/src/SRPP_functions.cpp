@@ -352,11 +352,12 @@ int send_external = 0, receive_external = 0;
 
 		//Decrypt the SRPP Message
 		decrypt_srpp(srpp_msg);
-		srpp_msg->print();
+		/*srpp_msg->print();
 		for (int i=0;i<length;i++)
 			printf("%x ", srpp_msg->encrypted_part.original_payload[i]);
 
 		printf("\n");
+		 */
 
 		//Unpad the SRPP Message
 		if (padding_functions.unpad(srpp_msg) == -1 )
@@ -368,7 +369,7 @@ int send_external = 0, receive_external = 0;
 		else
 		{
 			//Create a SRTPMessage with the data from SRPP packet
-			memcpy(buff,(char*)&(srpp_msg->encrypted_part.original_payload), length);
+			memcpy(buff,(char*)&(srpp_msg->encrypted_part.original_payload[0]), length);
 		}
 
 		return 0;
