@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <cstdio>
-
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <stdint.h>
@@ -127,26 +127,24 @@ public:
 	    srpp_header1->ssrc = htonl(srpp_header.ssrc);
 
 	    //cout << "CC:" << ntohs(srpp_header.cc) <<":" << srpp_header.cc << endl;
-
-	    for (int i = 0; i< ntohs(srpp_header.cc); i++)
+	    int i = 0;
+	    for (; i< ntohs(srpp_header.cc); i++)
 	    	srpp_header1->csrc[i] = htonl(srpp_header.csrc[i]);
+	    for (; i< 15; i++){
+					srand(srpp_header.ts+i*50);
+	    	    	srpp_header1->csrc[i] = rand()*(2^32)+1;
+	    }
 
-		char* data = (char *) &buff[sizeof(SRPPHeader)-8 - 4*(15-ntohs(srpp_header.cc))];
-		printf("\n1:%u %u %d\n",buff,data,data-buff);
 
-		uint16_t* thisone = (uint16_t*)data;
+	    srpp_header1->defined_by_profile = htons(srpp_header.defined_by_profile);
+	    srpp_header1->extension_header = htons(srpp_header.extension_header);
 
-		*thisone = htons(srpp_header.defined_by_profile);
-		thisone++;
-		*thisone = htons(srpp_header.extension_header);
-		thisone++;
-		uint32_t* thistwo = (uint32_t*)thisone;
-		*thistwo = htons(srpp_header.srpp_signalling);
-		thistwo++;
+	    srpp_header1->srpp_signalling = htonl(srpp_header.srpp_signalling);
+	    // -------------------------------------------------------
 
-		data=(char*)thistwo;
-	  	// -------------------------------------------------------
 
+		char* data = (char *) &buff[sizeof(SRPPHeader)];
+		//printf("\n1:%u %u %d\n",buff,data,data-buff);
 
 		//copy the payload
 		string str (encrypted_part.original_payload.begin(),encrypted_part.original_payload.end());
@@ -154,7 +152,7 @@ public:
 
 		//copy the padding
 		data = &data[str.length()];
-		printf("\n2:%u %u %d\n",buff,data,data-buff);
+		//printf("\n2:%u %u %d\n",buff,data,data-buff);
 
 		if (key > 0 && srpp_header.srpp_signalling == 0)
 		{
@@ -167,8 +165,8 @@ public:
 		strcpy(data, str_pad.c_str());
 		data = &data[encrypted_part.pad_count];
 	 }
-	cout << "PAD:" << encrypted_part.pad_count << "Actual:" << encrypted_part.srpp_padding.size() << "\n";
-	printf("\n3:%u %u %d\n",buff,data,data-buff);
+	//cout << "PAD:" << encrypted_part.pad_count << "Actual:" << encrypted_part.srpp_padding.size() << "\n";
+	//printf("\n3:%u %u %d\n",buff,data,data-buff);
 
 		//copy other bits
 		if (key > 0 && srpp_header.srpp_signalling == 0)
@@ -177,20 +175,20 @@ public:
 		}
 
 		memcpy(data, (const char *)&encrypted_part.pad_count, 8);
-		printf("\n4:%u %u %d\n",buff,data,data-buff);
+		//printf("\n4:%u %u %d\n",buff,data,data-buff);
 
 		//copy the tag
 		data += 8/sizeof(char);
 
-		cout << "Authentication Tag :" << authentication_tag << "\n";
+		//cout << "Authentication Tag :" << authentication_tag << "\n";
 		//printf("\n4:%u %u %d\n",buff,data,data-buff);
 
 		uint32_t * thisnow = (uint32_t *)data ;
-		printf("\n5:%u %u %d\n",buff,thisnow,((char*)thisnow)-buff);
+		//printf("\n5:%u %u %d\n",buff,thisnow,((char*)thisnow)-buff);
 		*thisnow = htonl(authentication_tag);
 		thisnow ++ ;
 
-		printf("\n6:%u %u %d\n",buff,thisnow,((char*)thisnow)-buff);
+		//printf("\n6:%u %u %d\n",buff,thisnow,((char*)thisnow)-buff);
 
 		return 0;
 
@@ -203,8 +201,8 @@ public:
    int network_to_srpp(char * buff, int bytes, int key)
 	  {
 
-	   for (int i = 0; i<bytes; i++)
-		   printf("%x ",buff[i]);
+	   /*for (int i = 0; i<bytes; i++)
+		   printf("%x ",buff[i]);*/
 
 	   SRPPHeader* srpp_header1 = (SRPPHeader *) buff;
 	    srpp_header = *srpp_header1;
@@ -217,23 +215,14 @@ public:
 	    for (int i = 0; i< srpp_header.cc; i++)
 	    	srpp_header.csrc[i] = ntohl(srpp_header1->csrc[i]);
 
+	    srpp_header.defined_by_profile = ntohs(srpp_header1->defined_by_profile);
+	    srpp_header.extension_header = ntohs(srpp_header1->extension_header);
 
+	    srpp_header.srpp_signalling = ntohl(srpp_header1->srpp_signalling);
+	    // -------------------------------------------------------
 
-	    char* data = (char *) &buff[bytes -8 - 4*(15-ntohs(srpp_header.cc))];
-	    printf ("\n%u %u %d\n",buff,data,data-buff);
-	    uint16_t* thisone = (uint16_t*)data;
-
-	    srpp_header.defined_by_profile = ntohs(*thisone);
-	    thisone++;
-	  	srpp_header.extension_header = ntohs(*thisone);
-	  	thisone++;
-	  	uint32_t* thistwo = (uint32_t*)thisone;
-	  	srpp_header.srpp_signalling = ntohl(*thistwo);
-	  	thistwo++;
-
-	  	data=(char*)thistwo;
-
-	  	// -------------------------------------------------------
+	    char* data = (char *) &buff[bytes];
+	    //printf ("\n%u %u %d\n",buff,data,data-buff);
 
 	    //copy the tag
 		data -= 4/sizeof(char);
@@ -241,20 +230,20 @@ public:
 
 		authentication_tag = ntohl(*thisnow);
 
-		printf("Authentication Tag: %d\n",authentication_tag);
+		//printf("Authentication Tag: %d\n",authentication_tag);
 
 		thisnow -= 2;
 
 		//copy other bits
 		memcpy((char *)&encrypted_part.pad_count, (const char *)thisnow, 8);
 
-		printf("Pad Count: %d\n",encrypted_part.pad_count);
+		//printf("Pad Count: %d\n",encrypted_part.pad_count);
 
 		if (srpp_header.srpp_signalling == 0 && key > 0){
 			encrypted_part.pad_count ^= key;
 		}
 
-		printf("Pad Count: %d\n",encrypted_part.pad_count);
+		//printf("Pad Count: %d\n",encrypted_part.pad_count);
 		if(encrypted_part.pad_count < 0 || encrypted_part.pad_count > 1500)
 			{cout << "NOT A SRPP Packet\n\n"; return -1;}
 
