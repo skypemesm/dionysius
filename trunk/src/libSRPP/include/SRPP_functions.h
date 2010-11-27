@@ -60,6 +60,7 @@ namespace srpp {
 
 	//Convert a SRPP packet back to SRTP
 	SRTPMessage srpp_to_srtp(SRPPMessage* srpp_msg);
+	int srpp_to_srtp(SRPPMessage * srpp_msg, char * buff,int length);
 
 	//Create a SRPP Message with the data and encrypt it and return it
 	SRPPMessage create_and_encrypt_srpp(string data);
@@ -67,8 +68,10 @@ namespace srpp {
 	// Only create a SRPP Message and return it.
 	SRPPMessage create_srpp_message(string data);
 
-	// Only create a SRPP Message and return it.
+	// Only create a RTP Message and return it.
 	RTPMessage create_rtp_message(string data);
+	// Only create a SRTP Message and return it.
+	SRTPMessage create_srtp_message(string data);
 
 	// Encrypt the given SRPP packet
 	SRPPMessage encrypt_srpp(SRPPMessage * original_pkt);

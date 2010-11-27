@@ -1449,15 +1449,15 @@ using namespace std;
 							new_size = srpp_msg.encrypted_part.original_payload.size();
 							cout << "New Size:" << new_size << "\n";
 
-							char srtp_buff[newsize];
-							if (srpp::srpp_to_srtp(&srpp_msg,srtp_buff,size) >= 0)
+							char srtp_buff[new_size];
+							if (srpp::srpp_to_srtp(&srpp_msg,srtp_buff,new_size) >= 0)
 							{
 
 								memcpy(buff+28,srtp_buff,new_size);
 								bytes_read = new_size+28;
 
 									for (int i = 0; i < new_size+28; i++)
-										printf("%x ", buff );
+										printf("%x ", srtp_buff );
 
 									printf("\n--------\n");
 							}
