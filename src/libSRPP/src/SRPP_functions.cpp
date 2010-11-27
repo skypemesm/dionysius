@@ -332,7 +332,7 @@ int send_external = 0, receive_external = 0;
 		{
 			//Create a SRTPMessage with the data from SRPP packet
 			cout << "Dummy Message\n" << "\n";
-			rtp_msg = create_srtp_message("");
+			*srtp_msg = create_srtp_message("");
 		}
 		else
 		{
@@ -362,7 +362,7 @@ int send_external = 0, receive_external = 0;
 		else
 		{
 			//Create a SRTPMessage with the data from SRPP packet
-			memcpy(buff,srpp_msg->encrypted_part.original_payload, length);
+			memcpy(buff,(char*)&(srpp_msg->encrypted_part.original_payload), length);
 		}
 
 		return 0;
@@ -410,6 +410,20 @@ int send_external = 0, receive_external = 0;
 			rtp_msg.payload[data.length()] = '\0';
 
 			return rtp_msg;
+
+		}
+		// Only create a RTP Message and return it.
+		SRTPMessage create_srtp_message(string data){
+
+			SRTPMessage srtp_msg;
+
+			//put data, if any, in the payload
+			if(!data.empty())
+				data.copy((srtp_msg.payload),data.length(),0);
+
+			srtp_msg.payload[data.length()] = '\0';
+
+			return srtp_msg;
 
 		}
 
