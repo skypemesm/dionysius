@@ -1447,9 +1447,9 @@ using namespace std;
 						if (srpp_msg.network_to_srpp((char *)buff+28,new_size,srpp::getKey()) >= 0)
 						{
 
-							srpp_msg.print();
+							//srpp_msg.print();
 							new_size = srpp_msg.encrypted_part.original_payload.size();
-							cout << "New Size:" << new_size << "\n";
+							//cout << "New Size:" << new_size << "\n";
 
 							char srtp_buff[new_size];
 							if (srpp::srpp_to_srtp(&srpp_msg,srtp_buff,new_size) >= 0)
@@ -1458,10 +1458,10 @@ using namespace std;
 								memcpy(buff+28,srtp_buff,new_size);
 								bytes_read = new_size+28;
 
-									for (int i = 28; i < new_size+28; i++)
+									/*for (int i = 28; i < new_size+28; i++)
 										printf("%x ", buff[i] );
 
-									printf("\n--------\n");
+									printf("\n--------\n");*/
 							}
 
 						}
@@ -1577,9 +1577,9 @@ using namespace std;
 					}
 					else
 					{
-						for (int i = 28; i < bytes_read; i++)
+						/*for (int i = 28; i < bytes_read; i++)
 								printf("%x ", buff[i] );
-						printf("\n--------\n");
+						printf("\n--------\n");*/
 
 						cout << " WE SENT A SRTP PACKET\n";
 						RTP_Header* srtp_hdr = (RTP_Header *)(buff+28);
@@ -1597,6 +1597,7 @@ using namespace std;
 
 						char srpp_buff[new_size+10];
 						srpp_msg.srpp_to_network(srpp_buff, srpp::getKey());
+
 
 						memcpy(buff+28,srpp_buff,new_size);
 						bytes_read = new_size+28;
