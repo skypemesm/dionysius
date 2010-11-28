@@ -26,7 +26,7 @@
 #include "sqrkal_discovery.h"
 #include "SRPPSession.hpp"
 
-
+#include <fstream>
 
 #include <linux/netfilter.h>
 extern "C" {
@@ -87,6 +87,10 @@ using namespace std;
 
 
 	static sqrkal_discovery* thisinstance;
+
+	vector<int> input_packet_sizes;
+
+	vector<int> output_packet_sizes;
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
 
@@ -806,6 +810,22 @@ using namespace std;
 			saw_bye_already = 0;
 			
 			out_addr.sin_addr.s_addr = last_out_dest;
+
+			ofstream outfile;
+		    outfile.open ("sizes.txt");
+
+		    //Write the input and output packet lengths to file.
+			for (int i = 0; i< input_packet_sizes.size(); i++)
+			{
+				outfile << input_packet_sizes[i] << "\t" << output_packet_sizes[i] << endl;
+			}
+
+			outfile.close();
+
+
+
+
+
 			return 0;
 
 		}
@@ -1533,6 +1553,8 @@ using namespace std;
 
 				if (apply_srpp == 1)
 				{
+					input_packet_sizes.push_back(bytes_read);
+
 					// PAD IT AND SEND SRPP PACKET ACCORDINGLY
 					if (is_srtp == 0)
 					{
@@ -1617,6 +1639,7 @@ using namespace std;
 					}
 				}
 
+				output_packet_sizes.push_back(bytes_read);
 
 				//---------------------------------send forward------------------------------------------
 				//SET the IP and UDP header appropriately
