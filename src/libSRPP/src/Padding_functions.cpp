@@ -63,7 +63,7 @@ int PaddingFunctions::pad(SRPPMessage * srpp_msg)
 	//COIN TOSS AND add this to the dummy cache, if HEADS.
 	if (srpp::srpp_rand(0,10) <= 5 )
 	{
-		SRPPMessage new_dummy = *srpp_msg;
+		SRPPMessage new_dummy (*srpp_msg);
 		PaddingFunctions::add_to_dummy_cache(new_dummy);
 	}
 
