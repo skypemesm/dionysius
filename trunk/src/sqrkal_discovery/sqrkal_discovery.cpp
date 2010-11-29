@@ -89,7 +89,6 @@ using namespace std;
 	static sqrkal_discovery* thisinstance;
 
 	vector<int> input_packet_sizes;
-
 	vector<int> output_packet_sizes;
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ALL UTILITY FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
@@ -797,6 +796,18 @@ using namespace std;
 			else
 				saw_bye_already = 1;
 
+			ofstream outfile;
+			outfile.open ("sizes.txt");
+
+			//Write the input and output packet lengths to file.
+			for (int i = 0; i< input_packet_sizes.size(); i++)
+			{
+				outfile << input_packet_sizes[i] << "\t" << output_packet_sizes[i] << endl;
+			}
+
+			outfile.close();
+
+
 			is_session_on = 0;
 
 			if(apply_srpp == 1 )
@@ -810,19 +821,6 @@ using namespace std;
 			saw_bye_already = 0;
 			
 			out_addr.sin_addr.s_addr = last_out_dest;
-
-			ofstream outfile;
-		    outfile.open ("sizes.txt");
-
-		    //Write the input and output packet lengths to file.
-			for (int i = 0; i< input_packet_sizes.size(); i++)
-			{
-				outfile << input_packet_sizes[i] << "\t" << output_packet_sizes[i] << endl;
-			}
-
-			outfile.close();
-
-
 
 
 
@@ -926,13 +924,14 @@ using namespace std;
 			{
 				// Get the receiver address from c=IN IP4...
 				unsigned int l,m;
-				if ((l = message.find("c=IN IP4 ")) != string::npos)
+				if ((l = message.find("c=IN IP4 ")) != string::npos && saw_ack == 0)
 				{
 					m = message.find_first_of(" \n",l+9);
 
 					if (direction == 0) // INwards
 					{
 						rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
+						//cout << "SET rtp_dest:" << (message.substr(l+9,m-l-9)) << " to " << rtp_dest << endl;
 					}
 					else
 					{
@@ -1019,6 +1018,25 @@ using namespace std;
 			}
 
 
+			// Get the receiver address from c=IN IP4...
+			if ((l = message.find("c=IN IP4 ")) != string::npos)
+			{
+				m = message.find_first_of(" \n",l+9);
+
+				if (direction == 0) // INwards
+				{
+					rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
+					//cout << "SINET rtp_dest:" << (message.substr(l+9,m-l-9)) << "to" << rtp_dest << endl;
+				}
+				else
+				{
+					rtp_src = inet_addr((message.substr(l+9,m-l-9)).c_str());
+				}
+			}
+
+
+
+
 		  if (direction == 0) // INWARDS
 		   {
 			return 0;   // since we have already set the out_addr earlier
@@ -1046,22 +1064,6 @@ using namespace std;
 			out_addr.sin_family = AF_INET;
 			out_addr.sin_port = htons(5060);
 			last_out_dest = out_addr.sin_addr.s_addr;
-
-			// Get the receiver address from c=IN IP4...
-			if ((l = message.find("c=IN IP4 ")) != string::npos)
-			{
-				m = message.find_first_of(" \n",l+9);
-
-				if (direction == 0) // INwards
-				{
-					rtp_dest = inet_addr((message.substr(l+9,m-l-9)).c_str());
-				}
-				else
-				{
-					rtp_src = inet_addr((message.substr(l+9,m-l-9)).c_str());
-				}
-			}
-
 
 
 		}
@@ -1401,7 +1403,7 @@ using namespace std;
 							printf("%x ",rtp_header[i]);*/
 
 				//if we see a different port, then we start a new session
-				if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count == 0))
+				if((outport != saddr && apply_srpp == 0) || (recv_count == 1 && sent_count < 5))
 				{
 					if (start_SRPP() >= 0)
 					{
