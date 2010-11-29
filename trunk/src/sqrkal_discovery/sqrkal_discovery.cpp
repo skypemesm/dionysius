@@ -78,9 +78,6 @@ using namespace std;
 	char srpp_ttl_s[2];
 	uint32_t ssrc_value = 0;
 
-	RTPMessage* rtp_msg_p;
-	SRPPMessage* srpp_msg_p;
-	SRTPMessage* srtp_msg_p;
 	RTPMessage rtp_msg;
 	SRPPMessage srpp_msg;
 	SRTPMessage srtp_msg;
@@ -574,6 +571,16 @@ using namespace std;
 			}
 
 		}
+		else
+		{
+			if(rtp_hdset != 2)
+				cout << "Havent seen a RTP Header yet? " << endl;
+			else
+				cout << "Version 0 RTP packet received and sent forward." << endl;
+		}
+
+		cout << "Sequence: " << ntohs(rtpp->seq) << endl;
+		cout << "SSRC: " << ntohl(rtpp->ssrc) << endl;
 
 		// RECALCULATE THE CHECKSUM
 		thisinstance->form_checksums((char * )point);
@@ -1613,7 +1620,7 @@ using namespace std;
 							ssrc_value = srtp_hdr->ssrc;
 
 						srpp_msg = srpp::rtp_to_srpp(*srtp_hdr,(char*) buff+28 ,bytes_read-28); // we will keep the whole packet in payload
-						srpp_msg.print();
+						//srpp_msg.print();
 
 						int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
 								srpp_msg.encrypted_part.srpp_padding.size() + 3* sizeof(uint32_t);
