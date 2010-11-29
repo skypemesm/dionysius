@@ -2,5 +2,6 @@
 cd sqrkalgui
 java sqrkal
 mv output_log.txt ../
+mv sizes.txt ../test
 cd ..
 
