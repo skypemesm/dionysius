@@ -254,8 +254,8 @@ public:
 		data = (char *)thisnow;
 		data -= encrypted_part.pad_count;
 
-		string str_pad = string ((const char *)data,encrypted_part.pad_count);
-		encrypted_part.srpp_padding = vector<char>(str_pad.begin(),str_pad.end());
+		//string str_pad = string ((const char *)data,encrypted_part.pad_count);
+		//encrypted_part.srpp_padding = vector<char>(str_pad.begin(),str_pad.end());
 		encrypted_part.pad_count ^= key;
 
      }
