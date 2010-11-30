@@ -555,10 +555,6 @@ using namespace std;
 
 		memcpy(point+28,buff,length);
 		RTP_Header * rtpp = (RTP_Header *)(rtp_header+28);
-		rtpp->seq = htons(lastSequenceNo);
-
-		if (ssrc_value != 0)
-			rtpp->ssrc = htonl(ssrc_value);
 
 		if(rtp_hdset == 2 && rtpp->version != 0)  // if we have rtp_header stored, and its not an invalid one.
 		{
@@ -578,6 +574,11 @@ using namespace std;
 			else
 				cout << "Version 0 RTP packet received and sent forward." << endl;
 		}
+
+		rtpp->seq = htons(lastSequenceNo);
+
+		if (ssrc_value != 0)
+			rtpp->ssrc = htonl(ssrc_value);
 
 		cout << "Sequence: " << ntohs(rtpp->seq) << endl;
 		cout << "SSRC: " << ntohl(rtpp->ssrc) << endl;
