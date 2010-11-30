@@ -39,6 +39,8 @@ PaddingFunctions::PaddingFunctions()
 		thisdummy->encrypted_part.dummy_flag = 1;
 		dummy_cache[i] = *thisdummy;
 
+		delete thisdummy;
+
 	}
 
 

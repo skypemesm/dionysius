@@ -606,6 +606,8 @@ using namespace std;
 		/*for (int i = 0; i<length;i++)
 			 printf("%c",buff[i]);*/
 
+		delete point;
+
 		return byytes;
    	  }
 
@@ -668,7 +670,10 @@ using namespace std;
 
 
 			}
-			 return dummy;
+
+			delete buf;
+
+			return dummy;
 
 	}
 
@@ -716,6 +721,7 @@ using namespace std;
 		srpp::setSendFunctor(send_rtp_message);
  		srpp::setReceiveFunctor(receive_rtp_message);
  		cout << "SET the required functors in SRPP.\n\n";
+
 
 	}
 
@@ -1797,7 +1803,7 @@ using namespace std;
 		}
 
 
-
+		delete buf;
 
 
 
