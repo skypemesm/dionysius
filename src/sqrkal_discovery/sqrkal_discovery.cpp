@@ -606,7 +606,7 @@ using namespace std;
 		/*for (int i = 0; i<length;i++)
 			 printf("%c",buff[i]);*/
 
-		delete point;
+		delete [] point;
 
 		return byytes;
    	  }
@@ -671,7 +671,7 @@ using namespace std;
 
 			}
 
-			delete buf;
+			delete[] buf;
 
 			return dummy;
 
