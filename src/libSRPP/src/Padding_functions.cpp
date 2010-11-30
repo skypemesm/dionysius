@@ -187,9 +187,11 @@ string	PaddingFunctions::generate_dummy_data (int size)
 	int size_recvd = 0, packet_size = 0;
 	string return_str;
 
+	SRPPMessage thisdummy;
+
 	while (size_recvd < size)
 	{
-		SRPPMessage thisdummy = dummy_cache[dummy_index];
+		thisdummy = dummy_cache[dummy_index];
 		packet_size = thisdummy.encrypted_part.original_payload.size();
 		if (packet_size > (size-size_recvd))
 			packet_size = (size-size_recvd);
