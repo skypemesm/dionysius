@@ -218,7 +218,7 @@ int send_external = 0, receive_external = 0;
 		srpp_msg.srpp_header.x = rtp_header.x;
 		srpp_msg.srpp_header.m = rtp_header.m;
 		srpp_msg.encrypted_part.original_seq_number = ntohl(rtp_header.seq);
-		srpp_msg.srpp_header.pt = ntohs(rtp_header.pt);
+		srpp_msg.srpp_header.pt = rtp_header.pt;
 		srpp_msg.srpp_header.ts = ntohl(rtp_header.ts);
 		srpp_msg.srpp_header.ssrc = ntohl(rtp_header.ssrc);
 
