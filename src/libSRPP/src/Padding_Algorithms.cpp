@@ -22,6 +22,7 @@ int cbp_packet_count = 0;
 int is_full_bandwidth = 0;
 int gradual_ascent_bandwidth = 0;
 int is_burst_padding = 0;
+int lastmaxbandwidth = 0;
 
 	/** Sets the behavior to pad all packets to maximum packet size or full bandwidth **/
 	int PaddingAlgos::set_options(int i)
@@ -111,6 +112,21 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		if (is_full_bandwidth == 0)
 			extra_size = srpp::srpp_rand(1,extra_size);
+
+		if (gradual_ascent_bandwidth == 1)
+		{
+			if (lastmaxbandwidth < srpp_msg->encrypted_part.original_payload.size())
+			{
+				//// Set a scaled value of the new size as the maxbandwidth
+				int l=srpp::srpp_rand(srpp_msg->encrypted_part.original_payload.size(),1366);
+				int m=srpp::srpp_rand(l,1366);
+			}
+
+			extra_size = srpp::srpp_rand(1,lastmaxbandwidth);
+
+		}
+
+
 
 		string status = PaddingFunctions::generate_dummy_data(extra_size);
 
