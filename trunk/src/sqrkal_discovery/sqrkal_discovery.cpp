@@ -581,6 +581,7 @@ using namespace std;
 
 		cout << "Sequence: " << ntohs(rtpp->seq) << endl;
 		cout << "SSRC: " << ntohl(rtpp->ssrc) << endl;
+		cout << "PAYLOAD TYPE: " << rtpp->pt << endl;
 
 		// RECALCULATE THE CHECKSUM
 		thisinstance->form_checksums((char * )point);
@@ -811,7 +812,8 @@ using namespace std;
 			{
 				outfile << input_packet_sizes[i] << "\t" << output_packet_sizes[i] << endl;
 			}
-
+			input_packet_sizes.clear();
+			output_packet_sizes.clear();
 			outfile.close();
 
 
@@ -1806,6 +1808,24 @@ using namespace std;
 	/** STOP DISCOVERY **/
 	void sqrkal_discovery::stop_discovering(int i)
 	{
+
+		if (input_packet_sizes.size() >= 50)
+		{
+
+			ofstream outfile;
+			outfile.open ("sizes.txt");
+
+			//Write the input and output packet lengths to file.
+			for (int i = 0; i< input_packet_sizes.size(); i++)
+			{
+				outfile << input_packet_sizes[i] << "\t" << output_packet_sizes[i] << endl;
+			}
+			input_packet_sizes.clear();
+			output_packet_sizes.clear();
+			outfile.close();
+		}
+
+
 		if (apply_srpp == 1)
 			{srpp::stop_session(); }
 

@@ -14,6 +14,10 @@ sub prob_dist
 
 	(@thisout) = @_;
 	$maxval = max @thisout; 
+	
+	if ($maxval == 0)
+		{return 0;}		
+
 	$maxindex = scalar @thisout;
  
 	#---- calculate frequencies----
@@ -60,6 +64,7 @@ foreach $file(@files)
 
 
 	open OUT, ">>", $filename or die $!;
+	#open DIST, ">>","dist.txt" or die $!;
 
 	print OUT $file."\n\n";
 
@@ -79,6 +84,8 @@ foreach $file(@files)
 
 	@in_freq = prob_dist(@inp);
 	@out_freq = prob_dist(@out);
+
+	#print DIST "@in_freq"."\n\n\n";
 
 	#print OUT "\n\nDISTRIBUTIONS:\n----------------------------------\n\n";
 	#print OUT "INPUT\n"."@in_freq"."\n\n";
@@ -120,6 +127,7 @@ foreach $file(@files)
  
 }
 
+#close DIST;
 
 exit 0;
 

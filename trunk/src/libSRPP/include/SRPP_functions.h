@@ -20,8 +20,8 @@
 #include <cstdlib>
 
 
-#define PACKET_INTERVAL_TIME	200	           /** This is time interval in ms we wait before we start current burst padding  **/
-#define SILENCE_INTERVAL_TIME	300            /** This is time interval in ms we wait in silence before we start extra burst padding  **/
+#define PACKET_INTERVAL_TIME	300	           /** This is time interval in ms we wait before we start current burst padding  **/
+#define SILENCE_INTERVAL_TIME	400            /** This is time interval in ms we wait in silence before we start extra burst padding  **/
 
 class SRPPSession;									/** Forward Declaration  **/
 
@@ -124,6 +124,7 @@ namespace srpp {
 	  int set_gradual_ascent();
 
 	  int set_starting_sequenceno(int seq_no);
+	  int set_packet_to_send();
 
 
 	  //reset timers
