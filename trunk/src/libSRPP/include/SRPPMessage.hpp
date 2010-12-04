@@ -159,8 +159,7 @@ public:
 			encrypted_part.pad_count ^= key;
 		}
 
-	if (encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0 &&
-			encrypted_part.pad_count <= encrypted_part.srpp_padding.size())
+	if ( encrypted_part.pad_count > 0 && srpp_header.srpp_signalling == 0)
 	 {
 		string str_pad (encrypted_part.srpp_padding.begin(),encrypted_part.srpp_padding.end());
 		strcpy(data, str_pad.c_str());

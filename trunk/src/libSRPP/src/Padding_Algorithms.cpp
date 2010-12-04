@@ -139,6 +139,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 				cout << "Gradual ascent from " << lastmaxbandwidth;
 				lastmaxbandwidth = (int) (pay_size*(m/l));
+				cout << " to " << lastmaxbandwidth << endl;
 
 
 			}
@@ -147,7 +148,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		}
 
-		if (is_small_perturbation == 1 )
+		if (is_small_perturbation == 1 || is_burst_padding == 1)
 		{
 			extra_size = srpp::srpp_rand(0,10);
 		}
@@ -178,6 +179,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		cout << "Sending " << calculated_burst_dummies << " dummy packets\n";
 		cbp_packet_count = 0;
+		int dummy_size;
 
 		while ((++cbp_packet_count) <= calculated_burst_dummies)
 		{
