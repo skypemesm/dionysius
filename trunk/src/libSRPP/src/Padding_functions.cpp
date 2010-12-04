@@ -171,7 +171,7 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 SRPPMessage PaddingFunctions::generate_dummy_pkt(int size)
 {
 	int dummy_index = srpp::srpp_rand(0,MAXDUMMYCACHESIZE);
-	//dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo++;
+	dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo++;
 
 	int pay_size = dummy_cache[dummy_index].encrypted_part.original_payload.size();
 	int pad_size = dummy_cache[dummy_index].encrypted_part.srpp_padding.size();
