@@ -40,8 +40,15 @@ int main(int argc, char * argv[])
 		if (arg1 == "--gradual-ascent" || arg1 == "-ga")
 					srpp::set_gradual_ascent();
 
+		if (arg1 == "--min-prob-bin" || arg1 == "-mpb")
+					srpp::set_min_prob_bin();
+
+		if (arg1 == "--small-perturbation" || arg1 == "-sp")
+					srpp::set_small_perturbation();
+
 		if (arg1 == "--usage" )
-		{	cerr << "./sqrkal [--full-bandwidth|-fb]|[--burst-padding|-bp]|[--gradual-ascent|-ga]" << endl; return 1;}
+		{	cerr << "./sqrkal [--full-bandwidth | -fb]|[--burst-padding | -bp]|[--gradual-ascent | -ga]|[--min-prob-bin | -mpb][--small-perturbation | -sp] "
+				"	" << endl; return 1;}
 
 	}
 
