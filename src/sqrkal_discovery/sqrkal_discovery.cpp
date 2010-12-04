@@ -712,9 +712,9 @@ using namespace std;
 	    SRPPSession * newsession = srpp::create_session("127.0.0.1", inport,*crypto);//this is a dummy
  		cout << "SRPP started at time " << newsession->startTime << ".\n";
 
- 		cerr << "Press Enter to Start." << endl;
- 		getchar();
- 		cerr << "Started now.\n";
+ 		//cerr << "Press Enter to Start." << endl;
+ 		//getchar();
+ 		cerr << "SQRKal Started now.\n";
 
 		srpp::setSendFunctor(send_rtp_message);
  		srpp::setReceiveFunctor(receive_rtp_message);
@@ -742,7 +742,7 @@ using namespace std;
 
         if(srpp::isSignalingComplete() == 0)
         {
-        	cout << " SRPP NOT SUPPORTED AT OTHER ENDPOINT \n." << endl;
+        	//cout << " SRPP NOT SUPPORTED AT OTHER ENDPOINT \n." << endl;
         	srpp::disable_srpp();
         	srpp::stop_session();
 
@@ -754,8 +754,8 @@ using namespace std;
         {
         	srpp::enable_srpp();
         	RTP_Header *rtpp = (RTP_Header *)(rtp_header+28);
-			cout << "SETTING SEQUENCE NUMBER TO:" << ntohl(rtpp->seq) << endl;
-			srpp::set_starting_sequenceno(ntohl(rtpp->seq));
+			cout << "SETTING SEQUENCE NUMBER TO:" << ntohs(rtpp->seq) << endl;
+			srpp::set_starting_sequenceno(ntohs(rtpp->seq));
         }
 
  		/*char data[40];
@@ -1801,7 +1801,7 @@ using namespace std;
 		}
 
 
-		delete buf;
+		//delete buf;
 
 
 

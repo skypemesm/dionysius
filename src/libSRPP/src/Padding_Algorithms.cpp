@@ -25,7 +25,7 @@ int is_burst_padding = 0;
 int is_min_bin_padding = 0;
 int is_small_perturbation = 0;
 
-int lastmaxbandwidth = 50;
+int lastmaxbandwidth = 100;
 
 	/** Sets the behavior to pad all packets to maximum packet size or full bandwidth **/
 	int PaddingAlgos::set_options(int i)
@@ -148,7 +148,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		}
 
-		if (is_small_perturbation == 1 || is_burst_padding == 1)
+		if (is_small_perturbation == 1)
 		{
 			extra_size = srpp::srpp_rand(0,10);
 		}
@@ -183,13 +183,14 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		while ((++cbp_packet_count) <= calculated_burst_dummies)
 		{
-			SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
+			dummy_size = srpp::srpp_rand(100,lastmaxbandwidth);
+			SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt(dummy_size);
 			srpp::encrypt_srpp(&dummy_msg);
 
 			//check if we already have a packet to send
 			//send if NO
 			if (packet_to_send == 0){
-				cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
+				//cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 				srpp::send_message(&dummy_msg);
 			} else
 			{
@@ -218,7 +219,8 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 		return 0;
 
 		cout << "I will send one dummy packet" << endl;
-		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
+		int dummy_size = srpp::srpp_rand(100,lastmaxbandwidth);
+		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt(dummy_size);
 		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 		srpp::encrypt_srpp(&dummy_msg);
 
