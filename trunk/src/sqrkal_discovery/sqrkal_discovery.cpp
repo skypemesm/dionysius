@@ -1783,6 +1783,8 @@ using namespace std;
 				 //cout << "\nDROPPED QUEUED PACKET with id " << m->packet_id << endl;
 				}
 
+				srpp::set_packet_to_send();
+
 				// process the received packet
 				process_packet(m->payload, m->data_len);
 

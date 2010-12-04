@@ -20,7 +20,8 @@ class sqrkal extends JPanel implements ActionListener{
  private JLabel jLabel1,jLabel2,jLabel3,jLabel4,jlO;
  private JButton b1,b2;
  private ImageIcon mainLabelIcon;
- public static String[] optionsStrings = { "Regular","Using Full Bandwidth", "With Burst Padding", "With Gradual Ascent Algorithm"};
+ public static String[] optionsStrings = { "With Small Perturbation","Max Random","Using Full Bandwidth", "With Burst Padding",
+	 										"With Gradual Ascent Padding","With Min Probability Bin Padding"};
  private JComboBox optionsList;
  public static final String COPYRIGHT  = "\u00a9";
 

@@ -22,7 +22,10 @@ int cbp_packet_count = 0;
 int is_full_bandwidth = 0;
 int gradual_ascent_bandwidth = 0;
 int is_burst_padding = 0;
-int lastmaxbandwidth = 150;
+int is_min_bin_padding = 0;
+int is_small_perturbation = 0;
+
+int lastmaxbandwidth = 50;
 
 	/** Sets the behavior to pad all packets to maximum packet size or full bandwidth **/
 	int PaddingAlgos::set_options(int i)
@@ -42,6 +45,17 @@ int lastmaxbandwidth = 150;
 			gradual_ascent_bandwidth = 1;
 			cout << "Applying Gradual Ascent Algorithm\n";
 			break;
+
+		case 4:
+			is_min_bin_padding = 1;
+			cout << "Applying Min Bin Padding Algorithm\n";
+			break;
+
+		case 5:
+			is_small_perturbation = 1;
+			cout << "Applying Small Perturbation Approach\n";
+			break;
+
 
 		}
 	}
@@ -123,12 +137,20 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 				float l=srpp::srpp_rand(pay_size,1366);
 				float m=srpp::srpp_rand(l,1366);
 
+				cout << "Gradual ascent from " << lastmaxbandwidth;
 				lastmaxbandwidth = (int) (pay_size*(m/l));
+				cout << " to " << lastmaxbandwidth << endl;
+
 
 			}
 
 			extra_size = srpp::srpp_rand(1,lastmaxbandwidth - pay_size);
 
+		}
+
+		if (is_small_perturbation == 1)
+		{
+			extra_size = srpp::srpp_rand(0,10);
 		}
 
 
