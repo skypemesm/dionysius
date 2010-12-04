@@ -20,8 +20,8 @@
 #include <cstdlib>
 
 
-#define PACKET_INTERVAL_TIME	300	           /** This is time interval in ms we wait before we start current burst padding  **/
-#define SILENCE_INTERVAL_TIME	400            /** This is time interval in ms we wait in silence before we start extra burst padding  **/
+#define PACKET_INTERVAL_TIME	20	           /** This is time interval in ms we wait before we start current burst padding  **/
+#define SILENCE_INTERVAL_TIME	150            /** This is time interval in ms we wait in silence before we start extra burst padding  **/
 
 class SRPPSession;									/** Forward Declaration  **/
 
