@@ -438,7 +438,7 @@ int send_external = 0, receive_external = 0;
 	SRPPMessage encrypt_srpp(SRPPMessage * original_pkt)
 	{
 		//TODO::: USE CRYPTO
-		cout << "KEY:" << srpp_session->encryption_key << endl;
+		//cout << "KEY:" << srpp_session->encryption_key << endl;
 		int val = srpp_rand(0,2^15);
 		val |= 1;
 
