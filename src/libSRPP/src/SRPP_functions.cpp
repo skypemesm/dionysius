@@ -816,6 +816,7 @@ int verifySignalling(char * buff)
 	  }
 
 
+	  /***** SETTER methods for OPTIONS OF PADDING ALGOS ********/
 	  int set_full_bandwidth()
 	  {
 		  return padding_functions.set_padding_options(1);
@@ -830,6 +831,18 @@ int verifySignalling(char * buff)
 	  {
 		  return padding_functions.set_padding_options(3);
 	  }
+
+	  int set_min_prob_bin()
+	  {
+		  return padding_functions.set_padding_options(5);
+	  }
+
+	  int set_small_perturbation()
+	  {
+		  return padding_functions.set_padding_options(5);
+	  }
+	  /*****************************************************/
+
 	  int set_starting_sequenceno(int seq_no)
 	  {
 		  lastSequenceNo = seq_no;
