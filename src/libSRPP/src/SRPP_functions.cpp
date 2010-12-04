@@ -217,13 +217,13 @@ int send_external = 0, receive_external = 0;
 		srpp_msg.srpp_header.cc = rtp_header.cc;
 		srpp_msg.srpp_header.x = rtp_header.x;
 		srpp_msg.srpp_header.m = rtp_header.m;
-		srpp_msg.encrypted_part.original_seq_number = ntohl(rtp_header.seq);
+		srpp_msg.encrypted_part.original_seq_number = rtp_header.seq;
 		srpp_msg.srpp_header.pt = rtp_header.pt;
-		srpp_msg.srpp_header.ts = ntohl(rtp_header.ts);
-		srpp_msg.srpp_header.ssrc = ntohl(rtp_header.ssrc);
+		srpp_msg.srpp_header.ts = rtp_header.ts;
+		srpp_msg.srpp_header.ssrc = rtp_header.ssrc;
 
 		for (int i = 0; i< ntohs(rtp_header.cc); i++)
-			srpp_msg.srpp_header.csrc[i] = ntohs(rtp_header.csrc[i]);
+			srpp_msg.srpp_header.csrc[i] = rtp_header.csrc[i];
 
 		srpp_msg.srpp_header.srpp_signalling = 0;
 		srpp_msg.srpp_header.seq = lastSequenceNo;

@@ -606,8 +606,6 @@ using namespace std;
 		/*for (int i = 0; i<length;i++)
 			 printf("%c",buff[i]);*/
 
-		delete [] point;
-
 		return byytes;
    	  }
 
@@ -714,9 +712,9 @@ using namespace std;
 	    SRPPSession * newsession = srpp::create_session("127.0.0.1", inport,*crypto);//this is a dummy
  		cout << "SRPP started at time " << newsession->startTime << ".\n";
 
- 		//cerr << "Press Enter to Start." << endl;
- 		//getchar();
- 		cerr << "SQRKal Started now.\n";
+ 		cerr << "Press Enter to Start." << endl;
+ 		getchar();
+ 		cerr << "Started now.\n";
 
 		srpp::setSendFunctor(send_rtp_message);
  		srpp::setReceiveFunctor(receive_rtp_message);
@@ -744,7 +742,7 @@ using namespace std;
 
         if(srpp::isSignalingComplete() == 0)
         {
-        	//cout << " SRPP NOT SUPPORTED AT OTHER ENDPOINT \n." << endl;
+        	cout << " SRPP NOT SUPPORTED AT OTHER ENDPOINT \n." << endl;
         	srpp::disable_srpp();
         	srpp::stop_session();
 
@@ -756,8 +754,8 @@ using namespace std;
         {
         	srpp::enable_srpp();
         	RTP_Header *rtpp = (RTP_Header *)(rtp_header+28);
-			cout << "SETTING SEQUENCE NUMBER TO:" << ntohs(rtpp->seq) << endl;
-			srpp::set_starting_sequenceno(ntohs(rtpp->seq));
+			cout << "SETTING SEQUENCE NUMBER TO:" << ntohl(rtpp->seq) << endl;
+			srpp::set_starting_sequenceno(ntohl(rtpp->seq));
         }
 
  		/*char data[40];
@@ -987,7 +985,7 @@ using namespace std;
 		else if (message.find("INVITE sip:") != string::npos && message.find("Content-Type: application/sdp") != string::npos)
 		{    /** check for invite and SDP message **/
 
-			//cout << "\n THIS IS AN INVITE MESSAGE WITH SDP \n";
+			cout << "\n THIS IS AN INVITE MESSAGE WITH SDP \n";
 			//cout << message << endl;
 
 			saw_invite_already = 1;
@@ -1001,12 +999,12 @@ using namespace std;
 				if (direction == 0) // INwards
 				{
 					outport = atoi((message.substr(l+8,m-l-8)).c_str());
-					//cout << "SET OUTPORT TO " << outport << endl;
+					cout << "SET OUTPORT TO " << outport << endl;
 				}
 				else
 				{
 					inport = atoi((message.substr(l+8,m-l-8)).c_str());
-					//cout << "SET INPORT TO " << inport << endl;
+					cout << "SET INPORT TO " << inport << endl;
 				}
 			}
 
@@ -1388,14 +1386,14 @@ using namespace std;
 		  abc.s_addr = ipHdr->saddr;
 		  abc1.s_addr = ipHdr->daddr;
 
-  		 // cout << "\n---------------------------------------------------------------\n";
+  		  cout << "\n---------------------------------------------------------------\n";
 		 /* cout << "TOS:"<< ntohs(ipHdr->tos) << "|" << bytes_read << " bytes FROM " << inet_ntoa(abc) << ":" << saddr
 				 << " TO " << inet_ntoa(abc1) << ":" << daddr << endl;*/
 
-			/* if (direction == 1)
+			 if (direction == 1)
 					cout << "OUTWARDS    -------------->>>>>>>>>>>\n";
 			 else
-					cout << "INWARDS     <<<<<<<<<<<<-------------\n";*/
+					cout << "INWARDS     <<<<<<<<<<<<-------------\n";
 
 			if (direction == 0) // COMING IN
 			{
@@ -1434,7 +1432,7 @@ using namespace std;
 					// RECEIVING A SRPP PACKET PROCESS ACCORDINGLY
 					if (is_srtp == 0)
 					{
-						//cout << " WE RECEIVED A RTP PACKET\n";
+						cout << " WE RECEIVED A RTP PACKET\n";
 
 						//---------------- CONVERT THE RECEIVED SRPP Message to RTP Message -----------------
 						int new_size = bytes_read - 28;
@@ -1477,8 +1475,8 @@ using namespace std;
 					}
 					else
 					{
-						//cout << " WE RECEIVED A SRTP PACKET\n";
-						//cout << "KEY:" << srpp::getKey() << endl;
+						cout << " WE RECEIVED A SRTP PACKET\n";
+						cout << "KEY:" << srpp::getKey() << endl;
 
 						//----------------CONVERT THE RECEIVED SRPP Message to SRTP Message-----------------
 						int new_size = bytes_read - 28;
@@ -1582,7 +1580,7 @@ using namespace std;
 						printf("\n******************************\n");*/
 
 
-						//cout << " WE SENT A RTP PACKET\n";
+						cout << " WE SENT A RTP PACKET\n";
 						RTP_Header* rtp_hdr = (RTP_Header *)(buff+28);
 
 						if (ssrc_value == 0)
@@ -1592,7 +1590,7 @@ using namespace std;
 
 						srpp_msg = srpp::rtp_to_srpp(*rtp_hdr,(char*) buff+40 ,bytes_read-40);
 						//srpp_msg.print();
-						//cout << "Sequence Number:  " << srpp_msg.srpp_header.seq << endl;
+						cout << "Sequence Number:  " << srpp_msg.srpp_header.seq << endl;
 
 
 						int new_size = sizeof(srpp_msg.srpp_header) + srpp_msg.encrypted_part.original_payload.size()  +
@@ -1622,7 +1620,7 @@ using namespace std;
 								printf("%x ", buff[i] );
 						printf("\n--------\n");*/
 
-						//cout << " WE SENT A SRTP PACKET\n";
+						cout << " WE SENT A SRTP PACKET\n";
 						RTP_Header* srtp_hdr = (RTP_Header *)(buff+28);
 
 						if (ssrc_value == 0)
@@ -1747,7 +1745,7 @@ using namespace std;
 		//See if we receive any packets
 		while(is_discovering == 1)
 		{
-			//cout << ".";
+			cout << ".";
 			signal(SIGINT,sqrkal_discovery::stop_discovering);
 
 			// Read a packet from the queue
@@ -1815,24 +1813,6 @@ using namespace std;
 	/** STOP DISCOVERY **/
 	void sqrkal_discovery::stop_discovering(int i)
 	{
-
-		if (input_packet_sizes.size() >= 50)
-		{
-
-			ofstream outfile;
-			outfile.open ("sizes.txt");
-
-			//Write the input and output packet lengths to file.
-			for (int i = 0; i< input_packet_sizes.size(); i++)
-			{
-				outfile << input_packet_sizes[i] << "\t" << output_packet_sizes[i] << endl;
-			}
-			input_packet_sizes.clear();
-			output_packet_sizes.clear();
-			outfile.close();
-		}
-
-
 		if (apply_srpp == 1)
 			{srpp::stop_session(); }
 
