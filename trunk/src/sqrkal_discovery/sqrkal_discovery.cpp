@@ -713,7 +713,7 @@ using namespace std;
 
  		//cerr << "Press Enter to Start." << endl;
  		//getchar();
- 		//cerr << "Started now.\n";
+ 		cerr << "SQRKal Started now.\n";
 
 		srpp::setSendFunctor(send_rtp_message);
  		srpp::setReceiveFunctor(receive_rtp_message);
@@ -1780,7 +1780,7 @@ using namespace std;
 				 //cout << "\nDROPPED QUEUED PACKET with id " << m->packet_id << endl;
 				}
 
-				srpp::set_packet_to_send();
+				//srpp::set_packet_to_send();
 
 				// process the received packet
 				process_packet(m->payload, m->data_len);
