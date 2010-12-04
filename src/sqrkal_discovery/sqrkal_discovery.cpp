@@ -576,6 +576,7 @@ using namespace std;
 		}
 
 		rtpp->seq = htons(lastSequenceNo);
+		rtpp->ts = htonl(ntohl(rtpp->ts)+20);
 
 		if (ssrc_value != 0)
 			rtpp->ssrc = htonl(ssrc_value);

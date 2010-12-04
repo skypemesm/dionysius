@@ -148,7 +148,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 
 		}
 
-		if (is_small_perturbation == 1)
+		if (is_small_perturbation == 1 || is_burst_padding == 1)
 		{
 			extra_size = srpp::srpp_rand(0,10);
 		}
