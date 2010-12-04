@@ -219,7 +219,7 @@ int PaddingAlgos::ebp_pad_algo(ebp_algo_type atype)
 		return 0;
 
 		cout << "I will send one dummy packet" << endl;
-		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt(d);
+		SRPPMessage dummy_msg = PaddingFunctions::generate_dummy_pkt();
 		cout << "Sequence Number of Dummy packet: " << dummy_msg.get_sequence_number() << endl;
 		srpp::encrypt_srpp(&dummy_msg);
 

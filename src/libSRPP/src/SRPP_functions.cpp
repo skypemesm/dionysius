@@ -62,7 +62,7 @@ int send_external = 0, receive_external = 0;
 	//create SRPP session
 	SRPPSession * create_session(string address, int port, CryptoProfile crypto){
 
-		srpp_session = new SRPPSession(address,port,port,150*PACKET_INTERVAL_TIME, 25*SILENCE_INTERVAL_TIME, crypto);
+		srpp_session = new SRPPSession(address,port,port,50*PACKET_INTERVAL_TIME, 10*SILENCE_INTERVAL_TIME, crypto);
 		return srpp_session;
 	}
 
