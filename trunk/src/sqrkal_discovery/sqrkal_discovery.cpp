@@ -753,8 +753,8 @@ using namespace std;
         {
         	srpp::enable_srpp();
         	RTP_Header *rtpp = (RTP_Header *)(rtp_header+28);
-			cout << "SETTING SEQUENCE NUMBER TO:" << rtpp->seq << endl;
-			srpp::set_starting_sequenceno(ntohl(rtpp->seq));
+			cout << "SETTING SEQUENCE NUMBER TO:" << ntohs(rtpp->seq) << endl;
+			srpp::set_starting_sequenceno(ntohs(rtpp->seq));
         }
 
  		/*char data[40];
