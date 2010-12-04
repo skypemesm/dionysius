@@ -148,7 +148,7 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 	int pay_size = dummy_cache[dummy_index].encrypted_part.original_payload.size();
 	int pad_size = dummy_cache[dummy_index].encrypted_part.srpp_padding.size();
 
-	if (pay_size + pad_size > 1200	)
+	if (pay_size + pad_size > 5200	) //change to 1200, as required
 	{
 		//vect.erase(vect.begin()+(vect.size() - 5 ),vect.end());
 		dummy_cache[dummy_index].encrypted_part.original_payload.erase(
@@ -163,6 +163,12 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 				<< dummy_cache[dummy_index].encrypted_part.srpp_padding.size() << endl;*/
 
 	}
+
+	pad_size = srpp::srpp_rand(0,10);
+	dummy_cache[dummy_index].encrypted_part.srpp_padding.erase(
+						dummy_cache[dummy_index].encrypted_part.srpp_padding.begin()+pad_size,
+						dummy_cache[dummy_index].encrypted_part.srpp_padding.end());
+
 
 
 	return dummy_cache[dummy_index];
