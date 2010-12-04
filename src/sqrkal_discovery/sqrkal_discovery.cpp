@@ -456,7 +456,7 @@ using namespace std;
 		 printf("%c",buff[i]);
 	}
 
-	//cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+	cout << "\nWriting " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
 
 	/*
 	in_addr abc;
@@ -602,7 +602,10 @@ using namespace std;
 			 printf("%c",buff[i]);
 		}
 
-		//cout << "\nWriting SRPP " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		cout << "\nWriting SRPP " << byytes << " bytes \"" << inet_ntoa(out_addr.sin_addr) << ":" << ntohs(out_addr.sin_port) << " LEN:" << length << endl << endl;
+		/*for (int i = 0; i<length;i++)
+			 printf("%c",buff[i]);*/
+
 		delete [] point;
 
 		return byytes;
@@ -1779,8 +1782,6 @@ using namespace std;
 				{
 				 //cout << "\nDROPPED QUEUED PACKET with id " << m->packet_id << endl;
 				}
-
-				//srpp::set_packet_to_send();
 
 				// process the received packet
 				process_packet(m->payload, m->data_len);
