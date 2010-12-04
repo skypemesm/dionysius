@@ -148,21 +148,22 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
 	int pay_size = dummy_cache[dummy_index].encrypted_part.original_payload.size();
 	int pad_size = dummy_cache[dummy_index].encrypted_part.srpp_padding.size();
 
-	if (pay_size + pad_size > 800	)
+	if (pay_size + pad_size > 1200)
 	{
 		//vect.erase(vect.begin()+(vect.size() - 5 ),vect.end());
 		dummy_cache[dummy_index].encrypted_part.original_payload.erase(
-				dummy_cache[dummy_index].encrypted_part.original_payload.begin()+0.5*(pay_size),
+				dummy_cache[dummy_index].encrypted_part.original_payload.begin()+0.8*(pay_size),
 				dummy_cache[dummy_index].encrypted_part.original_payload.end());
 
 		dummy_cache[dummy_index].encrypted_part.srpp_padding.erase(
-						dummy_cache[dummy_index].encrypted_part.srpp_padding.begin()+0.5*(pad_size),
+						dummy_cache[dummy_index].encrypted_part.srpp_padding.begin()+0.8*(pad_size),
 						dummy_cache[dummy_index].encrypted_part.srpp_padding.end());
 
 		/*cout << dummy_cache[dummy_index].encrypted_part.original_payload.size() << "::"
 				<< dummy_cache[dummy_index].encrypted_part.srpp_padding.size() << endl;*/
 
 	}
+
 
 	return dummy_cache[dummy_index];
 }
@@ -172,33 +173,11 @@ SRPPMessage PaddingFunctions::generate_dummy_pkt()
  */
 SRPPMessage PaddingFunctions::generate_dummy_pkt(int size)
 {
-	int dummy_index = srpp::srpp_rand(0,MAXDUMMYCACHESIZE);
-	//dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo++;
+	int dummy_index = srpp::srpp_rand(1,MAXDUMMYCACHESIZE);
 
-	int pay_size = dummy_cache[dummy_index].encrypted_part.original_payload.size();
-	int pad_size = dummy_cache[dummy_index].encrypted_part.srpp_padding.size();
-
-	if (pay_size > size	)
-	{
-		//vect.erase(vect.begin()+(vect.size() - 5 ),vect.end());
-		dummy_cache[dummy_index].encrypted_part.original_payload.erase(
-				dummy_cache[dummy_index].encrypted_part.original_payload.begin()+size,
-				dummy_cache[dummy_index].encrypted_part.original_payload.end());
-
-		dummy_cache[dummy_index].encrypted_part.srpp_padding.clear();
-		dummy_cache[dummy_index].encrypted_part.pad_count = 0;
-
-	}
-	else if (pad_size > size - pay_size)
-	{
-		dummy_cache[dummy_index].encrypted_part.srpp_padding.erase(
-				dummy_cache[dummy_index].encrypted_part.srpp_padding.begin()+size-pay_size,
-				dummy_cache[dummy_index].encrypted_part.srpp_padding.end());
-
-		dummy_cache[dummy_index].encrypted_part.pad_count = size - pay_size;
-	}
-
+	dummy_cache[dummy_index].srpp_header.seq = lastSequenceNo++;
 	return dummy_cache[dummy_index];
+
 }
 
 /** Generates a character array containing some dummy payload data (Useful for PSP algos)**/
